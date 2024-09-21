@@ -1,0 +1,3 @@
+interface SampleQuantity {
+  quantity: number;
+}
