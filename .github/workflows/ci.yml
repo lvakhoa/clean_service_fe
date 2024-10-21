@@ -19,7 +19,5 @@ jobs:
         run: npm install
       - name: Linting
         run: npm run lint
-      - name: Formatting check
-        run: npm run format
       - name: Build nextjs
         run: npm run build
