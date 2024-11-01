@@ -1,14 +1,7 @@
-import { Prisma } from '@prisma/client'
-import React from 'react'
+import React from "react";
 
-const LandingLayout = (props: {
-    children: React.ReactNode
-}) => {
-  return (
-    <div>
-      {props.children}
-    </div>
-  )
-}
+const LandingLayout = (props: { children: React.ReactNode }) => {
+  return <div>{props.children}</div>;
+};
 
-export default LandingLayout
+export default LandingLayout;
