@@ -4,19 +4,28 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-interface NavItemProps {
+type NavItemProps = {
   icon: string;
   activeIcon: string;
   label: string;
   href: string;
   isActive: boolean;
-}
+};
 
-const NavItem: React.FC<NavItemProps> = ({ icon, activeIcon, label, href, isActive }) => {
+const NavItem: React.FC<NavItemProps> = ({
+  icon,
+  activeIcon,
+  label,
+  href,
+  isActive,
+}) => {
   return (
-    <Link href={href} className={`flex gap-5 items-center px-5 py-4 w-48 max-w-full min-h-[50px] ${
-      isActive ? 'text-white bg-blue-500 rounded-lg' : ''
-    }`}>
+    <Link
+      href={href}
+      className={`flex gap-5 items-center px-5 py-4 w-48 max-w-full min-h-[50px] ${
+        isActive ? 'text-white bg-blue-500 rounded-lg' : ''
+      }`}
+    >
       <img
         loading="lazy"
         src={isActive ? activeIcon : icon}
@@ -32,38 +41,37 @@ const Sidebar: React.FC = () => {
   const pathname = usePathname();
 
   const navItems = [
-    { 
-      icon: "/images/Dashboard/Sidebar/InActive/Chart.svg", 
-      activeIcon: "/images/Dashboard/Sidebar/Active/Chart.svg", 
-      label: "Chart", 
-      href: "/dashboard/chart" 
+    {
+      icon: '/images/Dashboard/Sidebar/InActive/Chart.svg',
+      activeIcon: '/images/Dashboard/Sidebar/Active/Chart.svg',
+      label: 'Chart',
+      href: '/dashboard/chart',
     },
-    { 
-      icon: "/images/Dashboard/Sidebar/InActive/Customer.svg", 
-      activeIcon: "/images/Dashboard/Sidebar/Active/Customer.svg", 
-      label: "Customer", 
-      href: "/dashboard/customer" 
+    {
+      icon: '/images/Dashboard/Sidebar/InActive/Customer.svg',
+      activeIcon: '/images/Dashboard/Sidebar/Active/Customer.svg',
+      label: 'Customer',
+      href: '/dashboard/customer',
     },
-    { 
-      icon: "/images/Dashboard/Sidebar/InActive/Employee.svg", 
-      activeIcon: "/images/Dashboard/Sidebar/Active/Employee.svg", 
-      label: "Employee", 
-      href: "/dashboard/employee" 
+    {
+      icon: '/images/Dashboard/Sidebar/InActive/Employee.svg',
+      activeIcon: '/images/Dashboard/Sidebar/Active/Employee.svg',
+      label: 'Employee',
+      href: '/dashboard/employee',
     },
-    { 
-      icon: "/images/Dashboard/Sidebar/InActive/Feedback.svg", 
-      activeIcon: "/images/Dashboard/Sidebar/Active/Feedback.svg", 
-      label: "Feedback", 
-      href: "/dashboard/feedback" 
+    {
+      icon: '/images/Dashboard/Sidebar/InActive/Feedback.svg',
+      activeIcon: '/images/Dashboard/Sidebar/Active/Feedback.svg',
+      label: 'Feedback',
+      href: '/dashboard/feedback',
     },
-    { 
-      icon: "/images/Dashboard/Sidebar/InActive/Service.svg", 
-      activeIcon: "/images/Dashboard/Sidebar/Active/Service.svg", 
-      label: "Service", 
-      href: "/dashboard/service" 
+    {
+      icon: '/images/Dashboard/Sidebar/InActive/Service.svg',
+      activeIcon: '/images/Dashboard/Sidebar/Active/Service.svg',
+      label: 'Service',
+      href: '/dashboard/service',
     },
   ];
-
 
   return (
     <aside className="flex flex-col w-[16%] max-md:ml-0 max-md:w-full">
