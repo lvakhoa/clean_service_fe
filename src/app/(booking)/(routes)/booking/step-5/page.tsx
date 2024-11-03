@@ -1,9 +1,19 @@
-import React from 'react'
+'use client';
 
-const Step_5 = () => {
-    return (
-        <div>Step_5</div>
-    )
-}
+import React from 'react';
+import Booking5Left from '@/components/booking/step-5/booking5_left';
+import Booking5Right from '@/components/booking/step-5/booking5_right';
 
-export default Step_5
+const Step_5: React.FC = () => {
+  return (
+    <div className="flex flex-col md:flex-row h-full relative min-h-screen">
+      {/* Section Left */}
+      <Booking5Left />
+
+      {/* Section Right */}
+      <Booking5Right />
+    </div>
+  );
+};
+
+export default Step_5;
