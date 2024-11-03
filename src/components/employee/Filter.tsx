@@ -1,14 +1,10 @@
-import { useState } from "react";
-
-type FilterDropdownProps = {
-  onFilterChange: (filter: string) => void;
-};
+import { useState } from 'react';
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({ onFilterChange }) => {
-  const options = ["Best Rating", "Worst Rating", "Filter by"];
+  const options = ['Best Rating', 'Worst Rating', 'Filter by'];
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Filter by");
+  const [selectedOption, setSelectedOption] = useState('Filter by');
 
   const openDropdown = () => {
     setIsOpen(!isOpen);

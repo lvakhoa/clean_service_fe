@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-interface StarProps {
+type StarProps = {
   percentage: number;
-}
+};
 
 const Star: React.FC<StarProps> = ({ percentage }) => {
   return (
