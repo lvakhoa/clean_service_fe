@@ -1,19 +1,35 @@
 type Employee = {
   id: string;
-  name: string;
-  address: string;
-  phone: string;
-  email?: string;
+  experienceDescription: string;
+  resumeUploaded: any;
+  servicesOffered: string[];
+  hourlyRate: number;
+  averageRating: number;
   completedJobs: number;
-  totalJobs: number;
+  cancelledJobs: number;
+  gender: string;
+  profilePicture: any;
+  fullName: string;
+  dateOfBirth: string;
+  address: string;
+  phoneNumber: string;
+  email?: string;
 };
 
 type EmployeeRowProps = {
   id: string;
-  name: string;
-  address: string;
-  phone: string;
-  email?: string;
+  experienceDescription: string;
+  resumeUploaded: any;
+  servicesOffered: string[];
+  hourlyRate: number;
+  averageRating: number;
   completedJobs: number;
-  totalJobs: number;
+  cancelledJobs: number;
+  gender: string;
+  profilePicture: any;
+  fullName: string;
+  dateOfBirth: string;
+  address: string;
+  phoneNumber: string;
+  email?: string;
 };

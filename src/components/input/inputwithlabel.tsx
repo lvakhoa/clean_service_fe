@@ -17,7 +17,7 @@ interface InputWithLabelProps {
   inputId: string;
   inputWidth?: string;
   options?: string[];
-  defaulValue?: string;
+  defaultValue?: string;
   plusPX?: string;
 }
 
@@ -28,7 +28,7 @@ export function InputWithLabel({
   inputId,
   inputWidth = "w-full",
   options = [],
-  defaulValue,
+  defaultValue,
   plusPX,
 }: InputWithLabelProps) {
   return (
@@ -40,9 +40,9 @@ export function InputWithLabel({
         {labelText}
       </Label>
       {inputType === "combobox" ? (
-        <Select defaultValue={defaulValue}>
+        <Select defaultValue={defaultValue}>
           <SelectTrigger
-            className={`${inputWidth} font-Averta-Regular h-[50px] text-[16px] text-[#5f6367] border-2`}
+            className={`${inputWidth} font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
             style={{ width: `${inputWidth}` }}
           >
             <SelectValue />
@@ -59,7 +59,7 @@ export function InputWithLabel({
         </Select>
       ) : (
         <Input
-          className={`font-Averta-Regular h-[50px] text-[16px] text-[#5f6367] border-2`}
+          className={`font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
           type={inputType}
           id={inputId}
           placeholder={inputPlaceholder}
