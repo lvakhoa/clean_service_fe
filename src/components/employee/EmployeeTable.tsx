@@ -4,6 +4,9 @@ import Pagination from '../pagination/Pagination';
 import SearhBarAndFilter from './SearchBarAndFilter';
 import EmployeeRow from './EmployeeRow';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import helperAction from '@/apis/helper.action';
+import { useRouter } from 'next/navigation';
 
 const columns = [
   { header: 'ID', className: 'w-[10%] hidden md:table-cell' },
@@ -24,6 +27,7 @@ const fetchHelper = async (url: string) => {
 }
 
 const EmployeeTable = () => {
+  const router = useRouter()
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,22 +35,33 @@ const EmployeeTable = () => {
   const [searchBy, setSearchBy] = useState('Name');
   const [helpersData, setHelpersData] = useState<any>(null)
 
+  // useEffect(() => {
+  //   const url = 'http://localhost:5011/api/v1/manage/helpers';
+
+  //   const getHelpersData = async () => {
+  //     try {
+  //       const data = await fetchHelper(url)
+  //       console.log('helperdata', data)
+  //       setHelpersData(data)
+  //     } catch (error) {
+  //       console.error('Lỗi khi lấy dữ liệu:', error)
+  //     }
+  //   };
+
+  //   getHelpersData();
+  // }, []);
+
+
+  const { data, error } = useQuery({
+    queryKey: ['getHelpers'],
+    queryFn: () => helperAction.getHelpers()
+  })
+
   useEffect(() => {
-    const url = 'http://localhost:26831/api/v1/manage/helpers';
-
-    const getHelpersData = async () => {
-      try {
-        const data = await fetchHelper(url)
-        console.log('helperdata', data)
-        setHelpersData(data)
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu:', error)
-      }
-    };
-
-    getHelpersData();
-  }, []);
-
+    if (data) {
+      setHelpersData(data)
+    }
+  }, [data])
 
   //Filter
   const applyFilter = (data: Employee[]) => {

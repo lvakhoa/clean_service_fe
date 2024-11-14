@@ -63,6 +63,7 @@ export function InputWithLabel({
           type={inputType}
           id={inputId}
           placeholder={inputPlaceholder}
+          defaultValue={defaultValue}
           style={
             plusPX
               ? { width: `calc(${inputWidth} + ${plusPX})` }

@@ -1,8 +1,11 @@
+'use client'
 import { InputWithLabel } from '@/components/input/inputwithlabel'
 import Image from "next/image";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import FileDownloadCard from '@/components/card/FileDownloadCard';
+import { useQuery } from '@tanstack/react-query';
+import helperAction from '@/apis/helper.action';
 
 const genderOptions = ["Female", "Male", "Other"]
 
@@ -15,6 +18,22 @@ interface Props {
 const EmployeeInfo = ({ params }: Props) => {
     const { id } = params
 
+    const [helperData, setHelperData] = useState<any>(null)
+
+
+    const { data, error } = useQuery({
+        queryKey: ['getHelpers'],
+        queryFn: () => helperAction.getHelpers()
+    })
+
+    useEffect(() => {
+
+        console.log("helper data", data)
+        if (data) {
+            setHelperData(data[0])
+        }
+    }, [data])
+
     const handleDownload = () => {
 
     };
@@ -22,6 +41,8 @@ const EmployeeInfo = ({ params }: Props) => {
     const handleUpdate = () => {
 
     };
+
+    if (!helperData) return <div>Loading...</div>
 
     return (
         <div className="bg-white h-full w-full flex flex-col md:flex-row">
@@ -40,9 +61,12 @@ const EmployeeInfo = ({ params }: Props) => {
                 <div className="grid justify-center mt-[50px]">
                     <div className="flex flex-col md:flex-row">
                         <InputWithLabel
-                            labelText="FULL NAME" inputType="text"
-                            inputPlaceholder="Enter Full Name" inputId="name"
-                            inputWidth="25vw" />
+                            labelText="FULL NAME"
+                            inputType="text"
+                            inputPlaceholder="Enter Full Name"
+                            inputId="name"
+                            inputWidth="25vw"
+                            defaultValue={helperData.fullName} />
                         <div className="md:ml-2 md:mt-0">
                             <InputWithLabel
                                 labelText="DATE OF BIRTH" inputType="date"
@@ -52,7 +76,7 @@ const EmployeeInfo = ({ params }: Props) => {
                         <div className="md:ml-2 md:mt-0">
                             <InputWithLabel
                                 labelText="GENDER" inputType="combobox"
-                                inputPlaceholder="" inputId="gender" defaultValue={genderOptions.at(0)}
+                                inputPlaceholder="" inputId="gender" defaultValue={helperData.gender}
                                 inputWidth="6.875vw" options={genderOptions} />
                         </div>
                     </div>
@@ -60,12 +84,12 @@ const EmployeeInfo = ({ params }: Props) => {
                         <InputWithLabel
                             labelText="PHONE NUMBER" inputType="text"
                             inputPlaceholder="Enter a Phone number" inputId="phoneNum"
-                            inputWidth="25vw" />
+                            inputWidth="25vw" defaultValue={helperData.phoneNumber} />
                         <div className="md:ml-2 md:mt-0">
                             <InputWithLabel
                                 labelText="EMAIL ADDRESS" inputType="email"
                                 inputPlaceholder="Enter your email address" inputId="contactEmail"
-                                inputWidth="18.125vw" plusPX='8px' />
+                                inputWidth="18.125vw" plusPX='8px' defaultValue={helperData.email} />
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row mt-[30px]">
@@ -77,7 +101,7 @@ const EmployeeInfo = ({ params }: Props) => {
                             <InputWithLabel
                                 labelText="CITY/PROVINCE" inputType="text"
                                 inputPlaceholder="Enter your city/province" inputId="city"
-                                inputWidth="25vw" />
+                                inputWidth="25vw" defaultValue={helperData.address} />
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row mt-[30px]">

@@ -1,6 +1,6 @@
-import ENV from '@/configs/ENV';
+import ENV from '@/configs/env';
 import { errorHandler } from '@/helpers';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
@@ -21,7 +21,10 @@ export default class CleanClient {
       withCredentials: true,
     });
 
-    this.axiosInstance.interceptors.response.use(this.responseErrorHandler);
+    this.axiosInstance.interceptors.response.use(
+      (response) => this.handleResponseSuccess(response),
+      (error) => this.responseErrorHandler(error)
+    );
   }
 
   public static getInstance(): CleanClient {
@@ -32,13 +35,20 @@ export default class CleanClient {
     return CleanClient.httpInstance;
   }
 
-  private responseErrorHandler(response: any) {
-    const config = response.config;
+  private handleResponseSuccess(response: AxiosResponse) {
+    return response;
+  }
+
+  private responseErrorHandler(error: AxiosError) {
+    const config = error.config as AxiosRequestConfig || {}; // Ép kiểu config để có thuộc tính `raw`
+
+    // Nếu config có `raw` là true, trả về lỗi gốc
     if (config.raw) {
-      return response;
+      return Promise.reject(error);
     }
 
-    return errorHandler(response);
+    // Sử dụng errorHandler để xử lý lỗi
+    return Promise.reject(errorHandler(error));
   }
 
   public getClient() {
