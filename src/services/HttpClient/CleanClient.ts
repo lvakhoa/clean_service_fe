@@ -40,14 +40,12 @@ export default class CleanClient {
   }
 
   private responseErrorHandler(error: AxiosError) {
-    const config = error.config as AxiosRequestConfig || {}; // Ép kiểu config để có thuộc tính `raw`
+    const config = error.config as AxiosRequestConfig || {}
 
-    // Nếu config có `raw` là true, trả về lỗi gốc
     if (config.raw) {
       return Promise.reject(error);
     }
 
-    // Sử dụng errorHandler để xử lý lỗi
     return Promise.reject(errorHandler(error));
   }
 
