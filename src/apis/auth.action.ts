@@ -2,12 +2,19 @@ import { cleanApi, cleanClient } from '@/services/HttpClient';
 import { AxiosRequestConfig } from 'axios';
 
 const authAction = {
-  async logIn() {
-    const res = await cleanApi.get('/auth/login/customer');
-    return res.config.headers.get('Location');
+  async logOut(config?: AxiosRequestConfig) {
+    const res = await cleanApi.delete<CleanSuccessResponseWrapper>(
+      '/auth/logout',
+      config
+    );
+    return res.data;
   },
-  async decodeCookie<DecodedToken>(config?: AxiosRequestConfig) {
-    const res = await cleanApi.get<DecodedToken>('/auth/decode', config);
+  async decodeCookie(config?: AxiosRequestConfig) {
+    const res = await cleanApi.post<CleanSuccessResponseWrapper<DecodedToken>>(
+      '/auth/decode',
+      {},
+      config
+    );
     return res.data;
   },
 };
