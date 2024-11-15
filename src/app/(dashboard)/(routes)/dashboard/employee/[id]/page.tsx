@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import FileDownloadCard from '@/components/card/FileDownloadCard';
 import { useQuery } from '@tanstack/react-query';
 import helperAction from '@/apis/helper.action';
+import { useRouter } from 'next/navigation';
 
 const genderOptions = ["Female", "Male", "Other"]
 
@@ -19,12 +20,24 @@ const EmployeeInfo = ({ params }: Props) => {
     const { id } = params
 
     const [helperData, setHelperData] = useState<any>(null)
+    const router = useRouter()
 
 
     const { data, error } = useQuery({
         queryKey: ['getHelpers'],
         queryFn: () => helperAction.getHelpers()
     })
+
+    const formatDate = (dateString: string | null) => {
+        if (!dateString || dateString === "0001-01-01T00:00:00") {
+            return ""; // Trả về chuỗi rỗng nếu ngày không hợp lệ
+        }
+
+        // Cách 1: Chuyển đổi ngày với thời gian sang định dạng YYYY-MM-DD
+        const date = new Date(dateString);
+        const formattedDate = date.toLocaleDateString("en-CA"); // "en-CA" là định dạng ISO (YYYY-MM-DD)
+        return formattedDate;
+    };
 
     useEffect(() => {
 
@@ -54,6 +67,8 @@ const EmployeeInfo = ({ params }: Props) => {
                         alt="X-button"
                         width={70}
                         height={70}
+                        className="cursor-pointer transition-transform duration-300 hover:scale-110"
+                        onClick={() => { router.back() }}
                     />
                     <p className="font-Averta-Bold text-4xl text-center my-auto ml-[10px]">User Info</p>
                 </div>
@@ -71,7 +86,8 @@ const EmployeeInfo = ({ params }: Props) => {
                             <InputWithLabel
                                 labelText="DATE OF BIRTH" inputType="date"
                                 inputPlaceholder="" inputId="date"
-                                inputWidth="11.25vw" />
+                                inputWidth="11.25vw"
+                                defaultValue={formatDate(helperData.dateOfBirth)} />
                         </div>
                         <div className="md:ml-2 md:mt-0">
                             <InputWithLabel
@@ -116,7 +132,7 @@ const EmployeeInfo = ({ params }: Props) => {
                                 inputWidth="15.625vw" plusPX='8px' />
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row mt-[30px]">
+                    {/* <div className="flex flex-col md:flex-row mt-[30px]">
                         <InputWithLabel
                             labelText="HOUSE NUMBER" inputType="text"
                             inputPlaceholder="Enter your House Number" inputId="houseNum"
@@ -127,7 +143,7 @@ const EmployeeInfo = ({ params }: Props) => {
                                 inputPlaceholder="Enter your Street Name" inputId="streetName"
                                 inputWidth="24.375vw" plusPX='8px' />
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="mt-[30px]">
                         <InputWithLabel
