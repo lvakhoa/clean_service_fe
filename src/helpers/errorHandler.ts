@@ -13,7 +13,8 @@ export const errorHandler = (error: any) => {
     }
 
     if (response) {
-      var exceptionCode = response.data.exceptionCode;
+      var data = response.data as CleanErrorResponseWrapper;
+      var exceptionCode = data.exceptionCode;
       if (exceptionCode) {
         throw new HttpException(exceptionCode);
       }
