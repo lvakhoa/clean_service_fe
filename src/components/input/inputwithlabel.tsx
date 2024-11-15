@@ -19,6 +19,8 @@ interface InputWithLabelProps {
   options?: string[];
   defaultValue?: string;
   plusPX?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+  onValueChange?: (value: string) => void
 }
 
 export function InputWithLabel({
@@ -30,6 +32,8 @@ export function InputWithLabel({
   options = [],
   defaultValue,
   plusPX,
+  onChange,
+  onValueChange
 }: InputWithLabelProps) {
   return (
     <div className="grid max-w-max items-center gap-1.5">
@@ -40,7 +44,7 @@ export function InputWithLabel({
         {labelText}
       </Label>
       {inputType === "combobox" ? (
-        <Select defaultValue={defaultValue}>
+        <Select defaultValue={defaultValue} onValueChange={onValueChange}>
           <SelectTrigger
             className={`${inputWidth} font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
             style={{ width: `${inputWidth}` }}
@@ -64,6 +68,7 @@ export function InputWithLabel({
           id={inputId}
           placeholder={inputPlaceholder}
           defaultValue={defaultValue}
+          onChange={onChange}
           style={
             plusPX
               ? { width: `calc(${inputWidth} + ${plusPX})` }
