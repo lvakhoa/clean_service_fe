@@ -1,7 +1,6 @@
 'use client';
 
-import ENV from '@/configs/ENV';
-import { useLogin } from '@/hooks/useAuth';
+import ENV from '@/configs/env';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';

@@ -1,4 +1,4 @@
-import ENV from '@/configs/ENV';
+import ENV from '@/configs/env';
 import { errorHandler } from '@/helpers';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
