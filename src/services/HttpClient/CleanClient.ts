@@ -1,4 +1,4 @@
-import ENV from "@/configs/ENV";
+import ENV from "@/configs/env";
 import { errorHandler } from "@/helpers";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
@@ -33,9 +33,10 @@ export default class CleanClient {
   }
 
   private responseErrorHandler(response: any) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= 200 && response.status <= 300) {
       return response;
     }
+
     const config = response.config;
     if (config.raw) {
       return response;
