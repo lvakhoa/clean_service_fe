@@ -1,5 +1,9 @@
+"use client";
+
+import React, { use, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFormContext } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -9,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Key } from "lucide-react";
+import { set } from "zod";
 interface InputWithLabelProps {
   labelText: string;
   inputType: string;
@@ -17,7 +21,9 @@ interface InputWithLabelProps {
   inputId: string;
   inputWidth?: string;
   options?: string[];
-  defaulValue?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  keyName?: string;
   plusPX?: string;
 }
 
@@ -28,9 +34,18 @@ export function InputWithLabel({
   inputId,
   inputWidth = "w-full",
   options = [],
-  defaulValue,
+  defaultValue,
+  keyName,
   plusPX,
 }: InputWithLabelProps) {
+  const { register, setValue } = useFormContext();
+  const [selectedValue, setSelectedValue] = useState(defaultValue || "");
+
+  useEffect(() => {
+    setSelectedValue(defaultValue || "");
+    console.log("set value", "default value", defaultValue);
+  }, [defaultValue]);
+
   return (
     <div className="grid max-w-max items-center gap-1.5">
       <Label
@@ -40,7 +55,13 @@ export function InputWithLabel({
         {labelText}
       </Label>
       {inputType === "combobox" ? (
-        <Select defaultValue={defaulValue}>
+        <Select
+          value={selectedValue}
+          onValueChange={(value) => {
+            setSelectedValue(value);
+            setValue(keyName || inputId, value);
+          }}
+        >
           <SelectTrigger
             className={`${inputWidth} font-Averta-Regular h-[50px] text-[16px] text-[#5f6367] border-2`}
             style={{ width: `${inputWidth}` }}
@@ -63,11 +84,13 @@ export function InputWithLabel({
           type={inputType}
           id={inputId}
           placeholder={inputPlaceholder}
+          defaultValue={defaultValue}
           style={
             plusPX
               ? { width: `calc(${inputWidth} + ${plusPX})` }
               : { width: `${inputWidth}` }
           }
+          {...register(keyName || inputId)}
         />
       )}
     </div>
