@@ -1,97 +1,108 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import FeedbackRow from "./FeedbackRow";
+import RefundRow from "./RefundRow";
 import Pagination from "./Pagination";
 import SearchBarAndFilter from "./SearchBarAndFilter";
-import { useFeedback } from "@/hooks/feedback/useFeedback";
+import { useRefund } from "@/hooks/refund/useRefund";
 
-const feedbackSampleData: Feedback[] = [
+const refundSampleData: Refund[] = [
   {
     id: "1",
-    bookingId: "1",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   },
   {
     id: "2",
-    bookingId: "2",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   },
+
   {
     id: "3",
-    bookingId: "2",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   },
+
   {
     id: "4",
-    bookingId: "2",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   },
+
   {
     id: "5",
-    bookingId: "2",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   },
 ];
 
-export default function FeedbackTable() {
+export default function RefundTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Name");
 
-  const [feedbackData, setFeedbackData] =
-    useState<Feedback[]>(feedbackSampleData);
+  const [refundData, setRefundData] = useState<Refund[]>(refundSampleData);
 
-  const { getAllFeedbacks } = useFeedback();
+  const { getAllRefunds } = useRefund();
 
-  const { data, error, isPending } = getAllFeedbacks;
+  const { data, error, isPending } = getAllRefunds;
 
   useEffect(() => {
     if (data) {
-      setFeedbackData(data.data.results);
+      setRefundData(data.data.results);
     } else {
       console.error(error);
     }
   }, [data]);
 
+  useEffect(() => {}, [refundData]);
+
   // filter
-  const applyFilter = (data: Feedback[]) => {
+  const applyFilter = (data: Refund[]) => {
     switch (filter) {
-      case "Positive":
+      case "Refunded":
         return [...data].sort((a) =>
-          a.helperRating != null && a.helperRating > 3
-            ? -1
-            : a.helperRating != null && a.helperRating < 3
-            ? 0
-            : 1
+          a.status === "Refunded" ? -1 : a.status === "Pending" ? 0 : 1
         );
-      case "Negative":
+      case "Declined":
         return [...data].sort((a) =>
-          a.helperRating != null && a.helperRating < 3
-            ? -1
-            : a.helperRating != null && a.helperRating > 3
-            ? 0
-            : 1
+          a.status === "Declined" ? -1 : a.status === "Pending" ? 0 : 1
         );
-      case "Neutral":
+      case "Pending":
         return [...data].sort((a) =>
-          a.helperRating != null && a.helperRating === 3 ? -1 : 1
+          a.status === "Pending" ? -1 : a.status === "Pending" ? 0 : 1
         );
       case "Recent":
         return [...data].sort((a, b) =>
@@ -101,23 +112,22 @@ export default function FeedbackTable() {
         return [...data].sort((a, b) =>
           new Date(a.createdAt) < new Date(b.createdAt) ? -1 : 1
         );
-
       default:
         return data;
     }
   };
 
   // search by
-  const filteredData = feedbackData.filter((Feedback) => {
+  const filteredData = refundData.filter((Refund) => {
     switch (searchBy) {
-      case "Title":
-        return Feedback.title.toLowerCase().includes(searchTerm.toLowerCase());
+      case "Reason":
+        return Refund.reason.toLowerCase().includes(searchTerm.toLowerCase());
       case "Date":
-        return Feedback.createdAt
+        return Refund.createdAt
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
       default:
-        return Feedback.createdAt
+        return Refund.createdAt
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
     }
@@ -134,6 +144,10 @@ export default function FeedbackTable() {
     currentPage * itemsPerPage
   );
 
+  useEffect(() => {
+    console.log("current data:", currentData);
+  }, [currentData]);
+
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
   };
@@ -148,20 +162,13 @@ export default function FeedbackTable() {
 
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
-          <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-neutral-700 max-md:max-w-full">
-            {currentData.map((feedback: Feedback, index: any) => (
-              <FeedbackRow
-                key={feedback.id}
-                {...feedback}
-                isEven={index % 2 === 0}
-                sentiment={
-                  feedback.helperRating != null && feedback.helperRating > 3
-                    ? "Positive"
-                    : feedback.helperRating != null && feedback.helperRating < 3
-                    ? "Negative"
-                    : "Neutral"
-                }
+          <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-white max-md:max-w-full">
+            {currentData.map((refund: Refund, index: any) => (
+              <RefundRow
                 isPending={isPending}
+                key={refund.id}
+                {...refund}
+                isEven={index % 2 === 0}
               />
             ))}
           </div>

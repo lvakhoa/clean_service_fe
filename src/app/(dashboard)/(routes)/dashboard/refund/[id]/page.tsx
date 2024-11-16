@@ -6,53 +6,44 @@ import { GoArrowLeft } from "react-icons/go";
 import { useParams } from "next/navigation";
 import { LuArrowLeft } from "react-icons/lu";
 import Image from "next/image";
-import { useFeedback } from "@/hooks/feedback/useFeedback";
 import { useState } from "react";
-import { format, formatDistance, isToday, isYesterday } from "date-fns";
-import { set } from "zod";
 import { formatDateTime } from "@/helpers/formatDateTime";
+import { useRefund } from "@/hooks/refund/useRefund";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 
-const FeedbackDetail = () => {
+const RefundDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { useGetFeedbackById, useDeleteFeedback } = useFeedback();
+  const { useGetRefundById, deleteRefundMutation } = useRefund();
 
-  const { data, error, isPending } = useGetFeedbackById(id);
+  const { data, error, isPending } = useGetRefundById(id);
 
-  const mutation = useDeleteFeedback();
+  const mutation = deleteRefundMutation;
 
   const [sentiment, setSentiment] = useState("Neutral");
   const [sentimentColor, setSentimentColor] = useState(
     "bg-[#ccd0d9] text-[#2b3641]"
   );
-  const [feedbackData, setFeedbackData] = useState<Feedback>({
+
+  const [refundData, setRefundData] = useState<Refund>({
     id: "",
-    bookingId: "",
-    helperRating: 0,
-    title: "",
-    description: "",
+    helperId: "",
+    helperName: "",
+    customerId: "",
+    customerName: "",
+    reason: "",
+    status: "",
     createdAt: "",
+    resolvedAt: "",
   });
 
   useEffect(() => {
+    console.log(data);
     if (data) {
-      setFeedbackData(data.data);
+      setRefundData(data.data);
     } else {
       console.log(error);
-    }
-
-    if (data != null && data.data.helperRating != undefined) {
-      if (data.data.helperRating > 3) {
-        setSentiment("Positive");
-        setSentimentColor("bg-[#ccf0eb] text-[#00b69b]");
-      } else if (data.data.helperRating < 3) {
-        setSentiment("Negative");
-        setSentimentColor("bg-[#fcd7d4] text-[#ef3826]");
-      } else {
-        setSentiment("Neutral");
-        setSentimentColor("bg-[#ccd0d9] text-[#2b3641]");
-      }
     }
   }, [data]);
 
@@ -71,42 +62,53 @@ const FeedbackDetail = () => {
         {/* Begin Title */}
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center justify-start">
-            <button className="h-full p-6 hover:bg-slate-200 border-r-[1px] ">
+            <button
+              className="h-full p-6 hover:bg-slate-200 border-r-[1px]"
+              onClick={() => window.history.back()}
+            >
               <LuArrowLeft className="h-[19px] text-neutral-300 text-xl font-bold" />
             </button>
             {isPending ? (
               <Skeleton className="h-[50px] w-[100px]" />
             ) : (
               <p className="overflow-hidden self-stretch px-3 py-5 w-full ml-5 min-h-[48px] font-Averta-Bold text-lg">
-                {feedbackData.title}
+                {getFirstFiveWords(refundData.reason)}
               </p>
             )}
-            <div
-              className={`flex flex-col grow shrink justify-center pl-6 text-xs font-bold text-center whitespace-nowrap w-[125px]`}
-            >
-              <div className="flex overflow-hidden flex-1 items-center size-full">
-                <div className="flex flex-col self-stretch my-auto w-[93px]">
-                  {isPending ? (
-                    <Skeleton className="h-[50px] w-[100px]" />
-                  ) : (
-                    <div
-                      className={`flex relative gap-4 justify-between items-start px-4 py-1.5 min-h-[27px] ${sentimentColor} rounded-md`}
-                    >
-                      <div className="z-0 flex-1 shrink my-auto basis-0 font-Averta-Bold text-[13px]">
-                        {sentiment}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
-          <button
-            onClick={() => mutation.mutate(id)}
-            className="h-full p-6 hover:bg-slate-200"
-          >
-            <FaRegTrashAlt className="h-[19px]" />
-          </button>
+
+          <div className="flex justify-center items-center gap-3">
+            {isPending ? (
+              <Skeleton className="h-[50px] w-[100px]" />
+            ) : (
+              <div className="flex gap-2">
+                {refundData.status === "Pending" ? (
+                  <>
+                    <Button>Refund</Button>
+                    <Button variant={"destructive"}>Decline</Button>
+                  </>
+                ) : (
+                  <Button
+                    disabled
+                    className="text-[#12153A] bg-[#6896D1]/20 hover:bg-[#6896D1]/40"
+                  >
+                    {refundData.status}
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {isPending ? (
+              <Skeleton className="h-[50px] w-[100px]" />
+            ) : (
+              <button
+                onClick={() => mutation.mutate(id)}
+                className="h-full p-6 hover:bg-slate-200"
+              >
+                <FaRegTrashAlt className="h-[19px]" />
+              </button>
+            )}
+          </div>
         </div>
         {/* End Title */}
 
@@ -125,13 +127,13 @@ const FeedbackDetail = () => {
                 style={{ width: "60px", height: "auto" }}
               />
             )}
-            <div className="flex flex-row self-stretch items-center mx-4">
+            <div className="flex flex-row self-stretch items-center mx-4 gap-2">
               {isPending ? (
                 <Skeleton className="h-[50px] w-[100px]" />
               ) : (
                 <>
                   <p className=" font-bold font-Averta-Semibold text-lg mr-1">
-                    {feedbackData.customerName}
+                    {refundData.customerName}
                   </p>
                   <p className="text-xs font-semibold text-neutral-600 font-Averta-Regular mt-0.5">
                     {"<customer>"}
@@ -140,30 +142,24 @@ const FeedbackDetail = () => {
               )}
             </div>
           </div>
+
           {isPending ? (
             <Skeleton className="h-[50px] w-[100px]" />
           ) : (
             <p className=" py-4 font-Averta-Regular text-sm text-gray-400">
-              {formatDateTime(feedbackData.createdAt)}
+              {formatDateTime(refundData.createdAt)}
             </p>
           )}
         </div>
         {/* End Sender info */}
 
         {/* Begin Content */}
-        <div className="flex flex-col w-full h-fit px-16 py-8">
-          {isPending ? (
-            <Skeleton className="h-[50px] w-[100px] mb-4" />
-          ) : (
-            <p className="overflow-hidden self-stretch px-3 py-5 w-full ml-5 min-h-[48px] font-Averta-Bold text-2xl">
-              {feedbackData.title}
-            </p>
-          )}
+        <div className="flex flex-col w-full h-fit px-16 pb-8">
           {isPending ? (
             <Skeleton className="h-[50px] w-full" />
           ) : (
             <p className="overflow-hidden self-stretch px-3 py-5 w-full ml-5 min-h-[48px] font-Averta-Regular">
-              {feedbackData.description}
+              {refundData.reason}
             </p>
           )}
         </div>
@@ -191,4 +187,11 @@ const FeedbackDetail = () => {
   );
 };
 
-export default FeedbackDetail;
+export default RefundDetail;
+
+function getFirstFiveWords(paragraph: string) {
+  if (paragraph == undefined) return "";
+
+  const words = paragraph.split(" ");
+  return words.slice(0, 5).join(" ");
+}

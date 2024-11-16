@@ -5,42 +5,45 @@ import { Checkbox } from "@material-tailwind/react";
 import { formatDateTime } from "@/helpers/formatDateTime";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "../skeleton/skeleton";
+import { Button } from "../ui/button";
+import { Skeleton } from "@/components/skeleton/skeleton";
 
-interface FeedbackRowProps {
+interface RefundRowProps {
   id: string;
-  bookingId?: string;
-  title: string;
-  description?: string;
-  sentiment: "Positive" | "Negative" | "Neutral";
+  helperId?: string;
+  helperName?: string;
+  customerId: string;
+  customerName: string;
+  reason: string;
+  status: string;
   createdAt: string;
-  customerName?: string;
+  resolvedAt?: string;
   isEven: boolean;
   className?: string;
   isPending: boolean;
 }
 
-const FeedbackRow: React.FC<FeedbackRowProps> = ({
+const RefundRow: React.FC<RefundRowProps> = ({
   id,
-  bookingId,
-  title,
-  description,
-  sentiment,
   customerName,
+  reason,
+  status,
   createdAt,
   isEven,
   className,
+  resolvedAt,
   isPending,
 }) => {
   const bgColor = isEven ? "bg-white" : "bg-[#f5f7ff]";
   const sentimentColor =
-    sentiment === "Positive"
-      ? "bg-[#ccf0eb] text-[#00b69b]"
-      : sentiment === "Negative"
-      ? "bg-[#fcd7d4] text-[#ef3826]"
-      : "bg-[#ccd0d9] text-[#2b3641]";
+    status === "Refunded"
+      ? "bg-[#00B69B]/20 text-[#00B69B]"
+      : status === "Declined"
+      ? "bg-[#EF3826]/20 text-[#EF3826]"
+      : "bg-[#FFD154]/20 text-[#FF9500]";
 
   const router = useRouter();
+
   return (
     <div
       className={cn(
@@ -49,7 +52,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
       )}
       onClick={() => {
         console.log("clicked");
-        router.push(`/dashboard/feedback/${id}`);
+        router.push(`/dashboard/refund/${id}`);
       }}
     >
       <div
@@ -59,7 +62,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
         {isPending ? (
           <Skeleton className="h-[50px] w-full" />
         ) : (
-          <div className="flex overflow-hidden items-center pl-px w-full min-h-[48px]">
+          <div className="flex overflow-hidden items-center pl-px w-full z-20 min-h-[48px]">
             <Checkbox
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
@@ -91,7 +94,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
                 className={`flex relative gap-4 justify-between items-start px-4 py-1.5 min-h-[27px] ${sentimentColor} rounded-md`}
               >
                 <div className="z-0 flex-1 shrink my-auto basis-0 font-Averta-Bold text-[13px]">
-                  {sentiment}
+                  {status}
                 </div>
               </div>
             )}
@@ -105,7 +108,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
           <Skeleton className="h-[50px] w-full" />
         ) : (
           <div className="overflow-hidden self-stretch px-3 py-4 w-full min-h-[48px] max-md:max-w-full font-Averta-Regular text-[15px]">
-            {title}
+            {getFirstFiveWords(reason)}
           </div>
         )}
       </div>
@@ -120,8 +123,31 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
           </div>
         )}
       </div>
+      <div
+        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm ${bgColor} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[136px]`}
+      >
+        <div className="overflow-hidden self-stretch px-3 py-4 w-full min-h-[48px] font-Averta-Regular text-[14px]">
+          {isPending ? (
+            <Skeleton className="h-[50px] w-full" />
+          ) : (
+            <Button
+              className="text-[#12153A] bg-[#6896D1]/20 hover:bg-[#6896D1]/40"
+              variant={"default"}
+            >
+              {resolvedAt == undefined ? "Handle" : "More Info"}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default FeedbackRow;
+export default RefundRow;
+
+function getFirstFiveWords(paragraph: string) {
+  if (paragraph == undefined) return "";
+  const words = paragraph.split(" ");
+
+  return words.slice(0, 5).join(" ");
+}
