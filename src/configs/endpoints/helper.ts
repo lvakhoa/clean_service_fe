@@ -6,4 +6,5 @@ export const HELPER_ENDPOINTS = {
   job_history: "/dashboard/job-history",
   calendar: "/dashboard/calendar",
   customer: "/dashboard/customer",
+  helper: "/dashboard/employee",
 };

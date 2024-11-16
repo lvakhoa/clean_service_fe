@@ -1,6 +1,6 @@
 "use client";
 
-import { InputWithLabel } from "@/components/input/inputwithlabel";
+import { CustomerInputWithLabel } from "@/components/input/customerInputWithLabel";
 import Image from "next/image";
 import React, { use, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -107,7 +107,7 @@ const CustomerInfo = () => {
                     <Skeleton className="h-[50px] w-[25vw]" />
                   </div>
                 ) : (
-                  <InputWithLabel
+                  <CustomerInputWithLabel
                     labelText="FULL NAME"
                     inputType="text"
                     inputPlaceholder="Enter Full Name"
@@ -124,7 +124,7 @@ const CustomerInfo = () => {
                       <Skeleton className="h-[50px] w-[11.25vw]" />
                     </div>
                   ) : (
-                    <InputWithLabel
+                    <CustomerInputWithLabel
                       labelText="DATE OF BIRTH"
                       inputType="date"
                       inputPlaceholder=""
@@ -147,7 +147,7 @@ const CustomerInfo = () => {
                     </div>
                   )}
                   {
-                    <InputWithLabel
+                    <CustomerInputWithLabel
                       className={isPending ? "opacity-0 hidden" : ""}
                       labelText="GENDER"
                       inputType="combobox"
@@ -168,7 +168,7 @@ const CustomerInfo = () => {
                     <Skeleton className="h-[50px] w-[25vw]" />
                   </div>
                 ) : (
-                  <InputWithLabel
+                  <CustomerInputWithLabel
                     labelText="PHONE NUMBER"
                     inputType="tel"
                     inputPlaceholder="Enter a Phone number"
@@ -185,7 +185,7 @@ const CustomerInfo = () => {
                       <Skeleton className="h-[50px] w-[18.125vw]" />
                     </div>
                   ) : (
-                    <InputWithLabel
+                    <CustomerInputWithLabel
                       labelText="EMAIL ADDRESS"
                       inputType="email"
                       inputPlaceholder="Enter your email address"
@@ -205,7 +205,7 @@ const CustomerInfo = () => {
                     <Skeleton className="h-[50px] w-[full]" />
                   </div>
                 ) : (
-                  <InputWithLabel
+                  <CustomerInputWithLabel
                     className="w-full max-w-none"
                     labelText="STREET NAME"
                     inputType="text"
