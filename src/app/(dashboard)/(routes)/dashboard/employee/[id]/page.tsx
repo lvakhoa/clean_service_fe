@@ -1,20 +1,22 @@
 'use client'
 import { InputWithLabel } from '@/components/input/inputwithlabel'
-import Image from "next/image";
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import FileDownloadCard from '@/components/card/FileDownloadCard';
-import { useQuery } from '@tanstack/react-query';
-import helperAction from '@/apis/helper.action';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { RingLoader, ClipLoader } from 'react-spinners';
-import updateUserSchema, { UpdateUserDto } from '@/schemas/updateUserSchema';
-import { Gender } from '@/configs/enum';
-import UpdateHelperSchema from '@/schemas/updateHelperSchema';
-import { z } from 'zod';
+import { useForm, Controller } from 'react-hook-form'
+import Image from "next/image"
+import React, { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { useQuery } from '@tanstack/react-query'
+import helperAction from '@/apis/helper.action'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import { ClipLoader } from 'react-spinners'
+import UpdateUserSchema, { UpdateUserDto } from '@/schemas/updateUserSchema'
+import UpdateHelperSchema from '@/schemas/updateHelperSchema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Gender } from '@/configs/enum'
+import FileDownloadCard from '@/components/card/FileDownloadCard'
 
-const genderOptions = ["Female", "Male", "Other"]
+const genderOptions = Object.values(Gender)
 
 interface Props {
     params: {
@@ -22,29 +24,61 @@ interface Props {
     }
 }
 
+type FormData = UpdateUserDto & {
+    experienceDescription: string;
+}
+
 const EmployeeInfo = ({ params }: Props) => {
     const { id } = params
     const router = useRouter()
 
-    const [isSubmitting, setIsSubmitting] = useState(false)
     const [helperData, setHelperData] = useState<any>(null)
-    const [formUser, setFormUser] = useState({
-        fullName: "",
-        dateOfBirth: "",
-        gender: "",
-        phoneNumber: "",
-        email: "",
-        address: "",
-    })
-    const [description, setDescription] = useState({
-        experienceDescription: "",
-    })
-
 
     const { data, error } = useQuery({
         queryKey: ['getHelpers'],
         queryFn: () => helperAction.getHelpers()
     })
+
+    const combinedSchema = UpdateUserSchema.extend({
+        experienceDescription: UpdateHelperSchema.shape.experienceDescription,
+    })
+
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { isSubmitting, errors },
+    } = useForm<FormData>({
+        resolver: zodResolver(combinedSchema),
+        defaultValues: {
+            fullName: "",
+            dateOfBirth: new Date(), // Set default date
+            gender: undefined,
+            phoneNumber: "",
+            address: "",
+            experienceDescription: "",
+            profilePicture: "",
+            identityCard: "",
+        }
+    })
+
+    useEffect(() => {
+        if (data?.[0]) {
+            const helper = data[0]
+            reset({
+                fullName: helper.fullName || "",
+                dateOfBirth: helper.dateOfBirth || new Date(),
+                gender: helper.gender as Gender || undefined,
+                phoneNumber: helper.phoneNumber || "",
+                address: helper.address || "",
+                experienceDescription: helper.experienceDescription || "",
+                profilePicture: helper.profilePicture || "",
+                identityCard: helper.identityCard || "",
+            })
+            setHelperData(helper)
+            console.log("Helper Data: ", helper)
+        }
+    }, [data, reset])
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) {
@@ -55,66 +89,21 @@ const EmployeeInfo = ({ params }: Props) => {
         return formattedDate;
     }
 
-    useEffect(() => {
-        if (data) {
-            setHelperData(data[0])
-            setFormUser({
-                fullName: data[0].fullName,
-                dateOfBirth: formatDate(data[0].dateOfBirth),
-                gender: data[0].gender,
-                phoneNumber: data[0].phoneNumber,
-                email: data[0].email,
-                address: data[0].address,
-            })
-            setDescription({
-                experienceDescription: data[0].experienceDescription,
-            })
-        }
-    }, [data])
 
-    const handleDownload = () => {
-
-    }
-
-    const handleUpdate = () => {
-
-    }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { id, value } = e.target;
-        setFormUser({
-            ...formUser,
-            [id]: value,
-        })
-    }
-
-    const handleSelectChange = (value: string) => {
-        setFormUser((prevFormData) => ({
-            ...prevFormData,
-            gender: value,
-        }));
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true)
+    const onSubmit = async (formData: FormData) => {
         try {
-            const updateUserDto = updateUserSchema.parse(formUser)
-            const updateHelperDto = UpdateHelperSchema.parse(description)
+            console.log("FormData: ", formData)
+            const { experienceDescription, ...userDto } = formData
+            const helperDto = { experienceDescription }
 
-            const updatedData = await helperAction.updateUserHelper(id, updateUserDto)
-            const updatedHelper = await helperAction.updateHelper(id, updateHelperDto)
+            await helperAction.updateUserHelper(id, userDto)
+            await helperAction.updateHelper(id, helperDto)
 
             toast.success("User updated successfully!")
             router.refresh()
         } catch (error) {
-            if (error instanceof z.ZodError) {
-                toast.error("Validation failed. Please check your input.")
-            } else {
-                toast.error("Failed to update user.")
-            }
-        } finally {
-            setIsSubmitting(false)
+            toast.error("Failed to update user.")
+            console.error("Update error:", error)
         }
     }
 
@@ -137,50 +126,97 @@ const EmployeeInfo = ({ params }: Props) => {
                     <p className="font-Averta-Bold text-4xl text-center my-auto ml-[10px]">User Info</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="grid justify-center mt-[50px]">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid justify-center mt-[50px]">
                     <div className="flex flex-col md:flex-row">
-                        <InputWithLabel
-                            labelText="FULL NAME"
-                            inputType="text"
-                            inputPlaceholder="Enter Full Name"
-                            inputId="fullName"
-                            inputWidth="25vw"
-                            defaultValue={formUser.fullName}
-                            onChange={handleChange}
+                        <Controller
+                            name="fullName"
+                            control={control}
+                            render={({ field }) => (
+                                <InputWithLabel
+                                    labelText="FULL NAME"
+                                    inputType="text"
+                                    inputPlaceholder="Enter Full Name"
+                                    inputId="fullName"
+                                    inputWidth="25vw"
+                                    defaultValue={helperData.fullName}
+                                    error={errors.fullName?.message}
+                                    {...field}
+                                />
+                            )}
                         />
                         <div className="md:ml-2 md:mt-0">
-                            <InputWithLabel
-                                labelText="DATE OF BIRTH"
-                                inputType="date"
-                                inputId="dateOfBirth"
-                                inputPlaceholder=''
-                                inputWidth="11.25vw"
-                                defaultValue={formUser.dateOfBirth}
-                                onChange={handleChange}
+                            <Controller
+                                name="dateOfBirth"
+                                control={control}
+                                render={({ field: { onChange, value, ...field } }) => (
+                                    <InputWithLabel
+                                        labelText="DATE OF BIRTH"
+                                        inputType="date"
+                                        inputId="dateOfBirth"
+                                        inputPlaceholder=""
+                                        inputWidth="11.25vw"
+                                        error={errors.dateOfBirth?.message}
+                                        defaultValue={formatDate(helperData.dateOfBirth)}
+                                        onChange={(e) => onChange(new Date(e.target.value))}
+                                        {...field}
+                                    />
+                                )}
                             />
                         </div>
                         <div className="md:ml-2 md:mt-0">
-                            <InputWithLabel
-                                labelText="GENDER"
-                                inputPlaceholder=""
-                                inputType="combobox"
-                                inputId="gender"
-                                inputWidth="6.875vw"
-                                options={genderOptions}
-                                defaultValue={formUser.gender}
-                                onValueChange={handleSelectChange}
+                            <Controller
+                                name="gender"
+                                control={control}
+                                render={({ field: { onChange, value } }) => (
+                                    <InputWithLabel
+                                        labelText="GENDER"
+                                        inputPlaceholder=""
+                                        inputType="combobox"
+                                        inputId="gender"
+                                        inputWidth="6.875vw"
+                                        options={genderOptions}
+                                        error={errors.gender?.message}
+                                        onValueChange={(val) => onChange(val as Gender)}
+                                        defaultValue={value || ''}
+                                    />
+                                )}
                             />
                         </div>
                     </div>
+
+                    {/* <div className="flex flex-col md:flex-row mt-[30px]">
+                        <Controller
+                            name="phoneNumber"
+                            control={control}
+                            render={({ field }) => (
+                                <InputWithLabel
+                                    labelText="PHONE NUMBER"
+                                    inputType="text"
+                                    inputPlaceholder="Enter a Phone number"
+                                    inputId="phoneNumber"
+                                    inputWidth="25vw"
+                                    error={errors.phoneNumber?.message}
+                                    {...field}
+                                />
+                            )}
+                        />
+                    </div> */}
                     <div className="flex flex-col md:flex-row mt-[30px]">
-                        <InputWithLabel
-                            labelText="PHONE NUMBER"
-                            inputType="text"
-                            inputPlaceholder="Enter a Phone number"
-                            inputId="phoneNumber"
-                            inputWidth="25vw"
-                            defaultValue={formUser.phoneNumber}
-                            onChange={handleChange}
+                        <Controller
+                            name="phoneNumber"
+                            control={control}
+                            defaultValue={helperData.phoneNumber}
+                            render={({ field }) => (
+                                <InputWithLabel
+                                    labelText="PHONE NUMBER"
+                                    inputType="text"
+                                    inputPlaceholder="Enter a Phone number"
+                                    inputId="phoneNumber"
+                                    defaultValue={helperData.phoneNumber}
+                                    inputWidth="25vw"
+                                    {...field}
+                                />
+                            )}
                         />
                         <div className="md:ml-2 md:mt-0">
                             <InputWithLabel
@@ -189,42 +225,55 @@ const EmployeeInfo = ({ params }: Props) => {
                                 inputPlaceholder="Enter your email address"
                                 inputId="email"
                                 inputWidth="18.125vw"
-                                defaultValue={formUser.email}
-                                onChange={handleChange}
+                                defaultValue={helperData.email}
                             />
                         </div>
+
                     </div>
+
+
                     <div className="flex flex-col gap-8 mt-[30px]">
-                        <InputWithLabel
-                            labelText="ADDRESS"
-                            inputType="text"
-                            inputPlaceholder="Enter your city/province"
-                            inputId="address"
-                            inputWidth="44vw"
-                            defaultValue={formUser.address}
-                            onChange={handleChange}
+                        <Controller
+                            name="address"
+                            control={control}
+                            render={({ field }) => (
+                                <InputWithLabel
+                                    labelText="ADDRESS"
+                                    inputType="text"
+                                    inputPlaceholder="Enter your city/province"
+                                    inputId="address"
+                                    inputWidth="44vw"
+                                    defaultValue={helperData.address}
+                                    error={errors.address?.message}
+                                    {...field}
+                                />
+                            )}
                         />
-                        <InputWithLabel
-                            labelText="DESCRIPTION"
-                            inputType="text"
-                            inputPlaceholder="Describe your experience"
-                            inputId="experienceDescription"
-                            inputWidth="44vw"
-                            defaultValue={description.experienceDescription}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-                                const { id, value } = e.target;
-                                setDescription({
-                                    ...description,
-                                    [id]: value,
-                                })
-                            }}
+                        <Controller
+                            name="experienceDescription"
+                            control={control}
+                            render={({ field }) => (
+                                <InputWithLabel
+                                    labelText="DESCRIPTION"
+                                    inputType="text"
+                                    inputPlaceholder="Describe your experience"
+                                    inputId="experienceDescription"
+                                    inputWidth="44vw"
+                                    defaultValue={helperData.experienceDescription}
+                                    error={errors.experienceDescription?.message}
+                                    {...field}
+                                />
+                            )}
                         />
                     </div>
 
                     <div className="flex justify-center items-center mt-[4.5vw] pb-[2vw]">
-                        <Button type="submit" className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? (
-                                // <RingLoader color="#3498db" size={30} />
                                 <ClipLoader color="#ffffff" loading={isSubmitting} size={30} />
                             ) : (
                                 "Save"
@@ -268,6 +317,7 @@ const EmployeeInfo = ({ params }: Props) => {
                 <p className="text-3xl font-Averta-Bold mb-3 mt-[1vw]">Résumé</p>
                 <FileDownloadCard />
             </div>
+
         </div>
     )
 }
