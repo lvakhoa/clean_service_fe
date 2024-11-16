@@ -23,9 +23,12 @@ interface InputWithLabelProps {
   inputWidth?: string;
   options?: string[];
   defaultValue?: string;
-  onValueChange?: (value: string) => void;
   keyName?: string;
   plusPX?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
+  onValueChange?: (value: string) => void;
   className?: string;
 }
 
@@ -39,6 +42,8 @@ export function InputWithLabel({
   defaultValue,
   keyName,
   plusPX,
+  onChange,
+  onValueChange,
   className,
 }: InputWithLabelProps) {
   const { register, setValue } = useFormContext();
@@ -65,7 +70,7 @@ export function InputWithLabel({
           }}
         >
           <SelectTrigger
-            className={`${inputWidth} font-Averta-Regular h-[50px] text-[16px] text-[#5f6367] border-2`}
+            className={`${inputWidth} font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
             style={{ width: `${inputWidth}` }}
           >
             <SelectValue />

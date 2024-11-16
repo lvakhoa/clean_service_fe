@@ -1,3 +1,4 @@
+"use server";
 import authAction from "@/apis/auth.action";
 import { PUBLIC_ENDPOINTS } from "@/configs/endpoints";
 import { Role } from "@/configs/enum";
