@@ -1,37 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server';
-import authAction from './apis/auth.action';
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from "next/server";
+import authAction from "./apis/auth.action";
+import { cookies } from "next/headers";
 import {
   ADMIN_ENDPOINTS,
   CUSTOMER_ENDPOINTS,
   HELPER_ENDPOINTS,
   PUBLIC_ENDPOINTS,
-} from './configs/endpoints';
+} from "./configs/endpoints";
 
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (
     !Object.values(PUBLIC_ENDPOINTS).some(
-      (endpoint) => endpoint !== '/' && pathname.startsWith(endpoint)
+      (endpoint) => endpoint !== "/" && pathname.startsWith(endpoint)
     ) &&
     !Object.values(ADMIN_ENDPOINTS).some(
-      (endpoint) => endpoint !== '/' && pathname.startsWith(endpoint)
+      (endpoint) => endpoint !== "/" && pathname.startsWith(endpoint)
     ) &&
     !Object.values(HELPER_ENDPOINTS).some(
-      (endpoint) => endpoint !== '/' && pathname.startsWith(endpoint)
+      (endpoint) => endpoint !== "/" && pathname.startsWith(endpoint)
     ) &&
     !Object.values(CUSTOMER_ENDPOINTS).some(
-      (endpoint) => endpoint !== '/' && pathname.startsWith(endpoint)
+      (endpoint) => endpoint !== "/" && pathname.startsWith(endpoint)
     )
   ) {
     return NextResponse.next();
   }
 
   if (
-    pathname === '/' ||
+    pathname === "/" ||
     Object.values(PUBLIC_ENDPOINTS).some(
-      (endpoint) => endpoint !== '/' && pathname.startsWith(endpoint)
+      (endpoint) => endpoint !== "/" && pathname.startsWith(endpoint)
     )
   ) {
     return NextResponse.next();
@@ -45,7 +45,7 @@ export default async function middleware(request: NextRequest) {
     });
 
     const role = claims.data?.claims.find(
-      (claim) => claim.type === 'Role'
+      (claim) => claim.type === "Role"
     )?.value;
     if (!role) {
       return NextResponse.redirect(
@@ -53,7 +53,7 @@ export default async function middleware(request: NextRequest) {
       );
     }
 
-    if (role === 'Admin') {
+    if (role === "Admin") {
       if (
         Object.values(ADMIN_ENDPOINTS).some((endpoint) =>
           pathname.startsWith(endpoint)
@@ -65,7 +65,7 @@ export default async function middleware(request: NextRequest) {
           new URL(ADMIN_ENDPOINTS.chart, request.url)
         );
       }
-    } else if (role === 'Helper') {
+    } else if (role === "Helper") {
       if (
         Object.values(HELPER_ENDPOINTS).some((endpoint) =>
           pathname.startsWith(endpoint)
@@ -73,7 +73,7 @@ export default async function middleware(request: NextRequest) {
       ) {
         return NextResponse.next();
       }
-    } else if (role === 'Customer') {
+    } else if (role === "Customer") {
       if (
         Object.values(CUSTOMER_ENDPOINTS).some((endpoint) =>
           pathname.startsWith(endpoint)
@@ -95,8 +95,8 @@ export default async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
-    '/(api|trpc)(.*)',
+    "/(api|trpc)(.*)",
   ],
 };

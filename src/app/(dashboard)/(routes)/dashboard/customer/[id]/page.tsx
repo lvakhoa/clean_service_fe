@@ -13,6 +13,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { partialCustomerSchema } from "@/schemas/customer";
+import { Skeleton } from "@/components/skeleton/skeleton";
+import { useCustomer } from "@/hooks/customer/useCustomer";
 
 const sampleData: Customer = {
   id: "-",
@@ -31,17 +33,12 @@ type FormField = z.infer<typeof partialCustomerSchema>;
 
 const CustomerInfo = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: queryData, error: queryError } = useQuery({
-    queryKey: ["customer", id],
-    queryFn: () => customerAction.getCustomerById(id ?? ""),
-  });
 
-  const mutation = useMutation({
-    mutationFn: (data: any) => {
-      console.log(data);
-      return customerAction.updateCustomer(id, data);
-    },
-  });
+  const { updateCustomer, getCustomerById } = useCustomer();
+
+  const { isPending, data: queryData, error: queryError } = getCustomerById(id);
+
+  const mutation = updateCustomer(id);
 
   const [customerData, setCustomerData] = useState<Customer>(sampleData);
 
@@ -55,9 +52,7 @@ const CustomerInfo = () => {
     }
   }, [queryData]);
 
-  useEffect(() => {
-    console.log(customerData);
-  }, [customerData]);
+  useEffect(() => {}, [customerData]);
 
   const form = useForm<FormField>({
     mode: "onBlur",
@@ -100,123 +95,135 @@ const CustomerInfo = () => {
               </p>
             </div>
 
-            <div className="grid justify-center mt-[50px]">
+            <div className="grid items-center justify-center mt-[75px]">
               <div className="flex flex-col md:flex-row">
-                <InputWithLabel
-                  labelText="FULL NAME"
-                  inputType="text"
-                  inputPlaceholder="Enter Full Name"
-                  inputId="name"
-                  inputWidth="25vw"
-                  defaultValue={customerData.fullName}
-                  keyName="fullName"
-                />
-                <div className="md:ml-2 md:mt-0">
+                {isPending ? (
+                  <div className="flex flex-col gap-1.5">
+                    <Skeleton className="h-[21px] w-[5vw]" />
+                    <Skeleton className="h-[50px] w-[25vw]" />
+                  </div>
+                ) : (
                   <InputWithLabel
-                    labelText="DATE OF BIRTH"
-                    inputType="date"
-                    inputPlaceholder=""
-                    inputId="date"
-                    inputWidth="11.25vw"
-                    defaultValue={
-                      new Date(customerData.dateOfBirth)
-                        .toISOString()
-                        .split("T")[0]
-                    }
-                    keyName="dateOfBirth"
-                  />
-                </div>
-                <div className="md:ml-2 md:mt-0">
-                  <InputWithLabel
-                    labelText="GENDER"
-                    inputType="combobox"
-                    inputPlaceholder=""
-                    inputId="gender"
-                    defaultValue={customerData.gender}
-                    inputWidth="6.875vw"
-                    options={["Male", "Female", "Other"]}
-                    keyName="gender"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col md:flex-row mt-[30px]">
-                <InputWithLabel
-                  labelText="PHONE NUMBER"
-                  inputType="tel"
-                  inputPlaceholder="Enter a Phone number"
-                  inputId="phoneNum"
-                  inputWidth="25vw"
-                  defaultValue={customerData.phoneNumber}
-                  keyName="phoneNumber"
-                />
-                <div className="md:ml-2 md:mt-0">
-                  <InputWithLabel
-                    labelText="EMAIL ADDRESS"
-                    inputType="email"
-                    inputPlaceholder="Enter your email address"
-                    inputId="contactEmail"
-                    inputWidth="18.125vw"
-                    plusPX="8px"
-                    defaultValue={customerData.email}
-                    keyName="email"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col md:flex-row mt-[30px]">
-                <InputWithLabel
-                  labelText="CITY/PROVINCE"
-                  inputType="text"
-                  inputPlaceholder="Enter your city/province"
-                  inputId="city"
-                  inputWidth="25vw"
-                />
-              </div>
-              <div className="flex flex-col md:flex-row mt-[30px]">
-                <InputWithLabel
-                  labelText="WARD"
-                  inputType="text"
-                  inputPlaceholder="Enter ward"
-                  inputId="ward"
-                  inputWidth="27.5vw"
-                />
-                <div className="md:ml-2 md:mt-0">
-                  <InputWithLabel
-                    labelText="POSTAL CODE"
+                    labelText="FULL NAME"
                     inputType="text"
-                    inputPlaceholder="Enter Postal Code"
-                    inputId="postal"
-                    inputWidth="15.625vw"
-                    plusPX="8px"
+                    inputPlaceholder="Enter Full Name"
+                    inputId="name"
+                    inputWidth="25vw"
+                    defaultValue={customerData.fullName}
+                    keyName="fullName"
                   />
+                )}
+                <div className="md:ml-2 md:mt-0">
+                  {isPending ? (
+                    <div className="flex flex-col gap-1.5">
+                      <Skeleton className="h-[21px] w-[5vw]" />
+                      <Skeleton className="h-[50px] w-[11.25vw]" />
+                    </div>
+                  ) : (
+                    <InputWithLabel
+                      labelText="DATE OF BIRTH"
+                      inputType="date"
+                      inputPlaceholder=""
+                      inputId="date"
+                      inputWidth="11.25vw"
+                      defaultValue={
+                        new Date(customerData.dateOfBirth)
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                      keyName="dateOfBirth"
+                    />
+                  )}
+                </div>
+                <div className="md:ml-2 md:mt-0">
+                  {isPending && (
+                    <div className="flex flex-col gap-1.5">
+                      <Skeleton className="h-[21px] w-[5vw]" />
+                      <Skeleton className="h-[50px] w-[6.875vw]" />
+                    </div>
+                  )}
+                  {
+                    <InputWithLabel
+                      className={isPending ? "opacity-0 hidden" : ""}
+                      labelText="GENDER"
+                      inputType="combobox"
+                      inputPlaceholder=""
+                      inputId="gender"
+                      defaultValue={customerData.gender}
+                      inputWidth="6.875vw"
+                      options={["Male", "Female", "Other"]}
+                      keyName="gender"
+                    />
+                  }
                 </div>
               </div>
               <div className="flex flex-col md:flex-row mt-[30px]">
-                <InputWithLabel
-                  labelText="HOUSE NUMBER"
-                  inputType="text"
-                  inputPlaceholder="Enter your House Number"
-                  inputId="houseNum"
-                  inputWidth="18.75vw"
-                />
-                <div className="md:ml-2 md:mt-0">
+                {isPending ? (
+                  <div className="flex flex-col gap-1.5">
+                    <Skeleton className="h-[21px] w-[5vw]" />
+                    <Skeleton className="h-[50px] w-[25vw]" />
+                  </div>
+                ) : (
                   <InputWithLabel
+                    labelText="PHONE NUMBER"
+                    inputType="tel"
+                    inputPlaceholder="Enter a Phone number"
+                    inputId="phoneNum"
+                    inputWidth="25vw"
+                    defaultValue={customerData.phoneNumber}
+                    keyName="phoneNumber"
+                  />
+                )}
+                <div className="md:ml-2 md:mt-0">
+                  {isPending ? (
+                    <div className="flex flex-col gap-1.5">
+                      <Skeleton className="h-[21px] w-[5vw]" />
+                      <Skeleton className="h-[50px] w-[18.125vw]" />
+                    </div>
+                  ) : (
+                    <InputWithLabel
+                      labelText="EMAIL ADDRESS"
+                      inputType="email"
+                      inputPlaceholder="Enter your email address"
+                      inputId="contactEmail"
+                      inputWidth="18.125vw"
+                      plusPX="8px"
+                      defaultValue={customerData.email}
+                      keyName="email"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col md:flex-row mt-[30px] w-full">
+                {isPending ? (
+                  <div className="flex flex-col gap-1.5 w-full">
+                    <Skeleton className="h-[21px] w-[5vw]" />
+                    <Skeleton className="h-[50px] w-[full]" />
+                  </div>
+                ) : (
+                  <InputWithLabel
+                    className="w-full max-w-none"
                     labelText="STREET NAME"
                     inputType="text"
                     inputPlaceholder="Enter your Street Name"
                     inputId="streetName"
-                    inputWidth="24.375vw"
                     plusPX="8px"
                     defaultValue={customerData.address}
                     keyName="address"
                   />
-                </div>
+                )}
               </div>
-              <div className="flex justify-center items-center mt-[4.5vw] pb-[2vw]">
+              <div className="flex justify-center items-center mt-[3.5vw] pb-[2vw]">
                 <Button
+                  disabled={mutation.isPending || isPending}
                   type="submit"
                   className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
                 >
-                  Save
+                  {isPending
+                    ? "Loading..."
+                    : mutation.isPending
+                    ? "Saving..."
+                    : "Save"}
                 </Button>
               </div>
             </div>

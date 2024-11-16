@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import customerAction from "@/apis/customer.action";
 import { UserType, Gender } from "@/types/enum";
 import { Customer } from "@/types/customer";
+import { useCustomer } from "@/hooks/customer/useCustomer";
 
 const columns = [
   { header: "ID", className: "w-[8%] hidden md:table-cell" },
@@ -131,16 +132,15 @@ const CustomerTable = () => {
     },
   ];
 
+  const { getAllCustomers } = useCustomer();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchBy, setSearchBy] = useState("Name");
   const [customersData, setCustomerData] =
     useState<Customer[]>(customersSampleData);
 
-  const { isLoading, data, error } = useQuery({
-    queryKey: ["customers"],
-    queryFn: customerAction.getAllCustomer,
-  });
+  const { isLoading, data, error } = getAllCustomers();
 
   useEffect(() => {
     if (data) {
