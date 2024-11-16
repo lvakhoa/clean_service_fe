@@ -1,5 +1,10 @@
+"use client";
+
+import React, { use, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFormContext } from "react-hook-form";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -9,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Key } from "lucide-react";
+import { set } from "zod";
 interface InputWithLabelProps {
   labelText: string;
   inputType: string;
@@ -18,15 +23,16 @@ interface InputWithLabelProps {
   inputWidth?: string;
   options?: string[];
   defaultValue?: string;
+  keyName?: string;
   plusPX?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   onValueChange?: (value: string) => void;
-  error?: string;
+  className?: string;
 }
 
-export function InputWithLabel({
+export function CustomerInputWithLabel({
   labelText,
   inputType,
   inputPlaceholder,
@@ -34,13 +40,21 @@ export function InputWithLabel({
   inputWidth = "w-full",
   options = [],
   defaultValue,
+  keyName,
   plusPX,
   onChange,
   onValueChange,
-  error,
+  className,
 }: InputWithLabelProps) {
+  const { register, setValue } = useFormContext();
+  const [selectedValue, setSelectedValue] = useState(defaultValue ?? "");
+
+  useEffect(() => {
+    setSelectedValue(defaultValue ?? selectedValue);
+  }, [defaultValue]);
+
   return (
-    <div className="grid max-w-max items-center gap-1.5">
+    <div className={cn("grid max-w-max items-center gap-1.5", className)}>
       <Label
         className="text-[14px] font-Averta-Semibold text-[#9FA7B0]"
         htmlFor={inputId}
@@ -48,7 +62,13 @@ export function InputWithLabel({
         {labelText}
       </Label>
       {inputType === "combobox" ? (
-        <Select defaultValue={defaultValue} onValueChange={onValueChange}>
+        <Select
+          value={selectedValue}
+          onValueChange={(value) => {
+            setSelectedValue(value);
+            setValue(keyName || inputId, value);
+          }}
+        >
           <SelectTrigger
             className={`${inputWidth} font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
             style={{ width: `${inputWidth}` }}
@@ -66,22 +86,19 @@ export function InputWithLabel({
           </SelectContent>
         </Select>
       ) : (
-        <>
-          <Input
-            className={`font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
-            type={inputType}
-            id={inputId}
-            placeholder={inputPlaceholder}
-            defaultValue={defaultValue}
-            onChange={onChange}
-            style={
-              plusPX
-                ? { width: `calc(${inputWidth} + ${plusPX})` }
-                : { width: `${inputWidth}` }
-            }
-          />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-        </>
+        <Input
+          className="font-Averta-Regular h-[50px] text-[16px] text-[#5f6367] border-2"
+          type={inputType}
+          id={inputId}
+          placeholder={inputPlaceholder}
+          defaultValue={defaultValue}
+          style={
+            plusPX
+              ? { width: `calc(${inputWidth} + ${plusPX})` }
+              : { width: `${inputWidth}` }
+          }
+          {...register(keyName || inputId)}
+        />
       )}
     </div>
   );

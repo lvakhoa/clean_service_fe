@@ -48,7 +48,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   type="text"
                   id="search"
                   placeholder="Search"
-                  className="text-sm text-[#202224] px-2 w-full font-Averta-Regular opacity-50 bg-transparent h-full px-2 focus:outline-none"
+                  className="text-sm text-[#202224] w-full font-Averta-Regular opacity-50 bg-transparent h-full px-2 focus:outline-none"
                   onChange={handleSearchChange}
                 />
               </div>

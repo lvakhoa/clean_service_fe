@@ -1,8 +1,13 @@
-import ENV from '@/configs/env';
-import { errorHandler } from '@/helpers';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import ENV from "@/configs/env";
+import { errorHandler } from "@/helpers";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
 
-declare module 'axios' {
+declare module "axios" {
   export interface AxiosRequestConfig {
     raw?: boolean;
     silent?: boolean;
@@ -40,7 +45,7 @@ export default class CleanClient {
   }
 
   private responseErrorHandler(error: AxiosError) {
-    const config = error.config as AxiosRequestConfig || {}
+    const config = (error.config as AxiosRequestConfig) || {};
 
     if (config.raw) {
       return Promise.reject(error);

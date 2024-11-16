@@ -1,15 +1,15 @@
-'use server'
-import authAction from '@/apis/auth.action';
-import { PUBLIC_ENDPOINTS } from '@/configs/endpoints';
-import { Role } from '@/configs/enum';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+"use server";
+import authAction from "@/apis/auth.action";
+import { PUBLIC_ENDPOINTS } from "@/configs/endpoints";
+import { Role } from "@/configs/enum";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function verifySession(): Promise<{
   isAuth: boolean;
   role?: RoleType;
 }> {
-  const token = cookies().get('.AspNetCore.Cookies')?.value;
+  const token = cookies().get(".AspNetCore.Cookies")?.value;
 
   if (!token) {
     return { isAuth: false };
@@ -22,7 +22,7 @@ export async function verifySession(): Promise<{
   });
 
   const role = claims.data?.claims.find(
-    (claim) => claim.type === 'Role'
+    (claim) => claim.type === "Role"
   )?.value;
   if (!role) {
     return { isAuth: false };
