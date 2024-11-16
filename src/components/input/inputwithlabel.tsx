@@ -21,6 +21,7 @@ interface InputWithLabelProps {
   plusPX?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
   onValueChange?: (value: string) => void
+  error?: string
 }
 
 export function InputWithLabel({
@@ -33,7 +34,8 @@ export function InputWithLabel({
   defaultValue,
   plusPX,
   onChange,
-  onValueChange
+  onValueChange,
+  error,
 }: InputWithLabelProps) {
   return (
     <div className="grid max-w-max items-center gap-1.5">
@@ -62,19 +64,23 @@ export function InputWithLabel({
           </SelectContent>
         </Select>
       ) : (
-        <Input
-          className={`font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
-          type={inputType}
-          id={inputId}
-          placeholder={inputPlaceholder}
-          defaultValue={defaultValue}
-          onChange={onChange}
-          style={
-            plusPX
-              ? { width: `calc(${inputWidth} + ${plusPX})` }
-              : { width: `${inputWidth}` }
-          }
-        />
+        <>
+          <Input
+            className={`font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
+            type={inputType}
+            id={inputId}
+            placeholder={inputPlaceholder}
+            defaultValue={defaultValue}
+            onChange={onChange}
+            style={
+              plusPX
+                ? { width: `calc(${inputWidth} + ${plusPX})` }
+                : { width: `${inputWidth}` }
+            }
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+        </>
+
       )}
     </div>
   );
