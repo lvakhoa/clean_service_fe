@@ -30,6 +30,7 @@ export default function Provider({
         draggable
         pauseOnHover
         theme="light"
+        style={{ zIndex: 9999 }}
       />
     </QueryClientProvider>
   );
