@@ -3,8 +3,6 @@ import React, { use, useState, useEffect } from "react";
 import Pagination from "../pagination/Pagination";
 import SearhBar from "./SearchBar";
 import CustomerRow from "./CustomerRow";
-import { useQuery } from "@tanstack/react-query";
-import customerAction from "@/apis/customer.action";
 import { UserType, Gender } from "@/types/enum";
 import { Customer } from "@/types/customer";
 import { useCustomer } from "@/hooks/customer/useCustomer";
@@ -140,7 +138,7 @@ const CustomerTable = () => {
   const [customersData, setCustomerData] =
     useState<Customer[]>(customersSampleData);
 
-  const { isLoading, data, error } = getAllCustomers();
+  const { isLoading, data, error } = getAllCustomers;
 
   useEffect(() => {
     if (data) {

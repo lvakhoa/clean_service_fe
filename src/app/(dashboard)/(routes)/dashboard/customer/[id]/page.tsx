@@ -34,11 +34,15 @@ type FormField = z.infer<typeof partialCustomerSchema>;
 const CustomerInfo = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { updateCustomer, getCustomerById } = useCustomer();
+  const { useUpdateCustomer, useGetCustomerById } = useCustomer();
 
-  const { isPending, data: queryData, error: queryError } = getCustomerById(id);
+  const {
+    isPending,
+    data: queryData,
+    error: queryError,
+  } = useGetCustomerById(id);
 
-  const mutation = updateCustomer(id);
+  const mutation = useUpdateCustomer(id);
 
   const [customerData, setCustomerData] = useState<Customer>(sampleData);
 
@@ -50,7 +54,7 @@ const CustomerInfo = () => {
     } else {
       console.log(queryError);
     }
-  }, [queryData]);
+  }, [queryData, queryError]);
 
   useEffect(() => {}, [customerData]);
 

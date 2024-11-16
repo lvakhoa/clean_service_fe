@@ -4,13 +4,12 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import customerAction from "@/apis/customer.action";
 
 export const useCustomer = () => {
-  const getAllCustomers = () =>
-    useQuery({
-      queryKey: ["customers"],
-      queryFn: customerAction.getAllCustomer,
-    });
+  const getAllCustomers = useQuery({
+    queryKey: ["customers"],
+    queryFn: customerAction.getAllCustomer,
+  });
 
-  const getCustomerById = (id: string) =>
+  const useGetCustomerById = (id: string) =>
     useQuery({
       queryKey: ["customer", id],
       queryFn: () => {
@@ -18,7 +17,7 @@ export const useCustomer = () => {
       },
     });
 
-  const updateCustomer = (id: string) =>
+  const useUpdateCustomer = (id: string) =>
     useMutation({
       mutationFn: (data: any) => {
         return customerAction.updateCustomer(id, data);
@@ -27,7 +26,7 @@ export const useCustomer = () => {
 
   return {
     getAllCustomers,
-    getCustomerById,
-    updateCustomer,
+    useGetCustomerById,
+    useUpdateCustomer,
   };
 };
