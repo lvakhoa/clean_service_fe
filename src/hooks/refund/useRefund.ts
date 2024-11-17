@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import refundAction from "@/apis/refund.action";
 
 export const useRefund = () => {
+  const queryClient = useQueryClient();
+
   const getAllRefunds = useQuery({
     queryKey: ["refunds"],
     queryFn: refundAction.getAllRefunds,
@@ -27,6 +29,7 @@ export const useRefund = () => {
   });
 
   return {
+    queryClient,
     getAllRefunds,
     useGetRefundById,
     deleteRefundMutation,

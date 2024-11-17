@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Checkbox } from "@material-tailwind/react";
 import { formatDateTime } from "@/helpers/formatDateTime";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,7 @@ interface FeedbackRowProps {
   isEven: boolean;
   className?: string;
   isPending: boolean;
+  onCheckboxToggle?: (id: string, checked: boolean) => void;
 }
 
 const FeedbackRow: React.FC<FeedbackRowProps> = ({
@@ -31,7 +32,10 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
   isEven,
   className,
   isPending,
+  onCheckboxToggle,
 }) => {
+  const [isChecked, setIsChecked] = useState(false);
+
   const bgColor = isEven ? "bg-white" : "bg-[#f5f7ff]";
   const sentimentColor =
     sentiment === "Positive"
@@ -39,6 +43,14 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
       : sentiment === "Negative"
       ? "bg-[#fcd7d4] text-[#ef3826]"
       : "bg-[#ccd0d9] text-[#2b3641]";
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsChecked(checked);
+    if (onCheckboxToggle) {
+      onCheckboxToggle(id, checked);
+    }
+  };
 
   const router = useRouter();
   return (
@@ -61,6 +73,8 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
         ) : (
           <div className="flex overflow-hidden items-center pl-px w-full min-h-[48px]">
             <Checkbox
+              checked={isChecked}
+              onChange={handleCheckboxChange}
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
               crossOrigin={undefined}

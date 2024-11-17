@@ -5,6 +5,8 @@ import RefundRow from "./RefundRow";
 import Pagination from "./Pagination";
 import SearchBarAndFilter from "./SearchBarAndFilter";
 import { useRefund } from "@/hooks/refund/useRefund";
+import { toast } from "react-toastify";
+import Image from "next/image";
 
 const refundSampleData: Refund[] = [
   {
@@ -72,11 +74,12 @@ export default function RefundTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Name");
+  const [checkedRows, setCheckedRows] = useState<string[]>([]);
 
   const [refundData, setRefundData] = useState<Refund[]>(refundSampleData);
 
-  const { getAllRefunds } = useRefund();
-
+  const { getAllRefunds, deleteRefundMutation, queryClient } = useRefund();
+  const mutation = deleteRefundMutation;
   const { data, error, isPending } = getAllRefunds;
 
   useEffect(() => {
@@ -88,6 +91,24 @@ export default function RefundTable() {
   }, [data]);
 
   useEffect(() => {}, [refundData]);
+
+  const handleCheckboxToggle = (id: string, isChecked: boolean) => {
+    setCheckedRows((prevCheckedRows) =>
+      isChecked
+        ? [...prevCheckedRows, id]
+        : prevCheckedRows.filter((rowId) => rowId !== id)
+    );
+  };
+  const handleDeleteFeedback = async () => {
+    try {
+      await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
+      toast.success("Delete refund successfully!");
+      queryClient.invalidateQueries({ queryKey: ["refunds"] });
+    } catch (error) {
+      toast.error("Failed to delete some refund");
+      console.error(error);
+    }
+  };
 
   // filter
   const applyFilter = (data: Refund[]) => {
@@ -154,11 +175,22 @@ export default function RefundTable() {
 
   return (
     <>
-      <SearchBarAndFilter
-        setSearchTerm={setSearchTerm}
-        setSearchBy={setSearchBy}
-        onFilterChange={setFilter}
-      />
+      <div className="flex justify-between">
+        <SearchBarAndFilter
+          setSearchTerm={setSearchTerm}
+          setSearchBy={setSearchBy}
+          onFilterChange={setFilter}
+        />
+        <button className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5">
+          <Image
+            src="/images/Dashboard/Feedback/Trash.svg"
+            alt=""
+            width={18}
+            height={18}
+          />
+          <p>Delete</p>
+        </button>
+      </div>
 
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
@@ -169,6 +201,7 @@ export default function RefundTable() {
                 key={refund.id}
                 {...refund}
                 isEven={index % 2 === 0}
+                onCheckboxToggle={handleCheckboxToggle}
               />
             ))}
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Checkbox } from "@material-tailwind/react";
 import { formatDateTime } from "@/helpers/formatDateTime";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ interface RefundRowProps {
   isEven: boolean;
   className?: string;
   isPending: boolean;
+  onCheckboxToggle?: (id: string, checked: boolean) => void;
 }
 
 const RefundRow: React.FC<RefundRowProps> = ({
@@ -33,7 +34,10 @@ const RefundRow: React.FC<RefundRowProps> = ({
   className,
   resolvedAt,
   isPending,
+  onCheckboxToggle,
 }) => {
+  const [isChecked, setIsChecked] = useState(false);
+
   const bgColor = isEven ? "bg-white" : "bg-[#f5f7ff]";
   const sentimentColor =
     status === "Refunded"
@@ -41,6 +45,14 @@ const RefundRow: React.FC<RefundRowProps> = ({
       : status === "Declined"
       ? "bg-[#EF3826]/20 text-[#EF3826]"
       : "bg-[#FFD154]/20 text-[#FF9500]";
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsChecked(checked);
+    if (onCheckboxToggle) {
+      onCheckboxToggle(id, checked);
+    }
+  };
 
   const router = useRouter();
 
@@ -64,6 +76,8 @@ const RefundRow: React.FC<RefundRowProps> = ({
         ) : (
           <div className="flex overflow-hidden items-center pl-px w-full z-20 min-h-[48px]">
             <Checkbox
+              checked={isChecked}
+              onChange={handleCheckboxChange}
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
               crossOrigin={undefined}

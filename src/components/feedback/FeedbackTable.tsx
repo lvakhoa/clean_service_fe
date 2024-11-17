@@ -5,6 +5,9 @@ import FeedbackRow from "./FeedbackRow";
 import Pagination from "./Pagination";
 import SearchBarAndFilter from "./SearchBarAndFilter";
 import { useFeedback } from "@/hooks/feedback/useFeedback";
+import Image from "next/image";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const feedbackSampleData: Feedback[] = [
   {
@@ -50,18 +53,22 @@ const feedbackSampleData: Feedback[] = [
 ];
 
 export default function FeedbackTable() {
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Name");
+  const [checkedRows, setCheckedRows] = useState<string[]>([]);
 
   const [feedbackData, setFeedbackData] =
     useState<Feedback[]>(feedbackSampleData);
 
-  const { getAllFeedbacks } = useFeedback();
+  const { getAllFeedbacks, useDeleteFeedback, queryClient } = useFeedback();
 
   const { data, error, isPending } = getAllFeedbacks;
 
+  const mutation = useDeleteFeedback();
   useEffect(() => {
     if (data) {
       setFeedbackData(data.data.results);
@@ -69,6 +76,24 @@ export default function FeedbackTable() {
       console.error(error);
     }
   }, [data]);
+
+  const handleCheckboxToggle = (id: string, isChecked: boolean) => {
+    setCheckedRows((prevCheckedRows) =>
+      isChecked
+        ? [...prevCheckedRows, id]
+        : prevCheckedRows.filter((rowId) => rowId !== id)
+    );
+  };
+  const handleDeleteFeedback = async () => {
+    try {
+      await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
+      toast.success("Delete feedback successfully!");
+      queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+    } catch (error) {
+      toast.error("Failed to delete some feedback");
+      console.error(error);
+    }
+  };
 
   // filter
   const applyFilter = (data: Feedback[]) => {
@@ -140,11 +165,25 @@ export default function FeedbackTable() {
 
   return (
     <>
-      <SearchBarAndFilter
-        setSearchTerm={setSearchTerm}
-        setSearchBy={setSearchBy}
-        onFilterChange={setFilter}
-      />
+      <div className="flex justify-between">
+        <SearchBarAndFilter
+          setSearchTerm={setSearchTerm}
+          setSearchBy={setSearchBy}
+          onFilterChange={setFilter}
+        />
+        <button
+          onClick={handleDeleteFeedback}
+          className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5"
+        >
+          <Image
+            src="/images/Dashboard/Feedback/Trash.svg"
+            alt=""
+            width={18}
+            height={18}
+          />
+          <p>Delete</p>
+        </button>
+      </div>
 
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
@@ -162,6 +201,7 @@ export default function FeedbackTable() {
                     : "Neutral"
                 }
                 isPending={isPending}
+                onCheckboxToggle={handleCheckboxToggle}
               />
             ))}
           </div>

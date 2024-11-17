@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import feedbackAction from "@/apis/feedback.action";
 
 export const useFeedback = () => {
+  const queryClient = useQueryClient();
+
   const getAllFeedbacks = useQuery({
     queryKey: ["feedbacks"],
     queryFn: feedbackAction.getAllFeedbacks,
@@ -25,6 +27,7 @@ export const useFeedback = () => {
     });
 
   return {
+    queryClient,
     getAllFeedbacks,
     useGetFeedbackById,
     useDeleteFeedback,

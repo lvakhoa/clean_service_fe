@@ -11,11 +11,17 @@ import { formatDateTime } from "@/helpers/formatDateTime";
 import { useRefund } from "@/hooks/refund/useRefund";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
+import { toast } from "react-toastify";
 
 const RefundDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { useGetRefundById, deleteRefundMutation } = useRefund();
+  const {
+    useGetRefundById,
+    deleteRefundMutation,
+    queryClient,
+    updateRefundMutation,
+  } = useRefund();
 
   const { data, error, isPending } = useGetRefundById(id);
 
@@ -56,6 +62,32 @@ const RefundDetail = () => {
     },
   ];
 
+  const handleRefund = async (status: string) => {
+    try {
+      if (status === "Refunded") {
+        await updateRefundMutation.mutateAsync({
+          id,
+          data: { status: "Refunded" },
+        });
+        toast.success("Refund approved successfully!");
+      } else if (status === "Declined") {
+        await updateRefundMutation.mutateAsync({
+          id,
+          data: { status: "Declined" },
+        });
+        toast.success("Refund rejected successfully!");
+      } else {
+        throw new Error("Invalid refund status");
+      }
+      queryClient.invalidateQueries({ queryKey: ["refund"] });
+    } catch (error: any) {
+      console.error("Error handling refund:", error);
+      toast.error(
+        `Failed to update refund: ${error.message || "Unknown error"}`
+      );
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
       <div className="flex flex-col w-full rounded max-md:max-w-full pb-6">
@@ -84,8 +116,15 @@ const RefundDetail = () => {
               <div className="flex gap-2">
                 {refundData.status === "Pending" ? (
                   <>
-                    <Button>Refund</Button>
-                    <Button variant={"destructive"}>Decline</Button>
+                    <Button onClick={() => handleRefund("Refunded")}>
+                      Refund
+                    </Button>
+                    <Button
+                      onClick={() => handleRefund("Declined")}
+                      variant={"destructive"}
+                    >
+                      Decline
+                    </Button>
                   </>
                 ) : (
                   <Button
