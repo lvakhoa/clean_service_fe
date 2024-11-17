@@ -2,7 +2,9 @@ import { cleanApi } from "@/services/HttpClient";
 
 const refundAction = {
   async getAllRefunds() {
-    const res = await cleanApi.get("/manage/refunds");
+    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Refund>>(
+      "/manage/refunds"
+    );
     return res.data;
   },
   async getRefundById(id: string) {

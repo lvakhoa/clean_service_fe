@@ -99,7 +99,8 @@ export default function RefundTable() {
         : prevCheckedRows.filter((rowId) => rowId !== id)
     );
   };
-  const handleDeleteFeedback = async () => {
+
+  const handleRefundFeedback = async () => {
     try {
       await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
       toast.success("Delete refund successfully!");
@@ -158,7 +159,6 @@ export default function RefundTable() {
 
   // pagination
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const currentData = finalData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -170,7 +170,8 @@ export default function RefundTable() {
   }, [currentData]);
 
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
+    if (newPage > 0 && newPage <= (data?.data.totalPages ?? 1))
+      setCurrentPage(newPage);
   };
 
   return (
@@ -181,7 +182,10 @@ export default function RefundTable() {
           setSearchBy={setSearchBy}
           onFilterChange={setFilter}
         />
-        <button className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5">
+        <button
+          onClick={handleRefundFeedback}
+          className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5"
+        >
           <Image
             src="/images/Dashboard/Feedback/Trash.svg"
             alt=""
@@ -209,9 +213,9 @@ export default function RefundTable() {
       </div>
 
       <Pagination
-        currentPage={currentPage}
-        totalItems={filteredData.length}
-        totalPages={totalPages}
+        currentPage={data?.data.currentPage || 1}
+        totalItems={data?.data.totalItems || 0}
+        totalPages={data?.data.totalPages || 1}
         onPageChange={handlePageChange}
       />
     </>

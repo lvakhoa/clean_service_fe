@@ -12,6 +12,7 @@ import { useRefund } from "@/hooks/refund/useRefund";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 import { toast } from "react-toastify";
+import getFirstNWords from "@/helpers/getFirstNWords";
 
 const RefundDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,13 +28,8 @@ const RefundDetail = () => {
 
   const mutation = deleteRefundMutation;
 
-  const [sentiment, setSentiment] = useState("Neutral");
-  const [sentimentColor, setSentimentColor] = useState(
-    "bg-[#ccd0d9] text-[#2b3641]"
-  );
-
   const [refundData, setRefundData] = useState<Refund>({
-    id: "",
+    id: "1",
     helperId: "",
     helperName: "",
     customerId: "",
@@ -45,7 +41,6 @@ const RefundDetail = () => {
   });
 
   useEffect(() => {
-    console.log(data);
     if (data) {
       setRefundData(data.data);
     } else {
@@ -79,7 +74,7 @@ const RefundDetail = () => {
       } else {
         throw new Error("Invalid refund status");
       }
-      queryClient.invalidateQueries({ queryKey: ["refund"] });
+      queryClient.invalidateQueries({ queryKey: ["refund", id] });
     } catch (error: any) {
       console.error("Error handling refund:", error);
       toast.error(
@@ -104,7 +99,7 @@ const RefundDetail = () => {
               <Skeleton className="h-[50px] w-[100px]" />
             ) : (
               <p className="overflow-hidden self-stretch px-3 py-5 w-full ml-5 min-h-[48px] font-Averta-Bold text-lg">
-                {getFirstFiveWords(refundData.reason)}
+                {getFirstNWords(refundData.reason, 5)}
               </p>
             )}
           </div>
@@ -227,10 +222,3 @@ const RefundDetail = () => {
 };
 
 export default RefundDetail;
-
-function getFirstFiveWords(paragraph: string) {
-  if (paragraph == undefined) return "";
-
-  const words = paragraph.split(" ");
-  return words.slice(0, 5).join(" ");
-}

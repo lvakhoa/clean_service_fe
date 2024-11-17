@@ -10,3 +10,17 @@ type CleanErrorResponseWrapper = {
   exceptionCode: string;
   errors?: string[];
 };
+
+type CleanSuccessGetAllResponseWrapper<T> = {
+  statusCode: number;
+  message: string;
+  total: number;
+  data: {
+    results: T[];
+    currentPage: number;
+    nextPage: number | null;
+    previousPage: number | null;
+    totalItems: number;
+    totalPages: number;
+  };
+};

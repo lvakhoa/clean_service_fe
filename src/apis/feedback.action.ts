@@ -2,7 +2,9 @@ import { cleanApi } from "@/services/HttpClient";
 
 const feedbackAction = {
   async getAllFeedbacks() {
-    const res = await cleanApi.get("/manage/feedbacks");
+    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Feedback>>(
+      "/manage/feedbacks"
+    );
     return res.data;
   },
   async getFeedbackById(id: string) {

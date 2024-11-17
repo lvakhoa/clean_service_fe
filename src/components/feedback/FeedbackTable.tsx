@@ -7,7 +7,6 @@ import SearchBarAndFilter from "./SearchBarAndFilter";
 import { useFeedback } from "@/hooks/feedback/useFeedback";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 
 const feedbackSampleData: Feedback[] = [
   {
@@ -53,8 +52,6 @@ const feedbackSampleData: Feedback[] = [
 ];
 
 export default function FeedbackTable() {
-  const router = useRouter();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
@@ -69,13 +66,14 @@ export default function FeedbackTable() {
   const { data, error, isPending } = getAllFeedbacks;
 
   const mutation = useDeleteFeedback();
+
   useEffect(() => {
     if (data) {
       setFeedbackData(data.data.results);
     } else {
       console.error(error);
     }
-  }, [data]);
+  }, [data, error]);
 
   const handleCheckboxToggle = (id: string, isChecked: boolean) => {
     setCheckedRows((prevCheckedRows) =>
@@ -133,26 +131,29 @@ export default function FeedbackTable() {
   };
 
   // search by
-  const filteredData = feedbackData.filter((Feedback) => {
-    switch (searchBy) {
-      case "Title":
-        return Feedback.title.toLowerCase().includes(searchTerm.toLowerCase());
-      case "Date":
-        return Feedback.createdAt
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-      default:
-        return Feedback.createdAt
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-    }
-  });
+  const filteredData =
+    feedbackData != undefined
+      ? feedbackData.filter((Feedback) => {
+          switch (searchBy) {
+            case "Title":
+              return Feedback.title
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            case "Date":
+              return Feedback.createdAt
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            default:
+              return Feedback.createdAt
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+          }
+        })
+      : feedbackSampleData;
 
   const finalData = applyFilter(filteredData);
 
-  // pagination
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const currentData = finalData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -160,7 +161,8 @@ export default function FeedbackTable() {
   );
 
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
+    if (newPage > 0 && newPage <= (data?.data.totalPages ?? 1))
+      setCurrentPage(newPage);
   };
 
   return (
@@ -209,9 +211,9 @@ export default function FeedbackTable() {
       </div>
 
       <Pagination
-        currentPage={currentPage}
-        totalItems={filteredData.length}
-        totalPages={totalPages}
+        currentPage={data?.data.currentPage || 1}
+        totalItems={data?.data.totalItems || 0}
+        totalPages={data?.data.totalPages || 1}
         onPageChange={handlePageChange}
       />
     </>
