@@ -69,7 +69,7 @@ const refundSampleData: Refund[] = [
   },
 ];
 
-export default function RefundTable() {
+export default function RefundTable({ role }: { role: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
@@ -78,9 +78,15 @@ export default function RefundTable() {
 
   const [refundData, setRefundData] = useState<Refund[]>(refundSampleData);
 
-  const { getAllRefunds, deleteRefundMutation, queryClient } = useRefund();
+  const {
+    getAllRefunds,
+    deleteRefundMutation,
+    getRefundOfCurrentUser,
+    queryClient,
+  } = useRefund();
   const mutation = deleteRefundMutation;
-  const { data, error, isPending } = getAllRefunds;
+  const { data, error, isPending } =
+    role == "Admin" ? getAllRefunds : getRefundOfCurrentUser;
 
   useEffect(() => {
     if (data) {
@@ -100,14 +106,22 @@ export default function RefundTable() {
     );
   };
 
-  const handleRefundFeedback = async () => {
-    try {
-      await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
-      toast.success("Delete refund successfully!");
-      queryClient.invalidateQueries({ queryKey: ["refunds"] });
-    } catch (error) {
-      toast.error("Failed to delete some refund");
-      console.error(error);
+  const handleDeleteRefund = async () => {
+    if (checkedRows.length === 0) {
+      toast.error("Please select feedback to delete");
+    } else {
+      try {
+        await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
+        toast.success("Delete refund successfully!");
+        if (role == "Admin") {
+          queryClient.invalidateQueries({ queryKey: ["refunds"] });
+        } else {
+          queryClient.invalidateQueries({ queryKey: ["refunds/customer"] });
+        }
+      } catch (error) {
+        toast.error("Failed to delete some refund");
+        console.error(error);
+      }
     }
   };
 
@@ -183,7 +197,7 @@ export default function RefundTable() {
           onFilterChange={setFilter}
         />
         <button
-          onClick={handleRefundFeedback}
+          onClick={handleDeleteRefund}
           className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5"
         >
           <Image
@@ -199,15 +213,23 @@ export default function RefundTable() {
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
           <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-white max-md:max-w-full">
-            {currentData.map((refund: Refund, index: any) => (
-              <RefundRow
-                isPending={isPending}
-                key={refund.id}
-                {...refund}
-                isEven={index % 2 === 0}
-                onCheckboxToggle={handleCheckboxToggle}
-              />
-            ))}
+            {refundData.length === 0 ? (
+              <div className="flex justify-center items-center w-full bg-white">
+                {role == "Admin"
+                  ? "We have no refund"
+                  : "This customer has no refund"}
+              </div>
+            ) : (
+              currentData.map((refund: Refund, index: any) => (
+                <RefundRow
+                  isPending={isPending}
+                  key={refund.id}
+                  {...refund}
+                  isEven={index % 2 === 0}
+                  onCheckboxToggle={handleCheckboxToggle}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

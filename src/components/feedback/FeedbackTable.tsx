@@ -51,7 +51,7 @@ const feedbackSampleData: Feedback[] = [
   },
 ];
 
-export default function FeedbackTable() {
+export default function FeedbackTable({ role }: { role: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
@@ -61,9 +61,15 @@ export default function FeedbackTable() {
   const [feedbackData, setFeedbackData] =
     useState<Feedback[]>(feedbackSampleData);
 
-  const { getAllFeedbacks, useDeleteFeedback, queryClient } = useFeedback();
+  const {
+    getAllFeedbacks,
+    useDeleteFeedback,
+    queryClient,
+    getFeedBackOfCurrentUser,
+  } = useFeedback();
 
-  const { data, error, isPending } = getAllFeedbacks;
+  const { data, error, isPending } =
+    role == "Admin" ? getAllFeedbacks : getFeedBackOfCurrentUser;
 
   const mutation = useDeleteFeedback();
 
@@ -83,13 +89,20 @@ export default function FeedbackTable() {
     );
   };
   const handleDeleteFeedback = async () => {
-    try {
-      await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
-      toast.success("Delete feedback successfully!");
-      queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
-    } catch (error) {
-      toast.error("Failed to delete some feedback");
-      console.error(error);
+    if (checkedRows.length === 0) {
+      toast.error("Please select feedback to delete");
+    } else {
+      try {
+        await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
+        toast.success("Delete feedback successfully!");
+        if (role == "Admin") {
+          queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+        }
+        queryClient.invalidateQueries({ queryKey: ["feedbacks/customer"] });
+      } catch (error) {
+        toast.error("Failed to delete some feedback");
+        console.error(error);
+      }
     }
   };
 
@@ -190,22 +203,31 @@ export default function FeedbackTable() {
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
           <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-neutral-700 max-md:max-w-full">
-            {currentData.map((feedback: Feedback, index: any) => (
-              <FeedbackRow
-                key={feedback.id}
-                {...feedback}
-                isEven={index % 2 === 0}
-                sentiment={
-                  feedback.helperRating != null && feedback.helperRating > 3
-                    ? "Positive"
-                    : feedback.helperRating != null && feedback.helperRating < 3
-                    ? "Negative"
-                    : "Neutral"
-                }
-                isPending={isPending}
-                onCheckboxToggle={handleCheckboxToggle}
-              />
-            ))}
+            {feedbackData.length === 0 ? (
+              <div className="flex justify-center items-center w-full bg-white">
+                {role == "Admin"
+                  ? "We have no feedback"
+                  : "This customer has no feedback"}
+              </div>
+            ) : (
+              currentData.map((feedback: Feedback, index: any) => (
+                <FeedbackRow
+                  key={feedback.id}
+                  {...feedback}
+                  isEven={index % 2 === 0}
+                  sentiment={
+                    feedback.helperRating != null && feedback.helperRating > 3
+                      ? "Positive"
+                      : feedback.helperRating != null &&
+                        feedback.helperRating < 3
+                      ? "Negative"
+                      : "Neutral"
+                  }
+                  isPending={isPending}
+                  onCheckboxToggle={handleCheckboxToggle}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

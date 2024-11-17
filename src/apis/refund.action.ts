@@ -11,6 +11,12 @@ const refundAction = {
     const res = await cleanApi.get(`/manage/refunds/${id}`);
     return res.data;
   },
+  async getRefundOfCurrentUser() {
+    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Refund>>(
+      "/manage/refunds/customer"
+    );
+    return res.data;
+  },
   async deleteRefund(id: string) {
     const res = await cleanApi.delete(`/manage/refunds/${id}`);
     return res.data;

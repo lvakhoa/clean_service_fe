@@ -11,6 +11,12 @@ const feedbackAction = {
     const res = await cleanApi.get(`/manage/feedbacks/${id}`);
     return res.data;
   },
+  async getFeedBackOfCurrentUser() {
+    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Feedback>>(
+      "/manage/feedbacks/customer"
+    );
+    return res.data;
+  },
   async deleteFeedback(id: string) {
     const res = await cleanApi.delete(`/manage/feedbacks/${id}`);
     return res.data;

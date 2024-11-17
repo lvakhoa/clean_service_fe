@@ -19,6 +19,11 @@ export const useRefund = () => {
       },
     });
 
+  const getRefundOfCurrentUser = useQuery({
+    queryKey: ["refunds/customer"],
+    queryFn: refundAction.getRefundOfCurrentUser,
+  });
+
   const deleteRefundMutation = useMutation({
     mutationFn: (id: string) => refundAction.deleteRefund(id),
   });
@@ -30,6 +35,7 @@ export const useRefund = () => {
 
   return {
     queryClient,
+    getRefundOfCurrentUser,
     getAllRefunds,
     useGetRefundById,
     deleteRefundMutation,

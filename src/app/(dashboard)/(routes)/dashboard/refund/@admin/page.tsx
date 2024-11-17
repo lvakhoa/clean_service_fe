@@ -11,7 +11,7 @@ export default function RefundPage({
   return (
     <div>
       {/* <SearchAndFilter /> */}
-      <RefundTable />
+      <RefundTable role="Admin" />
     </div>
   );
 }

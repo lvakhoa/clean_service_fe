@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import feedbackAction from "@/apis/feedback.action";
+import { use } from "react";
 
 export const useFeedback = () => {
   const queryClient = useQueryClient();
@@ -26,7 +27,13 @@ export const useFeedback = () => {
       },
     });
 
+  const getFeedBackOfCurrentUser = useQuery({
+    queryKey: ["feedbacks/customer"],
+    queryFn: feedbackAction.getFeedBackOfCurrentUser,
+  });
+
   return {
+    getFeedBackOfCurrentUser,
     queryClient,
     getAllFeedbacks,
     useGetFeedbackById,
