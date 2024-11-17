@@ -1,6 +1,6 @@
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { verifySession } from '@/helpers';
+import { verifySession } from '@/helpers/verifySession';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 

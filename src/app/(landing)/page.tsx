@@ -1,7 +1,7 @@
 import Footer from '@/components/footer/Footer';
 import Header from '@/components/header/Header';
 import HomePage from '@/components/homepage/HomePage';
-import { verifySession } from '@/helpers';
+import { verifySession } from '@/helpers/verifySession';
 
 const LandingPage = async () => {
   const session = await verifySession();
