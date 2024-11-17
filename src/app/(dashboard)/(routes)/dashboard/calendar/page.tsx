@@ -1,6 +1,5 @@
 "use client";
 import customerAction from "@/apis/customer.action";
-import { useAuth } from "@/hooks/customer/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import React, { use, useEffect, useState } from "react";
 import { text } from "stream/consumers";
