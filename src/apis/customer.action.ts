@@ -15,6 +15,16 @@ const customerAction = {
     const res = await cleanApi.patch(`/manage/users/${id}`, data);
     return res.data;
   },
+  async getBookingByCustomerId(id: string) {
+    const res = await cleanApi.get(`/scheduler?customerId=${id}`);
+    //console.log("Bookings", res.data.data.results);
+    return res.data.data.results;
+  },
+  async getCurrentCustomerBooking() {
+    const res = await cleanApi.get("/scheduler/current")
+    console.log("Current Booking", res.data)
+    return res.data.data.results
+  }
 };
 
 export default customerAction;
