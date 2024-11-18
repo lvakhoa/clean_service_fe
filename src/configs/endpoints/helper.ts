@@ -7,4 +7,5 @@ export const HELPER_ENDPOINTS = {
   calendar: "/dashboard/calendar",
   customer: "/dashboard/customer",
   helper: "/dashboard/employee",
+  refund: "/dashboard/refund",
 };

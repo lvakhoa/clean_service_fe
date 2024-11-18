@@ -1,101 +1,174 @@
-import React, { useState } from 'react';
-import FeedbackRow from './FeedbackRow';
-import Pagination from './Pagination';
-import SearchBarAndFilter from './SearchBarAndFilter';
+"use client";
 
-export type Feedback = {
-  id: number;
-  name: string;
-  sentiment: "Positive" | "Negative" | "Neutral";
-  message: string;
-  date: string;
-}
+import React, { useEffect, useState } from "react";
+import FeedbackRow from "./FeedbackRow";
+import Pagination from "./Pagination";
+import SearchBarAndFilter from "./SearchBarAndFilter";
+import { useFeedback } from "@/hooks/useFeedback";
+import Image from "next/image";
+import { toast } from "react-toastify";
 
-const feedbackData: Feedback[] = [
-  { id: 1, name: "Jullu Jalal", sentiment: "Positive" as "Positive", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 2, name: "Jullu Jalal", sentiment: "Positive" as "Positive", message: "Free Classifieds Using Them To Promote Your Stuff Online", date: "OCT 15 - 8:13 AM" },
-  { id: 3, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Vacation Home Rental Success", date: "OCT 15 - 8:13 AM" },
-  { id: 4, name: "Jullu Jalal", sentiment: "Neutral" as "Neutral", message: "Enhance Your Brand Potential With Giant Advertising Blimps", date: "OCT 15 - 8:13 AM" },
-  { id: 5, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Always Look On The Bright Side Of Life", date: "OCT 15 - 8:13 AM" },
-  { id: 6, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 7, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 8, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 9, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 10, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 11, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 12, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 13, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 14, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 15, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 16, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 17, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 18, name: "Jullu Jalal", sentiment: "Positive" as "Positive", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 19, name: "Jullu Jalal", sentiment: "Positive" as "Positive", message: "Free Classifieds Using Them To Promote Your Stuff Online", date: "OCT 15 - 8:13 AM" },
-  { id: 20, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Vacation Home Rental Success", date: "OCT 15 - 8:13 AM" },
-  { id: 21, name: "Jullu Jalal", sentiment: "Neutral" as "Neutral", message: "Enhance Your Brand Potential With Giant Advertising Blimps", date: "OCT 15 - 8:13 AM" },
-  { id: 22, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Always Look On The Bright Side Of Life", date: "OCT 15 - 8:13 AM" },
-  { id: 23, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 24, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 25, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 26, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
-  { id: 27, name: "Jullu Jalal", sentiment: "Negative" as "Negative", message: "Get Best Advertiser In Your Side Pocket", date: "OCT 15 - 8:13 AM" },
+const feedbackSampleData: Feedback[] = [
+  {
+    id: "1",
+    bookingId: "1",
+    helperRating: 0,
+    title: "",
+    description: "",
+    createdAt: "",
+  },
+  {
+    id: "2",
+    bookingId: "2",
+    helperRating: 0,
+    title: "",
+    description: "",
+    createdAt: "",
+  },
+  {
+    id: "3",
+    bookingId: "2",
+    helperRating: 0,
+    title: "",
+    description: "",
+    createdAt: "",
+  },
+  {
+    id: "4",
+    bookingId: "2",
+    helperRating: 0,
+    title: "",
+    description: "",
+    createdAt: "",
+  },
+  {
+    id: "5",
+    bookingId: "2",
+    helperRating: 0,
+    title: "",
+    description: "",
+    createdAt: "",
+  },
 ];
 
-export default function FeedbackTable() {
-
+export default function FeedbackTable({ role }: { role: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Name");
+  const [checkedRows, setCheckedRows] = useState<string[]>([]);
+
+  const [feedbackData, setFeedbackData] =
+    useState<Feedback[]>(feedbackSampleData);
+
+  const itemsPerPage = 10;
+
+  const {
+    getAllFeedbacks,
+    useDeleteFeedback,
+    queryClient,
+    getFeedBackOfCurrentUser,
+  } = useFeedback(currentPage, itemsPerPage);
+
+  const { data, error, isPending } =
+    role == "Admin" ? getAllFeedbacks : getFeedBackOfCurrentUser;
+
+  const mutation = useDeleteFeedback();
+
+  useEffect(() => {
+    console.log(data?.data?.results);
+
+    if (data) {
+      setFeedbackData(data.data?.results || feedbackSampleData);
+    } else {
+      console.error(error);
+    }
+  }, [data, error]);
+
+  const handleCheckboxToggle = (id: string, isChecked: boolean) => {
+    setCheckedRows((prevCheckedRows) =>
+      isChecked
+        ? [...prevCheckedRows, id]
+        : prevCheckedRows.filter((rowId) => rowId !== id)
+    );
+  };
+  const handleDeleteFeedback = async () => {
+    if (checkedRows.length === 0) {
+      toast.error("Please select feedback to delete");
+    } else {
+      try {
+        await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
+        toast.success("Delete feedback successfully!");
+        if (role == "Admin") {
+          queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+        }
+        queryClient.invalidateQueries({ queryKey: ["feedbacks/customer"] });
+      } catch (error) {
+        toast.error("Failed to delete some feedback");
+        console.error(error);
+      }
+    }
+  };
 
   // filter
-  const applyFilter = (data: any) => {
+  const applyFilter = (data: Feedback[]) => {
     switch (filter) {
-      case "Name":
-        return [...data].sort(
-          (a, b) =>
-            b.completedJobs / b.totalJobs - a.completedJobs / a.totalJobs
+      case "Positive":
+        return [...data].sort((a) =>
+          a.helperRating != null && a.helperRating > 3
+            ? -1
+            : a.helperRating != null && a.helperRating < 3
+            ? 0
+            : 1
         );
-      case "Status":
-        return [...data].sort(
-          (a, b) =>
-            a.completedJobs / a.totalJobs - b.completedJobs / b.totalJobs
+      case "Negative":
+        return [...data].sort((a) =>
+          a.helperRating != null && a.helperRating < 3
+            ? -1
+            : a.helperRating != null && a.helperRating > 3
+            ? 0
+            : 1
         );
-      case "Date":
-        return [...data].sort(
-          (a, b) =>
-            a.completedJobs / a.totalJobs - b.completedJobs / b.totalJobs
+      case "Neutral":
+        return [...data].sort((a) =>
+          a.helperRating != null && a.helperRating === 3 ? -1 : 1
         );
+      case "Recent":
+        return [...data].sort((a, b) =>
+          new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
+        );
+      case "Oldest":
+        return [...data].sort((a, b) =>
+          new Date(a.createdAt) < new Date(b.createdAt) ? -1 : 1
+        );
+
       default:
         return data;
     }
   };
 
   // search by
-  const filteredData = feedbackData.filter((Feedback) => {
-    switch (searchBy) {
-      case "Name":
-        return Feedback.name.toLowerCase().includes(searchTerm.toLowerCase());
-      case "Sentiment":
-        const check = Feedback.sentiment.toLowerCase().includes(searchTerm.toLowerCase());
-        console.log(check);
-        return Feedback.sentiment
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-      case "Message":
-        return Feedback.message.toLowerCase().includes(searchTerm.toLowerCase());
-      case "Date":
-        return Feedback.date.toLowerCase().includes(searchTerm.toLowerCase());
-      default:
-        return Feedback.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-  });
+  const filteredData =
+    feedbackData != undefined
+      ? feedbackData.filter((Feedback) => {
+          switch (searchBy) {
+            case "Title":
+              return Feedback.title
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            case "Date":
+              return Feedback.createdAt
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            default:
+              return Feedback.createdAt
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+          }
+        })
+      : feedbackSampleData;
 
   const finalData = applyFilter(filteredData);
-
-  // pagination
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const currentData = finalData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -103,34 +176,70 @@ export default function FeedbackTable() {
   );
 
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
+    if (newPage > 0 && data && newPage <= (data.data?.totalPages ?? 1))
+      setCurrentPage(newPage);
   };
 
   return (
     <>
-      <SearchBarAndFilter
-        setSearchTerm={setSearchTerm}
-        setSearchBy={setSearchBy}
-        onFilterChange={setFilter}
-      />
+      <div className="flex justify-between">
+        <SearchBarAndFilter
+          setSearchTerm={setSearchTerm}
+          setSearchBy={setSearchBy}
+          onFilterChange={setFilter}
+        />
+        <button
+          onClick={handleDeleteFeedback}
+          className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5"
+        >
+          <Image
+            src="/images/Dashboard/Feedback/Trash.svg"
+            alt=""
+            width={18}
+            height={18}
+          />
+          <p>Delete</p>
+        </button>
+      </div>
 
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
           <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-neutral-700 max-md:max-w-full">
-            {currentData.map((feedback: Feedback, index: any) => (
-              <FeedbackRow key={feedback.id} {...feedback} isEven={index % 2 === 0} />
-            ))}
+            {feedbackData == null || feedbackData.length === 0 ? (
+              <div className="flex justify-center items-center w-full bg-white">
+                {role == "Admin"
+                  ? "We have no feedback"
+                  : "This customer has no feedback"}
+              </div>
+            ) : (
+              currentData.map((feedback: Feedback, index: any) => (
+                <FeedbackRow
+                  key={feedback.id}
+                  {...feedback}
+                  isEven={index % 2 === 0}
+                  sentiment={
+                    feedback.helperRating != null && feedback.helperRating > 3
+                      ? "Positive"
+                      : feedback.helperRating != null &&
+                        feedback.helperRating < 3
+                      ? "Negative"
+                      : "Neutral"
+                  }
+                  isPending={isPending}
+                  onCheckboxToggle={handleCheckboxToggle}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
 
       <Pagination
-        currentPage={currentPage}
-        totalItems={filteredData.length}
-        totalPages={totalPages}
-        onPageChange={handlePageChange} />
-
+        currentPage={data?.data?.currentPage || 1}
+        totalItems={data?.data?.totalItems || 0}
+        totalPages={data?.data?.totalPages || 1}
+        onPageChange={handlePageChange}
+      />
     </>
-
   );
-};
+}

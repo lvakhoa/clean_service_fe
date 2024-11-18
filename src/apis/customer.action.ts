@@ -1,18 +1,29 @@
 import { cleanApi } from "@/services/HttpClient";
-import { AxiosRequestConfig } from "axios";
-import { partialCustomerSchema } from "@/schemas/customer";
+import { Customer } from "@/types/customer";
 
 const customerAction = {
-  async getAllCustomer() {
-    const res = await cleanApi.get("/manage/customers");
+  async getAllCustomer(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Customer>>
+    >("/manage/customers", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async getCustomerById(id: string) {
-    const res = await cleanApi.get(`/manage/customers/${id}`);
+    const res = await cleanApi.get<CleanSuccessResponseWrapper>(
+      `/manage/customers/${id}`
+    );
     return res.data;
   },
   async updateCustomer(id: string, data: any) {
-    const res = await cleanApi.patch(`/manage/users/${id}`, data);
+    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
+      `/manage/users/${id}`,
+      data
+    );
     return res.data;
   },
   async getBookingByCustomerId(id: string) {

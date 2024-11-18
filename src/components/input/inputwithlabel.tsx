@@ -17,6 +17,8 @@ interface InputWithLabelProps {
   inputId: string;
   inputWidth?: string;
   options?: string[];
+  defaulValue?: string;
+  setValue?: (value: string) => void;
   defaultValue?: string;
   plusPX?: string;
   onChange?: (
@@ -33,12 +35,17 @@ export function InputWithLabel({
   inputId,
   inputWidth = "w-full",
   options = [],
+  setValue,
   defaultValue,
   plusPX,
   onChange,
   onValueChange,
   error,
 }: InputWithLabelProps) {
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue && setValue(e.target.value);
+  };
+
   return (
     <div className="grid max-w-max items-center gap-1.5">
       <Label
