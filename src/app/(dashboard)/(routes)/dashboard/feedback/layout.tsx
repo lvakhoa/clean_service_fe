@@ -1,4 +1,6 @@
 import { verifySession } from "@/helpers/verifySession";
+import { Gender } from "@/types/enum";
+import { UserType } from "@/types/enum";
 
 export default async function Layout({
   customer,
