@@ -13,7 +13,7 @@ const feedbackAction = {
     return res.data;
   },
   async getFeedbackById(id: string) {
-    const res = await cleanApi.get<CleanSuccessResponseWrapper>(
+    const res = await cleanApi.get<CleanSuccessResponseWrapper<Feedback>>(
       `/manage/feedbacks/${id}`
     );
     return res.data;

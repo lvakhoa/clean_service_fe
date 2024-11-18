@@ -13,7 +13,7 @@ const refundAction = {
     return res.data;
   },
   async getRefundById(id: string) {
-    const res = await cleanApi.get<CleanSuccessResponseWrapper>(
+    const res = await cleanApi.get<CleanSuccessResponseWrapper<Refund>>(
       `/manage/refunds/${id}`
     );
     return res.data;

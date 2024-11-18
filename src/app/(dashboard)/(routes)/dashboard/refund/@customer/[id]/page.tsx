@@ -41,7 +41,7 @@ const RefundDetail = () => {
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && data.data) {
       setRefundData(data.data);
     } else {
       console.log(error);

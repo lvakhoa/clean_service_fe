@@ -36,13 +36,17 @@ const FeedbackDetail = () => {
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && data.data) {
       setFeedbackData(data.data);
     } else {
       console.log(error);
     }
 
-    if (data != null && data.data.helperRating != undefined) {
+    if (
+      data != null &&
+      data.data != undefined &&
+      data.data.helperRating != undefined
+    ) {
       if (data.data.helperRating > 3) {
         setSentiment("Positive");
         setSentimentColor("bg-[#ccf0eb] text-[#00b69b]");
