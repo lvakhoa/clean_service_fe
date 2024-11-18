@@ -1,13 +1,11 @@
-const validateObject = (
-  obj: DeepPartial<Record<string, any>>
-): Record<string, any> | undefined => {
-  const dict = Object.entries(obj);
-  if (dict.every((item) => !!item[1])) {
-    // Safe cast Partial<T> to T
-    return Object.assign(obj, {
-      value1: obj.value1,
-      value2: obj.value2,
-    });
-  }
-  return undefined;
+import { z } from 'zod';
+
+const validateObject = <T>(schema: z.ZodType<T>, obj: DeepPartial<T>): T => {
+  const parse = schema.safeParse(obj);
+  if (parse.success) return parse.data;
+  throw new Error('Zod parse error', {
+    cause: parse.error,
+  });
 };
+
+export default validateObject;

@@ -1,6 +1,8 @@
 import bookingAction from '@/apis/booking.action';
 import { CreateBookingRequest } from '@/types/booking';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 import * as zustand from 'zustand';
 
 type State = {
@@ -18,7 +20,20 @@ export const useBookingStore = zustand.create<State & Action>((set) => ({
 }));
 
 export const useCreateBooking = () =>
+  useMutation<
+    CreateBookingResponse | undefined,
+    AxiosError<CleanErrorResponseWrapper, any>,
+    CreateBookingRequest
+  >({
+    mutationFn: (booking) => bookingAction.createBooking(booking),
+    onSuccess(data, variables, context) {
+      if (data?.paymentLink) {
+        window.location.href = data?.paymentLink;
+      }
+    },
+  });
+
+export const useCancelPayment = () =>
   useMutation({
-    mutationFn: (booking: CreateBookingRequest) =>
-      bookingAction.createBooking(booking),
+    mutationFn: (orderCode: number) => bookingAction.cancelPayment(orderCode),
   });

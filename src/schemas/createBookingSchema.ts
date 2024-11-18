@@ -9,7 +9,7 @@ const createBookingSchema: z.ZodType<CreateBookingRequest> = z.object({
   paymentMethod: z.string().optional(),
   contractContent: z.string(),
   bookingDetails: z.object({
-    durationPriceId: z.string(),
+    durationPriceId: z.string().optional(),
     bedroomCount: z.number(),
     bathroomCount: z.number(),
     kitchenCount: z.number(),
@@ -17,3 +17,5 @@ const createBookingSchema: z.ZodType<CreateBookingRequest> = z.object({
     specialRequirements: z.string().optional(),
   }),
 });
+
+export default createBookingSchema;

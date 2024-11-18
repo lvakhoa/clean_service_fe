@@ -6,8 +6,15 @@ import { InputWithLabel } from '@/components/input/inputwithlabel';
 import { MultiLineInput } from '@/components/input/multiplelineinput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { EXCEPTION_CODE } from '@/configs';
+import validateObject from '@/helpers/validateObject';
 import { useBookingStore, useCreateBooking } from '@/hooks/useBooking';
-import React, { useState } from 'react';
+import createBookingSchema from '@/schemas/createBookingSchema';
+import { Spinner } from '@material-tailwind/react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import ErrorPopup from '../error-popup/error-popup';
 
 const getInOpitonsButtons = [
   { id: 1, contentText: 'Someone in Home' },
@@ -43,6 +50,8 @@ const yesNoOptionsButtons = [
 ];
 
 const Booking4 = () => {
+  const router = useRouter();
+
   const booking = useBookingStore((state) => state.booking);
   const setBooking = useBookingStore((state) => state.setBooking);
 
@@ -54,7 +63,7 @@ const Booking4 = () => {
   const [notes, setNotes] = useState('');
   const [contract, setContract] = useState('');
 
-  const { mutate: createBooking } = useCreateBooking();
+  const { mutate: createBooking, isPending, error } = useCreateBooking();
 
   const handleOrder = () => {
     setBooking({
@@ -62,14 +71,38 @@ const Booking4 = () => {
       location: `Location: ${location}, APT number: ${aptNum}`,
       contractContent: contract,
       bookingDetails: {
+        ...booking?.bookingDetails,
         specialRequirements: notes,
       },
     });
-
-    // if(booking !== n) {
-    //   createBooking(booking);
-    // }
   };
+
+  useEffect(() => {
+    if (
+      booking &&
+      booking.location &&
+      booking.contractContent &&
+      booking.bookingDetails?.specialRequirements
+    ) {
+      try {
+        const validatedBooking = validateObject(createBookingSchema, booking);
+        createBooking(validatedBooking);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, [booking, createBooking]);
+
+  const [openErrorPopup, setOpenErrorPopup] = useState(false);
+  useEffect(() => {
+    if (
+      error &&
+      error.response?.data.exceptionCode === EXCEPTION_CODE.NoHelperAvailable
+    ) {
+      setOpenErrorPopup(true);
+      console.log('Popup open');
+    }
+  }, [error]);
 
   return (
     <div>
@@ -200,15 +233,24 @@ const Booking4 = () => {
 
             <div className="flex justify-center items-center mt-[55px] pb-[50px]">
               <Button
+                disabled={isPending}
                 onClick={handleOrder}
                 className="md:w-[12.5vw] h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
               >
+                {isPending && (
+                  <Spinner
+                    className="size-4"
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  />
+                )}
                 Place order
               </Button>
             </div>
           </div>
         </div>
       </div>
+      <ErrorPopup isOpen={openErrorPopup} />
     </div>
   );
 };

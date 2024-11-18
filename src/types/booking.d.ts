@@ -10,7 +10,7 @@ type CreateBookingRequest = {
   paymentMethod?: string;
   contractContent: string;
   bookingDetails: {
-    durationPriceId: string;
+    durationPriceId?: string;
     bedroomCount: number;
     bathroomCount: number;
     kitchenCount: number;
