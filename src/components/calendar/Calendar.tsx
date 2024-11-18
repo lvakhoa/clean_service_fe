@@ -1,3 +1,4 @@
+import { SelectedDay } from '@/types/booking';
 import React, { useState } from 'react';
 
 type CalendarProps = {
@@ -64,22 +65,20 @@ const Calendar: React.FC<CalendarProps> = ({
           <div
             key={day}
             onClick={() => handleDayClick(day)}
-            className={`w-[132px] h-[55px] p-2 text-center rounded-[10px] border-2 cursor-pointer font-Averta-Semibold pt-[10px] ${
-              selectedDay?.day === day &&
-              selectedDay?.month === month &&
-              selectedDay?.year === year
+            className={`w-[132px] h-[55px] p-2 text-center rounded-[10px] border-2 cursor-pointer font-Averta-Semibold pt-[10px] ${selectedDay?.day === day &&
+                selectedDay?.month === month &&
+                selectedDay?.year === year
                 ? 'border-blue-600 shadow-lg'
                 : 'border-[#DADDE1]'
-            } ${
-              (isCurrentMonth && currentDay !== null && day < currentDay) ||
-              isPastMonth
+              } ${(isCurrentMonth && currentDay !== null && day < currentDay) ||
+                isPastMonth
                 ? 'text-gray-400 cursor-not-allowed' // Ngày của các tháng trước và ngày đã qua trong tháng hiện tại không chọn được
                 : 'text-[#5e6976]'
-            }`}
+              }`}
             style={{
               pointerEvents:
                 (isCurrentMonth && currentDay !== null && day < currentDay) ||
-                isPastMonth
+                  isPastMonth
                   ? 'none'
                   : 'auto',
             }}

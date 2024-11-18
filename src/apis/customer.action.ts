@@ -1,4 +1,5 @@
 import { cleanApi } from "@/services/HttpClient";
+import { Booking } from "@/types/booking";
 import { Customer } from "@/types/customer";
 
 const customerAction = {
@@ -26,6 +27,17 @@ const customerAction = {
     );
     return res.data;
   },
+  async getCurrentCustomerBooking(page?: number, limit?: number) {
+    const res = await cleanApi.get<CleanSuccessResponseWrapper<
+      PaginationResponseWrapper<Booking>>
+    >("/scheduler/current", {
+      params: {
+        page,
+        limit,
+      },
+    })
+    return res.data
+  }
 };
 
 export default customerAction;

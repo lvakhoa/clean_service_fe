@@ -17,3 +17,11 @@ export enum Gender {
   Female = "Female",
   Other = "Other",
 }
+
+export enum BookingStatus {
+  Pending = "Pending",
+  Confirmed = "Confirmed",
+  InProgress = "InProgress",
+  Completed = "Completed",
+  Canceled = "Canceled",
+}

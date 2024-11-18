@@ -76,7 +76,7 @@ const EmployeeInfo = ({ params }: Props) => {
                 identityCard: helper.identityCard || "",
             })
             setHelperData(helper)
-            console.log("Helper Data: ", helper)
+            //console.log("Helper Data: ", helper)
         }
     }, [data, reset])
 
@@ -92,7 +92,7 @@ const EmployeeInfo = ({ params }: Props) => {
 
     const onSubmit = async (formData: FormData) => {
         try {
-            console.log("FormData: ", formData)
+            //console.log("FormData: ", formData)
             const { experienceDescription, ...userDto } = formData
             const helperDto = { experienceDescription }
 

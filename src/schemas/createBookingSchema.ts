@@ -1,3 +1,4 @@
+import { CreateBookingRequest } from '@/types/booking';
 import { z } from 'zod';
 
 const createBookingSchema: z.ZodType<CreateBookingRequest> = z.object({
