@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 import { toast } from "react-toastify";
 import getFirstNWords from "@/helpers/getFirstNWords";
+import { Label } from "@/components/ui/label";
 
 const RefundDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -64,13 +65,13 @@ const RefundDetail = () => {
           id,
           data: { status: "Refunded" },
         });
-        toast.success("Refund approved successfully!");
+        toast.success("The refund has been approved successfully.");
       } else if (status === "Declined") {
         await updateRefundMutation.mutateAsync({
           id,
           data: { status: "Declined" },
         });
-        toast.success("Refund rejected successfully!");
+        toast.success("The refund was declined successfully.");
       } else {
         throw new Error("Invalid refund status");
       }
@@ -122,12 +123,9 @@ const RefundDetail = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button
-                    disabled
-                    className="text-[#12153A] bg-[#6896D1]/20 hover:bg-[#6896D1]/40"
-                  >
+                  <Label className="text-[#12153A] bg-[#6896D1]/20 hover:bg-[#6896D1]/40">
                     {refundData.status}
-                  </Button>
+                  </Label>
                 )}
               </div>
             )}

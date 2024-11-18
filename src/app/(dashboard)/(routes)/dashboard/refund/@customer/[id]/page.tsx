@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 import { toast } from "react-toastify";
 import getFirstNWords from "@/helpers/getFirstNWords";
+import { Label } from "@/components/ui/label";
 
 const RefundDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,32 +58,6 @@ const RefundDetail = () => {
     },
   ];
 
-  const handleRefund = async (status: string) => {
-    try {
-      if (status === "Refunded") {
-        await updateRefundMutation.mutateAsync({
-          id,
-          data: { status: "Refunded" },
-        });
-        toast.success("Refund approved successfully!");
-      } else if (status === "Declined") {
-        await updateRefundMutation.mutateAsync({
-          id,
-          data: { status: "Declined" },
-        });
-        toast.success("Refund rejected successfully!");
-      } else {
-        throw new Error("Invalid refund status");
-      }
-      queryClient.invalidateQueries({ queryKey: ["refund", id] });
-    } catch (error: any) {
-      console.error("Error handling refund:", error);
-      toast.error(
-        `Failed to update refund: ${error.message || "Unknown error"}`
-      );
-    }
-  };
-
   return (
     <div className="flex flex-col justify-center mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
       <div className="flex flex-col w-full rounded max-md:max-w-full pb-6">
@@ -109,26 +84,16 @@ const RefundDetail = () => {
               <Skeleton className="h-[50px] w-[100px]" />
             ) : (
               <div className="flex gap-2">
-                {refundData.status === "Pending" ? (
-                  <>
-                    <Button onClick={() => handleRefund("Refunded")}>
-                      Refund
-                    </Button>
-                    <Button
-                      onClick={() => handleRefund("Declined")}
-                      variant={"destructive"}
-                    >
-                      Decline
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    disabled
-                    className="text-[#12153A] bg-[#6896D1]/20 hover:bg-[#6896D1]/40"
-                  >
-                    {refundData.status}
-                  </Button>
-                )}
+                <Label
+                  className={`
+                    ${
+                      refundData.status === "Pending"
+                        ? "bg-[#FFD154]/20 text-[#FF9500]"
+                        : "text-[#12153A] bg-[#6896D1]/20 "
+                    }`}
+                >
+                  {refundData.status}
+                </Label>
               </div>
             )}
 
