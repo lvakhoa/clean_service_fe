@@ -48,8 +48,7 @@ const CustomerInfo = () => {
 
   useEffect(() => {
     if (queryData) {
-      const customerData: Customer = { ...queryData.data };
-      setCustomerData(customerData as Customer);
+      setCustomerData(queryData.data || sampleData);
       reset();
     } else {
       console.log(queryError);
