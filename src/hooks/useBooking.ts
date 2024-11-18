@@ -1,4 +1,5 @@
 import bookingAction from '@/apis/booking.action';
+import { CreateBookingRequest } from '@/types/booking';
 import { useMutation } from '@tanstack/react-query';
 import * as zustand from 'zustand';
 
