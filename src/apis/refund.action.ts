@@ -13,7 +13,9 @@ const refundAction = {
     return res.data;
   },
   async getRefundById(id: string) {
-    const res = await cleanApi.get(`/manage/refunds/${id}`);
+    const res = await cleanApi.get<CleanSuccessResponseWrapper>(
+      `/manage/refunds/${id}`
+    );
     return res.data;
   },
   async getRefundOfCurrentUser(page?: number, limit?: number) {
@@ -28,11 +30,16 @@ const refundAction = {
     return res.data;
   },
   async deleteRefund(id: string) {
-    const res = await cleanApi.delete(`/manage/refunds/${id}`);
+    const res = await cleanApi.delete<CleanSuccessResponseWrapper>(
+      `/manage/refunds/${id}`
+    );
     return res.data;
   },
   async updateRefund(id: string, data: any) {
-    const res = await cleanApi.put(`/manage/refunds/${id}`, data);
+    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
+      `/manage/refunds/${id}`,
+      data
+    );
     return res;
   },
 };

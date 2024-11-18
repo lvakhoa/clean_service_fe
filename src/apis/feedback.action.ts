@@ -13,7 +13,9 @@ const feedbackAction = {
     return res.data;
   },
   async getFeedbackById(id: string) {
-    const res = await cleanApi.get(`/manage/feedbacks/${id}`);
+    const res = await cleanApi.get<CleanSuccessResponseWrapper>(
+      `/manage/feedbacks/${id}`
+    );
     return res.data;
   },
   async getFeedBackOfCurrentUser(page?: number, limit?: number) {
@@ -28,7 +30,9 @@ const feedbackAction = {
     return res.data;
   },
   async deleteFeedback(id: string) {
-    const res = await cleanApi.delete(`/manage/feedbacks/${id}`);
+    const res = await cleanApi.delete<CleanSuccessResponseWrapper>(
+      `/manage/feedbacks/${id}`
+    );
     return res.data;
   },
 };
