@@ -1,20 +1,30 @@
 import { cleanApi } from "@/services/HttpClient";
 
 const refundAction = {
-  async getAllRefunds() {
-    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Refund>>(
-      "/manage/refunds"
-    );
+  async getAllRefunds(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Refund>>
+    >("/manage/refunds", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async getRefundById(id: string) {
     const res = await cleanApi.get(`/manage/refunds/${id}`);
     return res.data;
   },
-  async getRefundOfCurrentUser() {
-    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Refund>>(
-      "/manage/refunds/customer"
-    );
+  async getRefundOfCurrentUser(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Refund>>
+    >("/manage/refunds/customer", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async deleteRefund(id: string) {

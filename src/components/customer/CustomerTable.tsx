@@ -5,7 +5,7 @@ import SearhBar from "./SearchBar";
 import CustomerRow from "./CustomerRow";
 import { UserType, Gender } from "@/types/enum";
 import { Customer } from "@/types/customer";
-import { useCustomer } from "@/hooks/customer/useCustomer";
+import { useCustomer } from "@/hooks/useCustomer";
 
 const columns = [
   { header: "ID", className: "w-[8%] hidden md:table-cell" },

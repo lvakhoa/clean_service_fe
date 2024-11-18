@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import FeedbackRow from "./FeedbackRow";
 import Pagination from "./Pagination";
 import SearchBarAndFilter from "./SearchBarAndFilter";
-import { useFeedback } from "@/hooks/feedback/useFeedback";
+import { useFeedback } from "@/hooks/useFeedback";
 import Image from "next/image";
 import { toast } from "react-toastify";
 
@@ -61,12 +61,14 @@ export default function FeedbackTable({ role }: { role: string }) {
   const [feedbackData, setFeedbackData] =
     useState<Feedback[]>(feedbackSampleData);
 
+  const itemsPerPage = 10;
+
   const {
     getAllFeedbacks,
     useDeleteFeedback,
     queryClient,
     getFeedBackOfCurrentUser,
-  } = useFeedback();
+  } = useFeedback(currentPage, itemsPerPage);
 
   const { data, error, isPending } =
     role == "Admin" ? getAllFeedbacks : getFeedBackOfCurrentUser;
@@ -74,8 +76,10 @@ export default function FeedbackTable({ role }: { role: string }) {
   const mutation = useDeleteFeedback();
 
   useEffect(() => {
+    console.log(data?.data?.results);
+
     if (data) {
-      setFeedbackData(data.data.results);
+      setFeedbackData(data.data?.results || feedbackSampleData);
     } else {
       console.error(error);
     }
@@ -166,15 +170,13 @@ export default function FeedbackTable({ role }: { role: string }) {
 
   const finalData = applyFilter(filteredData);
 
-  const itemsPerPage = 10;
-
   const currentData = finalData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= (data?.data.totalPages ?? 1))
+    if (newPage > 0 && data && newPage <= (data.data?.totalPages ?? 1))
       setCurrentPage(newPage);
   };
 
@@ -203,7 +205,7 @@ export default function FeedbackTable({ role }: { role: string }) {
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
         <div className="flex flex-col w-full rounded max-md:max-w-full">
           <div className="flex overflow-hidden flex-col justify-center w-full rounded bg-neutral-700 max-md:max-w-full">
-            {feedbackData.length === 0 ? (
+            {feedbackData == null || feedbackData.length === 0 ? (
               <div className="flex justify-center items-center w-full bg-white">
                 {role == "Admin"
                   ? "We have no feedback"
@@ -233,9 +235,9 @@ export default function FeedbackTable({ role }: { role: string }) {
       </div>
 
       <Pagination
-        currentPage={data?.data.currentPage || 1}
-        totalItems={data?.data.totalItems || 0}
-        totalPages={data?.data.totalPages || 1}
+        currentPage={data?.data?.currentPage || 1}
+        totalItems={data?.data?.totalItems || 0}
+        totalPages={data?.data?.totalPages || 1}
         onPageChange={handlePageChange}
       />
     </>

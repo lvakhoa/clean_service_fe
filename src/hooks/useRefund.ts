@@ -3,12 +3,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import refundAction from "@/apis/refund.action";
 
-export const useRefund = () => {
+export const useRefund = (page?: number, limit?: number) => {
   const queryClient = useQueryClient();
 
   const getAllRefunds = useQuery({
     queryKey: ["refunds"],
-    queryFn: refundAction.getAllRefunds,
+    queryFn: () => {
+      return refundAction.getAllRefunds(page, limit);
+    },
   });
 
   const useGetRefundById = (id: string) =>
@@ -21,7 +23,9 @@ export const useRefund = () => {
 
   const getRefundOfCurrentUser = useQuery({
     queryKey: ["refunds/customer"],
-    queryFn: refundAction.getRefundOfCurrentUser,
+    queryFn: () => {
+      return refundAction.getRefundOfCurrentUser(page, limit);
+    },
   });
 
   const deleteRefundMutation = useMutation({

@@ -6,7 +6,7 @@ import { GoArrowLeft } from "react-icons/go";
 import { useParams } from "next/navigation";
 import { LuArrowLeft } from "react-icons/lu";
 import Image from "next/image";
-import { useFeedback } from "@/hooks/feedback/useFeedback";
+import { useFeedback } from "@/hooks/useFeedback";
 import { useState } from "react";
 import { format, formatDistance, isToday, isYesterday } from "date-fns";
 import { set } from "zod";

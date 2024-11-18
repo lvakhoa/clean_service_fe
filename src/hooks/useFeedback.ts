@@ -3,13 +3,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import feedbackAction from "@/apis/feedback.action";
 import { use } from "react";
+import { number } from "zod";
 
-export const useFeedback = () => {
+export const useFeedback = (page?: number, limit?: number) => {
   const queryClient = useQueryClient();
 
   const getAllFeedbacks = useQuery({
     queryKey: ["feedbacks"],
-    queryFn: feedbackAction.getAllFeedbacks,
+    queryFn: () => {
+      return feedbackAction.getAllFeedbacks(page, limit);
+    },
   });
 
   const useGetFeedbackById = (id: string) =>
@@ -29,7 +32,9 @@ export const useFeedback = () => {
 
   const getFeedBackOfCurrentUser = useQuery({
     queryKey: ["feedbacks/customer"],
-    queryFn: feedbackAction.getFeedBackOfCurrentUser,
+    queryFn: () => {
+      return feedbackAction.getFeedBackOfCurrentUser(page, limit);
+    },
   });
 
   return {

@@ -1,4 +1,5 @@
 import { verifySession } from "@/helpers/verifySession";
+import { UserType } from "@/types/enum";
 
 export default async function Layout({
   customer,
@@ -8,5 +9,5 @@ export default async function Layout({
   customer: React.ReactNode;
 }) {
   const role = await verifySession();
-  return <>{role.role?.toString() == "Admin" ? admin : customer}</>;
+  return <>{role.role == UserType.Admin ? admin : customer}</>;
 }

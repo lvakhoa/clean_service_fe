@@ -1,20 +1,30 @@
 import { cleanApi } from "@/services/HttpClient";
 
 const feedbackAction = {
-  async getAllFeedbacks() {
-    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Feedback>>(
-      "/manage/feedbacks"
-    );
+  async getAllFeedbacks(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Feedback>>
+    >("/manage/feedbacks", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async getFeedbackById(id: string) {
     const res = await cleanApi.get(`/manage/feedbacks/${id}`);
     return res.data;
   },
-  async getFeedBackOfCurrentUser() {
-    const res = await cleanApi.get<CleanSuccessGetAllResponseWrapper<Feedback>>(
-      "/manage/feedbacks/customer"
-    );
+  async getFeedBackOfCurrentUser(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Feedback>>
+    >("/manage/feedbacks/customer", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async deleteFeedback(id: string) {

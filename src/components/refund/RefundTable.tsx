@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import RefundRow from "./RefundRow";
 import Pagination from "./Pagination";
 import SearchBarAndFilter from "./SearchBarAndFilter";
-import { useRefund } from "@/hooks/refund/useRefund";
+import { useRefund } from "@/hooks/useRefund";
 import { toast } from "react-toastify";
 import Image from "next/image";
 
@@ -90,7 +90,7 @@ export default function RefundTable({ role }: { role: string }) {
 
   useEffect(() => {
     if (data) {
-      setRefundData(data.data.results);
+      setRefundData(data.data?.results || refundSampleData);
     } else {
       console.error(error);
     }
@@ -184,7 +184,7 @@ export default function RefundTable({ role }: { role: string }) {
   }, [currentData]);
 
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= (data?.data.totalPages ?? 1))
+    if (newPage > 0 && newPage <= (data?.data?.totalPages ?? 1))
       setCurrentPage(newPage);
   };
 
@@ -235,9 +235,9 @@ export default function RefundTable({ role }: { role: string }) {
       </div>
 
       <Pagination
-        currentPage={data?.data.currentPage || 1}
-        totalItems={data?.data.totalItems || 0}
-        totalPages={data?.data.totalPages || 1}
+        currentPage={data?.data?.currentPage || 1}
+        totalItems={data?.data?.totalItems || 0}
+        totalPages={data?.data?.totalPages || 1}
         onPageChange={handlePageChange}
       />
     </>

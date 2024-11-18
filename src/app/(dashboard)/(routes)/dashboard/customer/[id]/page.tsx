@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { partialCustomerSchema } from "@/schemas/customer";
 import { Skeleton } from "@/components/skeleton/skeleton";
-import { useCustomer } from "@/hooks/customer/useCustomer";
+import { useCustomer } from "@/hooks/useCustomer";
 
 const sampleData: Customer = {
   id: "-",
