@@ -5,7 +5,7 @@ import SearhBar from "./SearchBar";
 import CustomerRow from "./CustomerRow";
 import { UserType, Gender } from "@/types/enum";
 import { Customer } from "@/types/customer";
-import { useCustomer } from "@/hooks/customer/useCustomer";
+import { useCustomer } from "@/hooks/useCustomer";
 
 const columns = [
   { header: "ID", className: "w-[8%] hidden md:table-cell" },
@@ -17,6 +17,7 @@ const columns = [
 ];
 
 const CustomerTable = () => {
+  const itemsPerPage = 10;
   const customersSampleData: Customer[] = [
     {
       id: "00001",
@@ -130,19 +131,18 @@ const CustomerTable = () => {
     },
   ];
 
-  const { getAllCustomers } = useCustomer();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchBy, setSearchBy] = useState("Name");
   const [customersData, setCustomerData] =
     useState<Customer[]>(customersSampleData);
 
+  const { getAllCustomers } = useCustomer(currentPage, itemsPerPage);
   const { isLoading, data, error } = getAllCustomers;
 
   useEffect(() => {
     if (data) {
-      setCustomerData(data.data.results as Customer[]);
+      setCustomerData(data.data?.results || customersSampleData);
     } else if (error) {
       console.log(error);
     }
@@ -169,7 +169,7 @@ const CustomerTable = () => {
   });
 
   // Pagination
-  const itemsPerPage = 10;
+
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -213,9 +213,9 @@ const CustomerTable = () => {
       </div>
 
       <Pagination
-        currentPage={currentPage}
-        totalItems={filteredData.length}
-        totalPages={totalPages}
+        currentPage={data?.data?.currentPage || currentPage}
+        totalItems={data?.data?.totalItems || 0}
+        totalPages={data?.data?.totalPages || 1}
         onPageChange={handlePageChange}
       />
     </>

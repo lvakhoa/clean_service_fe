@@ -1,13 +1,7 @@
-import React from 'react'
+import React from 'react';
 
-const BookingLayout = (props: {
-    children: React.ReactNode
-}) => {
-    return (
-        <div>
-            {props.children}
-        </div>
-    )
-}
+const BookingLayout = (props: { children: React.ReactNode }) => {
+  return <div>{props.children}</div>;
+};
 
-export default BookingLayout
+export default BookingLayout;

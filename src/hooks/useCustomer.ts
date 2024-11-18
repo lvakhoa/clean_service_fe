@@ -3,10 +3,12 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import customerAction from "@/apis/customer.action";
 
-export const useCustomer = () => {
+export const useCustomer = (page?: number, limit?: number) => {
   const getAllCustomers = useQuery({
     queryKey: ["customers"],
-    queryFn: customerAction.getAllCustomer,
+    queryFn: () => {
+      return customerAction.getAllCustomer(page, limit);
+    },
   });
 
   const useGetCustomerById = (id: string) =>
