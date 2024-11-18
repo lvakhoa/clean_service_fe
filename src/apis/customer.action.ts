@@ -1,4 +1,5 @@
 import { cleanApi } from "@/services/HttpClient";
+import { Booking } from "@/types/booking";
 import { Customer } from "@/types/customer";
 
 const customerAction = {
@@ -26,15 +27,16 @@ const customerAction = {
     );
     return res.data;
   },
-  async getBookingByCustomerId(id: string) {
-    const res = await cleanApi.get(`/scheduler?customerId=${id}`);
-    //console.log("Bookings", res.data.data.results);
-    return res.data.data.results;
-  },
-  async getCurrentCustomerBooking() {
-    const res = await cleanApi.get("/scheduler/current")
-    console.log("Current Booking", res.data)
-    return res.data.data.results
+  async getCurrentCustomerBooking(page?: number, limit?: number) {
+    const res = await cleanApi.get<CleanSuccessResponseWrapper<
+      PaginationResponseWrapper<Booking>>
+    >("/scheduler/current", {
+      params: {
+        page,
+        limit,
+      },
+    })
+    return res.data
   }
 };
 

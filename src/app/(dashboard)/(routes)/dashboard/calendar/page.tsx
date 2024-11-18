@@ -1,5 +1,6 @@
 "use client";
 import customerAction from "@/apis/customer.action";
+import { useScheduler } from "@/hooks/useScheduler";
 import { useQuery } from "@tanstack/react-query";
 import React, { use, useEffect, useState } from "react";
 import { text } from "stream/consumers";
@@ -60,10 +61,14 @@ const tasks = [
 
 const CalendarPage = () => {
 
-    const { data, error } = useQuery({
-        queryKey: ['getCurrentCustomerBooking'],
-        queryFn: () => customerAction.getCurrentCustomerBooking()
-    })
+    // const { data, error } = useQuery({
+    //     queryKey: ['getCurrentCustomerBooking'],
+    //     queryFn: () => customerAction.getCurrentCustomerBooking()
+    // })
+
+    const { getCurrentCustomerBooking, queryClient } = useScheduler()
+
+    const { data, error, isPending } = getCurrentCustomerBooking
 
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -74,8 +79,10 @@ const CalendarPage = () => {
     const [booking, setBooking] = useState<Task[]>([]);
 
     useEffect(() => {
-        if (data) {
-            const transformedData = data.map((item: any) => {
+        const qureyBookings = data?.data?.results
+
+        if (qureyBookings) {
+            const transformedData = qureyBookings.map((item: any) => {
                 const startDate = new Date(item.scheduledStartTime)
                 const endDate = new Date(item.scheduledEndTime)
 
@@ -97,7 +104,7 @@ const CalendarPage = () => {
 
             setBooking(transformedData)
         }
-    }, [data])
+    }, [data, error])
 
     // Switches between month view and day view
     const toggleView = (newView: "month" | "day") => {
@@ -342,8 +349,9 @@ const CalendarPage = () => {
                 </div>
             </div>
         );
-    };
+    }
     if (!data) return <div>Loading...</div>
+    if (error) return <div>Error: {error.message}</div>
 
     return (
         <div className="min-w-[1207px] min-h-[970px] p-4 bg-[#F1F4F9]">
