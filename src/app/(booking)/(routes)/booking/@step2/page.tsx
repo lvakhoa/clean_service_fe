@@ -4,7 +4,6 @@ import Header from '@/components/header/Header';
 import { Button } from '@/components/ui/button';
 import { AUTH_ENDPOINTS } from '@/configs/endpoints';
 import { useBookingStore } from '@/hooks/useBooking';
-import { SelectedDay } from '@/types/booking';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -47,10 +46,10 @@ const Step_2 = () => {
   const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(
     booking && booking?.scheduledStartTime
       ? {
-        day: new Date(booking?.scheduledStartTime).getDate(),
-        month: new Date(booking.scheduledStartTime).getMonth() + 1,
-        year: new Date(booking.scheduledStartTime).getFullYear(),
-      }
+          day: new Date(booking?.scheduledStartTime).getDate(),
+          month: new Date(booking.scheduledStartTime).getMonth() + 1,
+          year: new Date(booking.scheduledStartTime).getFullYear(),
+        }
       : null
   );
 
@@ -156,8 +155,9 @@ const Step_2 = () => {
       <Button
         disabled={!canNextStep}
         onClick={handleNextStep}
-        className={`mt-8 w-[165px] h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold ${!canNextStep && 'cursor-not-allowed bg-gray-400'
-          }`}
+        className={`mt-8 w-[165px] h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold ${
+          !canNextStep && 'cursor-not-allowed bg-gray-400'
+        }`}
       >
         Next
       </Button>

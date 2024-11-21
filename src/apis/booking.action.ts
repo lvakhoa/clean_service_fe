@@ -1,7 +1,12 @@
 import { cleanApi } from '@/services/HttpClient';
-import { CreateBookingRequest } from '@/types/booking';
 
 const bookingAction = {
+  async getBookingByOrderCode(orderCode: number) {
+    const response = await cleanApi.get<CleanSuccessResponseWrapper<Booking>>(
+      `/booking/order/${orderCode}`
+    );
+    return response.data.data;
+  },
   async createBooking(booking: CreateBookingRequest) {
     try {
       const response = await cleanApi.post<
@@ -13,6 +18,12 @@ const bookingAction = {
     } catch (err) {
       throw err;
     }
+  },
+  async createPayment(orderCode: number) {
+    const response = await cleanApi.post<
+      CleanSuccessResponseWrapper<CreateBookingResponse>
+    >(`/payment/create/${orderCode}`);
+    return response.data.data;
   },
   async cancelPayment(orderCode: number) {
     const response = await cleanApi.patch<CleanSuccessResponseWrapper>(

@@ -1,32 +1,31 @@
-"use client";
+'use client';
 
-import { CustomerInputWithLabel } from "@/components/input/customerInputWithLabel";
-import Image from "next/image";
-import React, { use, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { UserType } from "@/types/enum";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import customerAction from "@/apis/customer.action";
-import { Customer } from "@/types/customer";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider } from "react-hook-form";
-import { partialCustomerSchema } from "@/schemas/customer";
-import { Skeleton } from "@/components/skeleton/skeleton";
-import { useCustomer } from "@/hooks/useCustomer";
+import { CustomerInputWithLabel } from '@/components/input/customerInputWithLabel';
+import Image from 'next/image';
+import React, { use, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { UserType } from '@/types/enum';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import customerAction from '@/apis/customer.action';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, FormProvider } from 'react-hook-form';
+import { partialCustomerSchema } from '@/schemas/customer';
+import { Skeleton } from '@/components/skeleton/skeleton';
+import { useCustomer } from '@/hooks/useCustomer';
 
 const sampleData: Customer = {
-  id: "-",
-  fullName: "khang",
-  address: "-",
-  phoneNumber: "-",
-  email: "-",
+  id: '-',
+  fullName: 'khang',
+  address: '-',
+  phoneNumber: '-',
+  email: '-',
   userType: UserType.Customer,
-  gender: "Other",
+  gender: 'Other',
   createdAt: new Date(),
   updatedAt: new Date(),
-  dateOfBirth: "2000-01-01",
+  dateOfBirth: '2000-01-01',
 };
 
 type FormField = z.infer<typeof partialCustomerSchema>;
@@ -58,7 +57,7 @@ const CustomerInfo = () => {
   useEffect(() => {}, [customerData]);
 
   const form = useForm<FormField>({
-    mode: "onBlur",
+    mode: 'onBlur',
     resolver: zodResolver(partialCustomerSchema),
   });
 
@@ -132,7 +131,7 @@ const CustomerInfo = () => {
                       defaultValue={
                         new Date(customerData.dateOfBirth)
                           .toISOString()
-                          .split("T")[0]
+                          .split('T')[0]
                       }
                       keyName="dateOfBirth"
                     />
@@ -147,14 +146,14 @@ const CustomerInfo = () => {
                   )}
                   {
                     <CustomerInputWithLabel
-                      className={isPending ? "opacity-0 hidden" : ""}
+                      className={isPending ? 'opacity-0 hidden' : ''}
                       labelText="GENDER"
                       inputType="combobox"
                       inputPlaceholder=""
                       inputId="gender"
                       defaultValue={customerData.gender}
                       inputWidth="6.875vw"
-                      options={["Male", "Female", "Other"]}
+                      options={['Male', 'Female', 'Other']}
                       keyName="gender"
                     />
                   }
@@ -223,10 +222,10 @@ const CustomerInfo = () => {
                   className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
                 >
                   {isPending
-                    ? "Loading..."
+                    ? 'Loading...'
                     : mutation.isPending
-                    ? "Saving..."
-                    : "Save"}
+                    ? 'Saving...'
+                    : 'Save'}
                 </Button>
               </div>
             </div>
@@ -276,7 +275,7 @@ const CustomerInfo = () => {
                 className="ml-[10px] w-[170px] h-[40px]
          bg-white font-Averta-Semibold text-[#1A78F2] hover:bg-gray-100
          text-[16px] border-2 border-[#1A78F2]"
-                onClick={() => document.getElementById("fileInput")?.click()}
+                onClick={() => document.getElementById('fileInput')?.click()}
               >
                 Upload
                 <input type="file" id="fileInput" className=" hidden" />

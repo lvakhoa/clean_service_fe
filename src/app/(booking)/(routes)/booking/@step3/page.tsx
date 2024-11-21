@@ -12,7 +12,6 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { useBookingStore } from '@/hooks/useBooking';
-import { SelectedTime } from '@/types/booking';
 
 const days = [
   { dayInMonth: '1', active: true },
@@ -79,9 +78,9 @@ const Step_3 = () => {
       scheduledStartTime.getHours() !== 0 &&
       scheduledStartTime.getMinutes() !== 0
       ? {
-        hour: scheduledStartTime.getHours(),
-        minute: scheduledStartTime.getMinutes(),
-      }
+          hour: scheduledStartTime.getHours(),
+          minute: scheduledStartTime.getMinutes(),
+        }
       : null
   );
 
@@ -98,11 +97,12 @@ const Step_3 = () => {
       <CarouselItem className="basis-auto pl-4" key={day.dayInMonth}>
         <Card>
           <CardContent
-            className={`flex justify-center items-center pt-[23px] bg-white h-[55px] w-[132px] rounded-[10px] font-Averta-Semibold text-xl border transition duration-100 ${scheduledStartTime &&
-                scheduledStartTime.getDate() === parseInt(day.dayInMonth)
+            className={`flex justify-center items-center pt-[23px] bg-white h-[55px] w-[132px] rounded-[10px] font-Averta-Semibold text-xl border transition duration-100 ${
+              scheduledStartTime &&
+              scheduledStartTime.getDate() === parseInt(day.dayInMonth)
                 ? 'text-[#1A78F2] border-[#1A78F2]'
                 : 'text-[#4f6071] border-[#d3d8dd]'
-              } hover:text-white hover:bg-[#1A78F2]`}
+            } hover:text-white hover:bg-[#1A78F2]`}
           >
             {day.dayInMonth}
           </CardContent>
@@ -119,12 +119,13 @@ const Step_3 = () => {
             onClick={() =>
               setSelectedTime({ hour: time.hour, minute: time.minute })
             }
-            className={`flex justify-center items-center pt-[23px] bg-white h-[73px] w-[400px] rounded-[10px] font-Averta-Semibold text-base leading-[23px] tracking-tight text-[#88929c] border border-[#d3d8dd] transition duration-100 ${selectedTime &&
-                selectedTime.hour === time.hour &&
-                selectedTime.minute === time.minute
+            className={`flex justify-center items-center pt-[23px] bg-white h-[73px] w-[400px] rounded-[10px] font-Averta-Semibold text-base leading-[23px] tracking-tight text-[#88929c] border border-[#d3d8dd] transition duration-100 ${
+              selectedTime &&
+              selectedTime.hour === time.hour &&
+              selectedTime.minute === time.minute
                 ? 'text-[#1A78F2] border-[#1A78F2]'
                 : 'text-[#4f6071] border-[#d3d8dd]'
-              } hover:text-white hover:bg-[#1A78F2]`}
+            } hover:text-white hover:bg-[#1A78F2]`}
           >
             {time.time}
           </CardContent>
@@ -185,8 +186,9 @@ const Step_3 = () => {
         <Button
           disabled={!canNextStep}
           onClick={handleNextStep}
-          className={`w-[165px] h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold ${!canNextStep && 'cursor-not-allowed bg-gray-400'
-            }`}
+          className={`w-[165px] h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold ${
+            !canNextStep && 'cursor-not-allowed bg-gray-400'
+          }`}
         >
           Next
         </Button>

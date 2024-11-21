@@ -1,5 +1,3 @@
-import { Gender } from "./enum";
-
 type CustomerRowProps = {
   stt: string;
   id: string;
@@ -23,5 +21,3 @@ type Customer = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-export type { CustomerRowProps, Customer };

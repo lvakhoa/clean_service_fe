@@ -50,8 +50,6 @@ const yesNoOptionsButtons = [
 ];
 
 const Booking4 = () => {
-  const router = useRouter();
-
   const booking = useBookingStore((state) => state.booking);
   const setBooking = useBookingStore((state) => state.setBooking);
 
@@ -63,7 +61,12 @@ const Booking4 = () => {
   const [notes, setNotes] = useState('');
   const [contract, setContract] = useState('');
 
-  const { mutate: createBooking, isPending, error } = useCreateBooking();
+  const {
+    mutate: createBooking,
+    isPending,
+    error,
+    isSuccess,
+  } = useCreateBooking();
 
   const handleOrder = () => {
     setBooking({
@@ -100,7 +103,6 @@ const Booking4 = () => {
       error.response?.data.exceptionCode === EXCEPTION_CODE.NoHelperAvailable
     ) {
       setOpenErrorPopup(true);
-      console.log('Popup open');
     }
   }, [error]);
 
@@ -198,7 +200,7 @@ const Booking4 = () => {
             </div>
           </div> */}
 
-          <div className="grid justify-center items-center mt-[45px]">
+          <div className="grid justify-center items-center">
             {/* <Input
               value={petType}
               onChange={(e) => setPetType(e.target.value)}
@@ -233,16 +235,12 @@ const Booking4 = () => {
 
             <div className="flex justify-center items-center mt-[55px] pb-[50px]">
               <Button
-                disabled={isPending}
+                disabled={isPending || isSuccess}
                 onClick={handleOrder}
-                className="md:w-[12.5vw] h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
+                className="h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
               >
                 {isPending && (
-                  <Spinner
-                    className="size-4"
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
+                  <FaSpinner className="animate-spin size-5 mr-2" />
                 )}
                 Place order
               </Button>

@@ -1,12 +1,10 @@
-import { cleanApi } from "@/services/HttpClient";
-import { Booking } from "@/types/booking";
-import { Customer } from "@/types/customer";
+import { cleanApi } from '@/services/HttpClient';
 
 const customerAction = {
   async getAllCustomer(page?: number, limit?: number) {
     const res = await cleanApi.get<
       CleanSuccessResponseWrapper<PaginationResponseWrapper<Customer>>
-    >("/manage/customers", {
+    >('/manage/customers', {
       params: {
         page,
         limit,
@@ -28,16 +26,16 @@ const customerAction = {
     return res.data;
   },
   async getCurrentCustomerBooking(page?: number, limit?: number) {
-    const res = await cleanApi.get<CleanSuccessResponseWrapper<
-      PaginationResponseWrapper<Booking>>
-    >("/scheduler/current", {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Booking>>
+    >('/scheduler/current', {
       params: {
         page,
         limit,
       },
-    })
-    return res.data
-  }
+    });
+    return res.data;
+  },
 };
 
 export default customerAction;
