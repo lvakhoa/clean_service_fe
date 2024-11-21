@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 type Props = {
   children: React.ReactNode;
@@ -6,7 +6,11 @@ type Props = {
 
 const PaymentLayout = ({ children }: Props) => {
   return (
-    <div className="flex items-center justify-center h-screen">{children}</div>
+    <Suspense>
+      <div className="flex items-center justify-center h-screen">
+        {children}
+      </div>
+    </Suspense>
   );
 };
 

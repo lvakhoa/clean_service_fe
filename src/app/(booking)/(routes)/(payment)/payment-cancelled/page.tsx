@@ -3,20 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { AUTH_ENDPOINTS, PUBLIC_ENDPOINTS } from '@/configs/endpoints';
 import { BookingStatus, PaymentStatus } from '@/configs/enum';
-import validateObject from '@/helpers/validateObject';
-import {
-  useBookingStore,
-  useCancelPayment,
-  useCreateBooking,
-  useGetBookingByOrderCode,
-} from '@/hooks/useBooking';
-import createBookingSchema from '@/schemas/createBookingSchema';
-import { Spinner } from '@material-tailwind/react';
+import { useCancelPayment, useGetBookingByOrderCode } from '@/hooks/useBooking';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';
-import { toast } from 'react-toastify';
 
 function PaymentCancelled() {
   const router = useRouter();
