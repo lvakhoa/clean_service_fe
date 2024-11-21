@@ -1,4 +1,3 @@
-import { CreateBookingRequest } from '@/types/booking';
 import { z } from 'zod';
 
 const createBookingSchema: z.ZodType<CreateBookingRequest> = z.object({
@@ -9,11 +8,13 @@ const createBookingSchema: z.ZodType<CreateBookingRequest> = z.object({
   paymentMethod: z.string().optional(),
   contractContent: z.string(),
   bookingDetails: z.object({
-    durationPriceId: z.string(),
-    bedroomCount: z.number(),
-    bathroomCount: z.number(),
-    kitchenCount: z.number(),
-    livingRoomCount: z.number(),
+    durationPriceId: z.string().optional(),
+    bedroomCount: z.number().default(0),
+    bathroomCount: z.number().default(0),
+    kitchenCount: z.number().default(0),
+    livingRoomCount: z.number().default(0),
     specialRequirements: z.string().optional(),
   }),
 });
+
+export default createBookingSchema;

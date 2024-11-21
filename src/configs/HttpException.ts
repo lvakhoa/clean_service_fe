@@ -1,23 +1,25 @@
+import { EXCEPTION_CODE } from './exceptionCode';
+
 class HttpException extends Error {
   constructor(exceptionCode: string) {
     switch (exceptionCode) {
-      case "ERR/VALIDATION_FAILED":
-        super("Validation failed");
+      case EXCEPTION_CODE.ValidationFailed:
+        super('Validation failed');
         break;
-      case "ERR/NOT_FOUND":
-        super("Not found");
+      case EXCEPTION_CODE.NotFound:
+        super('Not found');
         break;
-      case "ERR/UNAUTHORIZED":
-        super("The session has expired, please login again");
+      case EXCEPTION_CODE.Unauthorized:
+        super('The session has expired, please login again');
         break;
-      case "ERR/FORBIDDEN":
+      case EXCEPTION_CODE.Forbidden:
         super("You don't have permission to access this resource");
         break;
-      case "ERR/INTERNAL_SERVER_ERROR":
-        super("Something went wrong, please try again later");
+      case EXCEPTION_CODE.InternalServerError:
+        super('Something went wrong, please try again later');
         break;
       default:
-        super("Something went wrong, please try again later");
+        super('Something went wrong, please try again later');
         break;
     }
   }

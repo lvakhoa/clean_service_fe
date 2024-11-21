@@ -7,7 +7,7 @@ export const errorHandler = (error: any) => {
     const request = error?.request;
     const code = error?.code;
     const config = error?.config;
-    console.log('error', error);
+
     if (code === 'ECONNABORTED') {
       throw new Error('ERR/CONNECTION_TIMEOUT');
     }

@@ -10,6 +10,7 @@ import useGetAllServiceTypes from '@/hooks/useServiceType';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
+import { Skeleton } from '../skeleton/skeleton';
 
 const HomeCleaning = () => {
   const router = useRouter();
@@ -18,7 +19,9 @@ const HomeCleaning = () => {
   const setBooking = useBookingStore((state) => state.setBooking);
 
   // Service type
-  const serviceTypes = useGetAllServiceTypes();
+  const serviceTypes = useGetAllServiceTypes(
+    'd9b2f3f2-a0b8-4c4e-b4a5-dcd71a0a2f9f'
+  );
   const cleanTypes = serviceTypes.data?.results.map((val) => ({
     id: val.id,
     name: val.name,
@@ -176,7 +179,11 @@ const HomeCleaning = () => {
               {!serviceTypes.isLoading && cleanTypes ? (
                 renderServiceOptions(cleanTypes, selectedCleanType)
               ) : (
-                <div>Loading...</div> // Skeleton
+                <div className="flex gap-2 items-center">
+                  <Skeleton className="h-16 w-72" />
+                  <Skeleton className="h-16 w-72" />
+                  <Skeleton className="h-16 w-72" />
+                </div>
               )}
             </div>
 
@@ -190,7 +197,14 @@ const HomeCleaning = () => {
                     selectedNumberOfBathroom
                   )
                 ) : (
-                  <div>Loading...</div> // Skeleton
+                  <div className="flex flex-col justify-center items-center">
+                    <Skeleton className="h-4 w-60 mb-4" />
+                    <div className="flex gap-2 items-center">
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                    </div>
+                  </div>
                 )}
 
                 {!roomPricings[1].isLoading && numberOfBedroom ? (
@@ -201,7 +215,14 @@ const HomeCleaning = () => {
                     selectedNumberOfBedroom
                   )
                 ) : (
-                  <div>Loading...</div> // Skeleton
+                  <div className="flex flex-col justify-center items-center">
+                    <Skeleton className="h-4 w-60 mb-4" />
+                    <div className="flex gap-2 items-center">
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                    </div>
+                  </div>
                 )}
 
                 {!roomPricings[2].isLoading && numberOfKitchen ? (
@@ -212,7 +233,14 @@ const HomeCleaning = () => {
                     selectedNumberOfKitchen
                   )
                 ) : (
-                  <div>Loading...</div> // Skeleton
+                  <div className="flex flex-col justify-center items-center">
+                    <Skeleton className="h-4 w-60 mb-4" />
+                    <div className="flex gap-2 items-center">
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                    </div>
+                  </div>
                 )}
 
                 {!roomPricings[3].isLoading && numberOfLivingRoom ? (
@@ -223,7 +251,14 @@ const HomeCleaning = () => {
                     selectedNumberOfLivingRoom
                   )
                 ) : (
-                  <div>Loading...</div> // Skeleton
+                  <div className="flex flex-col justify-center items-center">
+                    <Skeleton className="h-4 w-60 mb-4" />
+                    <div className="flex gap-2 items-center">
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                      <Skeleton className="h-16 w-24" />
+                    </div>
+                  </div>
                 )}
               </div>
             )}

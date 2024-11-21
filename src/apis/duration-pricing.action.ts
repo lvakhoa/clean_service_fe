@@ -1,22 +1,20 @@
 import { RoomType } from '@/configs/enum';
 import { cleanApi } from '@/services/HttpClient';
 
-const roomPricingAction = {
-  async getAllRoomPricings(
-    roomType?: RoomType,
+const durationPricingAction = {
+  async getAllDurationPrices(
     serviceTypeId?: string,
     page?: number,
     limit?: number
   ) {
     const response = await cleanApi.get<
       CleanSuccessResponseWrapper<
-        PaginationResponseWrapper<RoomPricingResponse>
+        PaginationResponseWrapper<DurationPriceResponse>
       >
-    >('/manage/room-pricing', {
+    >('/manage/duration-price', {
       params: {
         page,
         limit,
-        roomType,
         serviceTypeId,
       },
     });
@@ -24,4 +22,4 @@ const roomPricingAction = {
   },
 };
 
-export default roomPricingAction;
+export default durationPricingAction;

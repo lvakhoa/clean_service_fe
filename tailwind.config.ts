@@ -52,6 +52,10 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        error: {
+          100: 'hsl(var(--error-100))',
+          200: 'hsl(var(--error-200))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -66,6 +70,10 @@ const config = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
+        },
+        countdown: {
+          from: { 'stroke-dashoffset': '0' },
+          to: { 'stroke-dashoffset': '282px' },
         },
       },
       animation: {
