@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 
 import { UserType } from "@/types/enum";
-import { Customer } from "@/types/customer";
 import { partialCustomerSchema } from "@/schemas/customer";
 
 import { useCustomer } from "@/hooks/useCustomer";
@@ -28,11 +27,6 @@ const DEFAULT_CUSTOMER_DATA: Customer = {
   createdAt: new Date(),
   updatedAt: new Date(),
   dateOfBirth: "2000-01-01",
-};
-
-const DEFAULT_IMAGES = {
-  idCard: "/images/identity.png",
-  profilePicture: "/images/camera.svg",
 };
 
 const DEFAULT_IMAGES = {
