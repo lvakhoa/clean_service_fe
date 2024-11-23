@@ -73,13 +73,16 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
     );
   const styleBtn =
     bookingState === "Completed" ? (
-      <Button
-        onClick={handleFeedback}
-        className="w-full h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold"
-        disabled={booking.helperRating != null}
-      >
-        Feedback
-      </Button>
+      booking.helperRating == null ? (
+        <Button
+          onClick={handleFeedback}
+          className="w-full h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold"
+        >
+          Feedback
+        </Button>
+      ) : (
+        <></>
+      )
     ) : bookingState === "InProgress" ? (
       <Button
         className="w-full h-[55px] bg-[#000000] text-lg text-white font-Averta-Semibold"
@@ -349,7 +352,11 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       </div>
       {feedbackToggle && (
         <div onClick={(e) => e.stopPropagation()}>
-          <CreateFeedbackPopup toggle={handleFeedback} />
+          <CreateFeedbackPopup
+            toggle={handleFeedback}
+            booking={booking}
+            closeParentPopup={toggle}
+          />
         </div>
       )}
     </div>

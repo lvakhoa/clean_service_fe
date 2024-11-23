@@ -1,3 +1,4 @@
+import { CreateFeedbackDto } from "@/schemas/createFeedbackSchema";
 import { cleanApi } from "@/services/HttpClient";
 
 const feedbackAction = {
@@ -32,6 +33,13 @@ const feedbackAction = {
   async deleteFeedback(id: string) {
     const res = await cleanApi.delete<CleanSuccessResponseWrapper>(
       `/manage/feedbacks/${id}`
+    );
+    return res.data;
+  },
+  async createFeedback(data: CreateFeedbackDto) {
+    const res = await cleanApi.post<CleanSuccessResponseWrapper>(
+      "/booking/feedback",
+      data
     );
     return res.data;
   },
