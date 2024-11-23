@@ -35,6 +35,11 @@ const DEFAULT_IMAGES = {
   profilePicture: "/images/camera.svg",
 };
 
+const DEFAULT_IMAGES = {
+  idCard: "/images/identity.png",
+  profilePicture: "/images/camera.svg",
+};
+
 type FormField = z.infer<typeof partialCustomerSchema>;
 
 const CustomerInfo = () => {

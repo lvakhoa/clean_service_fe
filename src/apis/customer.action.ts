@@ -1,5 +1,4 @@
 import { cleanApi } from "@/services/HttpClient";
-import { Customer } from "@/types/customer";
 
 const customerAction = {
   async getAllCustomer(page?: number, limit?: number) {
@@ -24,6 +23,17 @@ const customerAction = {
       `/manage/users/${id}`,
       data
     );
+    return res.data;
+  },
+  async getCurrentCustomerBooking(page?: number, limit?: number) {
+    const res = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Booking>>
+    >("/scheduler/current", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return res.data;
   },
   async updateCustomerIdCard(id: string, data: any) {

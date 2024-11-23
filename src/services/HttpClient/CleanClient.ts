@@ -1,13 +1,14 @@
-import ENV from "@/configs/env";
-import { errorHandler } from "@/helpers";
+import ENV from '@/configs/env';
+import { errorHandler } from '@/helpers';
 import axios, {
   AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-} from "axios";
+  InternalAxiosRequestConfig,
+} from 'axios';
 
-declare module "axios" {
+declare module 'axios' {
   export interface AxiosRequestConfig {
     raw?: boolean;
     silent?: boolean;
@@ -27,8 +28,8 @@ export default class CleanClient {
     });
 
     this.axiosInstance.interceptors.response.use(
-      (response) => this.handleResponseSuccess(response),
-      (error) => this.responseErrorHandler(error)
+      (response) => this.handleSuccessResponse(response),
+      (error) => this.handleErrorResponse(error)
     );
   }
 
@@ -40,11 +41,11 @@ export default class CleanClient {
     return CleanClient.httpInstance;
   }
 
-  private handleResponseSuccess(response: AxiosResponse) {
+  private handleSuccessResponse(response: AxiosResponse) {
     return response;
   }
 
-  private responseErrorHandler(error: AxiosError) {
+  private handleErrorResponse(error: AxiosError) {
     const config = (error.config as AxiosRequestConfig) || {};
 
     if (config.raw) {

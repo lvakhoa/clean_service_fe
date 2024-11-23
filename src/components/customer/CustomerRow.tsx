@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import React from "react";
-import { Skeleton } from "../skeleton/skeleton";
-import { CustomerRowProps } from "@/types/customer";
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { Skeleton } from '../skeleton/skeleton';
 
 const CustomerRow: React.FC<CustomerRowProps> = ({
   stt,
