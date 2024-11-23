@@ -38,8 +38,6 @@ const DEFAULT_IMAGES = {
 type FormField = z.infer<typeof partialCustomerSchema>;
 
 const CustomerInfo = () => {
-  const { id } = useParams<{ id: string }>();
-
   const [customerData, setCustomerData] = useState<Customer>(
     DEFAULT_CUSTOMER_DATA
   );
@@ -52,7 +50,7 @@ const CustomerInfo = () => {
 
   const {
     useUpdateCustomer,
-    useGetCustomerById,
+    useGetCurrentCustomer,
     useUpdateCustomerIdCard,
     useUpdateCustomerProfile,
   } = useCustomer();
@@ -61,11 +59,13 @@ const CustomerInfo = () => {
     isPending,
     data: queryData,
     error: queryError,
-  } = useGetCustomerById(id);
+  } = useGetCurrentCustomer();
 
-  const updateCustomerMutation = useUpdateCustomer(id);
-  const updateIdCardMutation = useUpdateCustomerIdCard(id);
-  const updateProfilePictureMutation = useUpdateCustomerProfile(id);
+  const updateCustomerMutation = useUpdateCustomer(customerData.id);
+  const updateIdCardMutation = useUpdateCustomerIdCard(customerData.id);
+  const updateProfilePictureMutation = useUpdateCustomerProfile(
+    customerData.id
+  );
 
   useEffect(() => {
     if (queryData) {

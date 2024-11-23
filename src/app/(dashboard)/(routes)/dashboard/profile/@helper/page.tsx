@@ -33,7 +33,6 @@ const DEFAULT_IMAGES = {
 };
 
 const EmployeeInfo = () => {
-  const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
   const [helperData, setHelperData] = useState<Helper | undefined>();
@@ -46,17 +45,19 @@ const EmployeeInfo = () => {
   const [helperResumeFile, setHelperResumeFile] = useState<ResumeFile>();
 
   const {
-    useGetHelperById,
+    useGetCurrentHelper,
     useUpdateHelperIdCard,
     useUpdateHelperProfilePicture,
     useUpdateHelperResume,
   } = useHelper();
 
-  const { data, error } = useGetHelperById(id);
+  const { data, error } = useGetCurrentHelper();
 
-  const updateIdCardMutation = useUpdateHelperIdCard(id);
-  const updateProfilePictureMutation = useUpdateHelperProfilePicture(id);
-  const updateResumeMutation = useUpdateHelperResume(id);
+  const updateIdCardMutation = useUpdateHelperIdCard(helperData?.id || "");
+  const updateProfilePictureMutation = useUpdateHelperProfilePicture(
+    helperData?.id || ""
+  );
+  const updateResumeMutation = useUpdateHelperResume(helperData?.id || "");
 
   const combinedSchema = UpdateUserSchema.extend({
     experienceDescription: UpdateHelperSchema.shape.experienceDescription,
@@ -114,8 +115,8 @@ const EmployeeInfo = () => {
       const { experienceDescription, ...userDto } = formData;
       const helperDto = { experienceDescription };
 
-      await helperAction.updateUserHelper(id, userDto);
-      await helperAction.updateHelper(id, helperDto);
+      await helperAction.updateUserHelper(helperData?.id || "", userDto);
+      await helperAction.updateHelper(helperData?.id || "", helperDto);
 
       toast.success("User updated successfully!");
       router.refresh();

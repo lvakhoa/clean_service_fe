@@ -14,6 +14,7 @@ type Customer = {
   id: string;
   userType: UserType;
   profilePicture?: string;
+  identityCard?: string;
   gender?: string;
   fullName: string;
   dateOfBirth: string;

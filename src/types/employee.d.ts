@@ -1,4 +1,4 @@
-type Employee = {
+type Helper = {
   id: string;
   experienceDescription: string;
   resumeUploaded: any;
@@ -8,7 +8,8 @@ type Employee = {
   completedJobs: number;
   cancelledJobs: number;
   gender: string;
-  profilePicture: any;
+  profilePicture: string;
+  identityCard: string;
   fullName: string;
   dateOfBirth: string;
   address: string;
