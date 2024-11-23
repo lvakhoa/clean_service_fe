@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 
 import { UserType } from "@/types/enum";
-import { Customer } from "@/types/customer";
 import { partialCustomerSchema } from "@/schemas/customer";
 
 import { useCustomer } from "@/hooks/useCustomer";
