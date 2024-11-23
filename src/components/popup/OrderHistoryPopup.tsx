@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import CreateFeedbackPopup from "./CreateFeedbackPopup";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "react-toastify";
+import { useScheduler } from "@/hooks/useScheduler";
+import { ClipLoader } from "react-spinners";
 
 interface OrderHistoryPopupProps {
   toggle: () => void;
@@ -10,8 +25,17 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
   toggle,
   booking,
 }) => {
-  const bookingState: string = "Completed";
-  const [cancelService, setCancelService] = React.useState(false);
+  const { updateBooking, queryClient } = useScheduler();
+
+  const bookingState: string = booking.status;
+  const [cancelService, setCancelService] = useState(false);
+  const [reason, setReason] = useState("");
+  const [feedbackToggle, setFeedbackToggle] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
+  const handleFeedback = () => {
+    setFeedbackToggle(!feedbackToggle);
+  };
 
   const style =
     bookingState === "Completed" ? (
@@ -50,8 +74,9 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
   const styleBtn =
     bookingState === "Completed" ? (
       <Button
-        onClick={() => console.log("Feedback button clicked")}
+        onClick={handleFeedback}
         className="w-full h-[55px] bg-[#1A78F2] text-lg text-white font-Averta-Semibold"
+        disabled={booking.helperRating != null}
       >
         Feedback
       </Button>
@@ -100,6 +125,32 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
     return `From ${start} to ${end} | ${day}/${month}/${year}`;
   }
 
+  const handleConfirmCancel = async () => {
+    if (!reason.trim()) {
+      console.log("Error: Reason is empty");
+      toast.error("Please enter the reason for cancellation");
+    } else {
+      setUpdating(true);
+      try {
+        await updateBooking.mutateAsync({
+          id: booking.id,
+          data: { status: 4, cancellationReason: reason },
+        });
+        toast.success("Service has been cancelled successfully.");
+        //window.location.reload();
+        queryClient.invalidateQueries({ queryKey: ["currentBooking"] });
+        toggle();
+      } catch (error: any) {
+        console.error("Error cancelling service:", error);
+        toast.error(
+          `Failed to cancel service: ${error.message || "Unknown error"}`
+        );
+      } finally {
+        setUpdating(false);
+      }
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
@@ -110,7 +161,10 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex w-full h-[10%]">
-          <button onClick={toggle} className="ml-auto">
+          <button
+            onClick={toggle}
+            className="ml-auto p-2 rounded-full hover:bg-gray-200 hover:shadow-md transition duration-200 ease-in-out"
+          >
             <Image
               src="/images/ProgressBar/Group.svg"
               alt="exitButton"
@@ -252,17 +306,52 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
               </p>
               <textarea
                 placeholder="CANCELLATION REASON"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
                 className="text-[#4f6071] text-base font-Averta-Semibold leading-[23px] tracking-tight border-[#d3d8dd] border-2 rounded-lg min-h-[130px] px-[10px] py-[16px] resize-none"
               />
             </div>
-            <Button className="w-[50%] m-auto h-[55px] bg-[#e01a1a] text-lg text-white font-Averta-Semibold hover:bg-[#e01a1a] hover:bg-opacity-70">
-              Confirm
-            </Button>
+            <div className="flex item-center justify-center rounded-lg w-[50%] m-auto h-[55px] bg-[#e01a1a] text-lg text-white font-Averta-Semibold hover:bg-[#e01a1a] hover:bg-opacity-70">
+              <AlertDialog>
+                <AlertDialogTrigger disabled={updating}>
+                  {updating ? (
+                    <ClipLoader color="#ffffff" loading={updating} size={30} />
+                  ) : (
+                    "Confirm"
+                  )}
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently cancel
+                      the booking order.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleConfirmCancel}
+                      className="bg-[#e01a1a] hover:bg-[#e01a1a] hover:bg-opacity-70"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         ) : (
           ""
         )}
       </div>
+      {feedbackToggle && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <CreateFeedbackPopup toggle={handleFeedback} />
+        </div>
+      )}
     </div>
   );
 };

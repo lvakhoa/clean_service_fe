@@ -341,9 +341,9 @@ const ordersData: OrderHistory[] = [
 ];
 
 const OrderHistoryTable = () => {
-  const { getCurrentCustomerBooking, queryClient } = useScheduler()
+  const { getCurrentCustomerBooking, queryClient } = useScheduler();
 
-  const { data, error, isPending } = getCurrentCustomerBooking
+  const { data, error, isPending } = getCurrentCustomerBooking;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -351,14 +351,13 @@ const OrderHistoryTable = () => {
   const [order, setOrder] = useState<Booking[]>([]);
 
   useEffect(() => {
-    //setOrder(data?.data?.results as Booking[])
-    setOrder(Array.isArray(data?.data?.results) ? data?.data?.results as Booking[] : [])
-    console.log("Data: ", data)
-  }, [data])
-
-  useEffect(() => {
-    console.log("Order: ", order)
-  }, [order])
+    setOrder(
+      Array.isArray(data?.data?.results)
+        ? (data?.data?.results as Booking[])
+        : []
+    );
+    console.log("Data: ", data);
+  }, [data]);
 
   // Search
   const handleSearch = (term: string) => {
@@ -391,8 +390,8 @@ const OrderHistoryTable = () => {
     if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
   };
 
-  if (!data) return <div>Loading...</div>
-    if (error) return <div>Error: {error.message}</div>
+  if (!data) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
