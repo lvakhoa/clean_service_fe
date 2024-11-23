@@ -1,4 +1,5 @@
-import { cleanApi } from '@/services/HttpClient';
+import { UpdateBookingDto } from "@/schemas/updateBookingSchema";
+import { cleanApi } from "@/services/HttpClient";
 
 const bookingAction = {
   async getBookingByOrderCode(orderCode: number) {
@@ -11,7 +12,7 @@ const bookingAction = {
     try {
       const response = await cleanApi.post<
         CleanSuccessResponseWrapper<CreateBookingResponse>
-      >('/booking/create', booking, {
+      >("/booking/create", booking, {
         raw: true,
       });
       return response.data.data;
@@ -30,6 +31,14 @@ const bookingAction = {
       `/payment/cancel/${orderCode}`
     );
     return response.data;
+  },
+  async updateBooking(id: string, updateBooking: UpdateBookingDto) {
+    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
+      `/booking/update/${id}`,
+      updateBooking
+    );
+    //console.log(res.data);
+    return res.data;
   },
 };
 
