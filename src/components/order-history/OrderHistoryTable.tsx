@@ -1,10 +1,9 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import OrderHistoryRow from "./OrderHistoryRow";
-import Pagination from "./Pagination";
 import { useScheduler } from "@/hooks/useScheduler";
-import { set } from "zod";
+import Pagination from "../pagination/Pagination";
 
 type OrderHistory = {
   id: string;
@@ -414,7 +413,6 @@ const OrderHistoryTable = () => {
           <OrderHistoryRow key={order.id} order={order} />
         ))}
       </div>
-
       <Pagination
         currentPage={currentPage}
         totalItems={filteredData.length}
