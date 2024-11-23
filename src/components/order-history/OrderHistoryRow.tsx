@@ -2,6 +2,7 @@
 import React from "react";
 import Star from "../employee/Star";
 import OrderHistoryPopup from "../popup/OrderHistoryPopup";
+import { BookingStatus } from "@/configs/enum";
 
 type OrderHistoryRowProps = {
   order: Booking;
@@ -30,15 +31,15 @@ const OrderHistoryRow: React.FC<OrderHistoryRowProps> = ({ order }) => {
   const handleToggle = () => setToggle(!toggle);
 
   const statusColor =
-    order.status === "Pending"
+    order.status === BookingStatus.Pending
       ? "bg-[#FFD154] text-[#FF9500]"
-      : order.status === "InProgress"
+      : order.status === BookingStatus.InProgress
       ? "bg-[#1A78F2] text-[#1A78F2]"
-      : order.status === "Cancelled"
+      : order.status === BookingStatus.Cancelled
       ? "bg-[#EF3826] text-[#EF3826]"
-      : order.status === "Completed"
+      : order.status === BookingStatus.Completed
       ? "bg-[#00B69B] text-[#00B69B]"
-      : order.status === "Confirmed"
+      : order.status === BookingStatus.Confirmed
       ? "bg-[#6a1b9a] text-[#6a1b9a]" // Màu sắc cho trạng thái Confirmed
       : "";
 
@@ -118,7 +119,7 @@ const OrderHistoryRow: React.FC<OrderHistoryRowProps> = ({ order }) => {
           <div
             className={`flex relative gap-4 justify-between items-start px-4 py-1.5 min-h-[27px] ${statusColor} bg-opacity-20 rounded-md`}
           >
-            <div className="z-0 flex-1 shrink my-auto basis-0 font-Averta-Bold text-[13px]">
+            <div className="z-0 justify-center flex flex-1 shrink my-auto basis-0 font-Averta-Bold text-[13px] min-w-20">
               {order.status}
             </div>
           </div>

@@ -16,6 +16,7 @@ import {
 import { toast } from "react-toastify";
 import { useScheduler } from "@/hooks/useScheduler";
 import { ClipLoader } from "react-spinners";
+import { BookingStatus } from "@/configs/enum";
 
 interface OrderHistoryPopupProps {
   toggle: () => void;
@@ -38,31 +39,31 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
   };
 
   const style =
-    bookingState === "Completed" ? (
+    bookingState === BookingStatus.Completed ? (
       <div className="w-[60%] h-full bg-[#00b69b] p-[13px] bg-opacity-20 rounded-lg">
         <p className="flex h-full justify-center items-center text-[#00b69b] text-xl font-bold">
           {bookingState}
         </p>
       </div>
-    ) : bookingState === "InProgress" ? (
+    ) : bookingState === BookingStatus.InProgress ? (
       <div className="w-[60%] h-full bg-[#1a78f2] p-[13px] bg-opacity-20 rounded-lg">
         <p className="flex h-full justify-center items-center text-[#1a78f2] text-xl font-bold">
           {bookingState}
         </p>
       </div>
-    ) : bookingState === "Pending" ? (
+    ) : bookingState === BookingStatus.Pending ? (
       <div className="w-[60%] h-full bg-[#ffd154] p-[13px] bg-opacity-20 rounded-lg">
         <p className="flex h-full justify-center items-center text-[#ff9400] text-xl font-bold">
           {bookingState}
         </p>
       </div>
-    ) : bookingState === "Cancelled" ? (
+    ) : bookingState === BookingStatus.Cancelled ? (
       <div className="w-[60%] h-full bg-[#e01a1a] p-[13px] bg-opacity-20 rounded-lg">
         <p className="flex h-full justify-center items-center text-[#e01a1a] text-xl font-bold">
           {bookingState}
         </p>
       </div>
-    ) : bookingState === "Confirmed" ? (
+    ) : bookingState === BookingStatus.Confirmed ? (
       <div className="w-[60%] h-full bg-[#6a1b9a] p-[13px] bg-opacity-20 rounded-lg">
         <p className="flex h-full justify-center items-center text-[#6a1b9a] text-xl font-bold">
           {bookingState}
@@ -72,7 +73,7 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       ""
     );
   const styleBtn =
-    bookingState === "Completed" ? (
+    bookingState === BookingStatus.Completed ? (
       booking.helperRating == null ? (
         <Button
           onClick={handleFeedback}
@@ -83,14 +84,14 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       ) : (
         <></>
       )
-    ) : bookingState === "InProgress" ? (
+    ) : bookingState === BookingStatus.InProgress ? (
       <Button
         className="w-full h-[55px] bg-[#000000] text-lg text-white font-Averta-Semibold"
         disabled
       >
         Feedback
       </Button>
-    ) : (bookingState === "Pending" || bookingState == "Confirmed") &&
+    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
       cancelService ? (
       <Button
         className="w-full h-[55px] bg-[#00b69b] text-lg text-white font-Averta-Semibold hover:bg-[#00b69b] hover:bg-opacity-70"
@@ -98,7 +99,7 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       >
         Don't Cancel The Service
       </Button>
-    ) : (bookingState === "Pending" || bookingState == "Confirmed") &&
+    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
       !cancelService ? (
       <Button
         className="w-full h-[55px] bg-[#e01a1a] text-lg text-white font-Averta-Semibold hover:bg-[#e01a1a] hover:bg-opacity-70"
