@@ -1,6 +1,7 @@
 import React from "react";
 import Star from "../employee/Star";
 import { BookingStatus } from "@/configs/enum";
+import OrderInfoPopup from "../popup/OrderInfoPopup";
 
 const OrderRow: React.FC<OrderRowProps> = ({ booking }) => {
   const startTimeString: string = new Date(
@@ -57,6 +58,9 @@ const OrderRow: React.FC<OrderRowProps> = ({ booking }) => {
       </div>
     );
   };
+
+  const [toggleOrderInfo, setToggleOrderInfo] = React.useState(false);
+  const handleToggle = () => setToggleOrderInfo(!toggleOrderInfo);
 
   return (
     <div className="flex flex-wrap gap-3 w-full border-b border-gray-200 bg-white hover:bg-[#f4f7ff] h-auto items-start md:items-center p-2.5 cursor-pointer">
@@ -128,10 +132,16 @@ const OrderRow: React.FC<OrderRowProps> = ({ booking }) => {
       </div>
 
       <div className="w-full  flex-1 flex items-center md:py-6">
-        <button className="md:w-[100px] ml-auto px-4 py-1.5 bg-[#6896d1] text-[#12153a] bg-opacity-20 text-xs rounded-[4.5px] font-semibold hover:bg-opacity-50">
+        <button
+          onClick={handleToggle}
+          className="md:w-[100px] ml-auto px-4 py-1.5 bg-[#6896d1] text-[#12153a] bg-opacity-20 text-xs rounded-[4.5px] font-semibold hover:bg-opacity-50"
+        >
           More Info
         </button>
       </div>
+      {toggleOrderInfo && (
+        <OrderInfoPopup toggle={handleToggle} booking={booking} />
+      )}
     </div>
   );
 };
