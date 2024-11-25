@@ -15,8 +15,8 @@ import FileDownloadCard from "@/components/card/FileDownloadCard";
 import { useHelper } from "@/hooks/useHelper";
 import { formatDate } from "@/helpers/formatDateTime";
 import { useCustomer } from "@/hooks/useCustomer";
-import { partialAdminHelperSchema } from "@/schemas/helperSchema";
-import { partialAdminCustomerSchema } from "@/schemas/customerSchema";
+import { partialHelperSchema } from "@/schemas/helperSchema";
+import { partialCustomerSchema } from "@/schemas/customerSchema";
 import { z } from "zod";
 import { Skeleton } from "@/components/skeleton/skeleton";
 
@@ -34,14 +34,13 @@ const DEFAULT_IMAGES = {
 };
 
 const combinedSchema = z.object({
-  ...partialAdminCustomerSchema.shape,
-  ...partialAdminHelperSchema.shape,
+  ...partialCustomerSchema.shape,
+  ...partialHelperSchema.shape,
 });
 
 type FormField = z.infer<typeof combinedSchema>;
 
 const EmployeeInfo = () => {
-  const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
   const [helperIdCard, setHelperIdCard] = useState<string | null>(
@@ -52,13 +51,13 @@ const EmployeeInfo = () => {
   >(DEFAULT_IMAGES.profilePicture);
   const [helperResumeFile, setHelperResumeFile] = useState<ResumeFile>();
 
-  const { useGetHelperById, useUpdateHelper } = useHelper();
-  const { useUpdateUser } = useCustomer();
+  const { useUpdateCurrentHelper, useGetCurrentHelper } = useHelper();
+  const { useUpdateCurrentUser } = useCustomer();
 
-  const { data: helperData, error, isPending } = useGetHelperById(id);
+  const { data: helperData, error, isPending } = useGetCurrentHelper();
 
-  const updateUserMutation = useUpdateUser(id);
-  const updateHelperMutation = useUpdateHelper(id);
+  const updateUserMutation = useUpdateCurrentUser();
+  const updateHelperMutation = useUpdateCurrentHelper();
   const {
     control,
     handleSubmit,
@@ -85,7 +84,6 @@ const EmployeeInfo = () => {
 
       reset({
         ...helperData.data,
-        hourlyRate: helperData.data?.hourlyRate?.toString() || "",
       });
       console.log("helperData", helperData);
     }
@@ -93,17 +91,11 @@ const EmployeeInfo = () => {
 
   const onSubmit = async (formData: FormField) => {
     try {
-      const {
-        experienceDescription,
-        resumeUploadedFile,
-        hourlyRate,
-        ...other
-      } = formData;
+      const { experienceDescription, resumeUploadedFile, ...other } = formData;
 
       const helperDto = {
         experienceDescription,
         resumeUploadedFile,
-        hourlyRate,
       };
       const userDto = {
         ...other,

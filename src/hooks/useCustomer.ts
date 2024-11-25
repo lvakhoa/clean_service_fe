@@ -1,15 +1,19 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import customerAction from "@/apis/customer.action";
 
 export const useCustomer = (page?: number, limit?: number) => {
-  const getAllCustomers = useQuery({
-    queryKey: ["customers"],
-    queryFn: () => {
-      return customerAction.getAllCustomer(page, limit);
-    },
-  });
+  const queryClient = useQueryClient();
+
+  const useGetAllCustomers = () => {
+    return useQuery({
+      queryKey: ["customers"],
+      queryFn: () => {
+        return customerAction.getAllCustomer(page, limit);
+      },
+    });
+  };
 
   const useGetCustomerById = (id: string) =>
     useQuery({
@@ -19,16 +23,38 @@ export const useCustomer = (page?: number, limit?: number) => {
       },
     });
 
-  const useUpdateCustomer = (id: string) =>
+  const useUpdateUser = (id: string) =>
     useMutation({
       mutationFn: (data: any) => {
-        return customerAction.updateCustomer(id, data);
+        return customerAction.updateUser(id, data);
       },
     });
 
+  const useGetCurrentCustomer = () => {
+    return useQuery({
+      queryKey: ["customer", "me"],
+      queryFn: () => {
+        return customerAction.getCurrentCustomer();
+      },
+    });
+  };
+
+  const useUpdateCurrentUser = () => {
+    return useMutation({
+      mutationFn: (data: any) => {
+        return customerAction.updateCurrentUser(data);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["customer", "me"] });
+      },
+    });
+  };
   return {
-    getAllCustomers,
+    queryClient,
+    useGetAllCustomers,
+    useGetCurrentCustomer,
     useGetCustomerById,
-    useUpdateCustomer,
+    useUpdateUser,
+    useUpdateCurrentUser,
   };
 };

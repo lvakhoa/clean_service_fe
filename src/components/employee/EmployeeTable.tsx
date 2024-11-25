@@ -1,81 +1,114 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Pagination from '../pagination/Pagination';
-import SearhBarAndFilter from './SearchBarAndFilter';
-import EmployeeRow from './EmployeeRow';
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import helperAction from '@/apis/helper.action';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useEffect, useState } from "react";
+import Pagination from "../pagination/Pagination";
+import SearhBarAndFilter from "./SearchBarAndFilter";
+import EmployeeRow from "./EmployeeRow";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useHelper } from "@/hooks/useHelper";
 
 const columns = [
-  { header: 'ID', className: 'w-[10%] hidden md:table-cell' },
-  { header: 'NAME', className: 'w-[12%] hidden md:table-cell' },
-  { header: 'ADDRESS', className: 'w-[18%] hidden md:table-cell' },
-  { header: 'EVALUATE', className: 'w-[15%] hidden md:table-cell ' },
-  { header: 'PHONE', className: 'w-[11%] hidden md:table-cell' },
-  { header: 'EMAIL', className: 'w-[20%] hidden md:table-cell' },
-  { header: '', className: 'w-[8%] hidden md:table-cell' },
+  { header: "ID", className: "w-[10%] hidden md:table-cell" },
+  { header: "NAME", className: "w-[12%] hidden md:table-cell" },
+  { header: "ADDRESS", className: "w-[18%] hidden md:table-cell" },
+  { header: "EVALUATE", className: "w-[15%] hidden md:table-cell " },
+  { header: "PHONE", className: "w-[11%] hidden md:table-cell" },
+  { header: "EMAIL", className: "w-[20%] hidden md:table-cell" },
+  { header: "", className: "w-[8%] hidden md:table-cell" },
 ];
 
-const fetchHelper = async (url: string) => {
-  //const url = `http://localhost:26831/api/v1/manage/helpers`;
-  const response = await axios.get(url, {
-    withCredentials: true,
-  });
-  return response.data.data.results;
-}
+const sample: Helper[] = [
+  {
+    id: "1",
+    experienceDescription:
+      "3 years of experience in house cleaning and organizing spaces.",
+    resumeUploaded: null,
+    servicesOffered: ["House Cleaning", "Organizing"],
+    hourlyRate: 20,
+    averageRating: 4.8,
+    completedJobs: 150,
+    cancelledJobs: 3,
+    gender: "Female",
+    profilePicture: "https://example.com/profiles/helper1.jpg",
+    identityCard: "123456789",
+    fullName: "Jane Doe",
+    dateOfBirth: "1990-05-15",
+    address: "123 Main Street, Springfield, USA",
+    phoneNumber: "+1234567890",
+    email: "jane.doe@example.com",
+  },
+  {
+    id: "2",
+    experienceDescription:
+      "5 years specializing in gardening and lawn maintenance.",
+    resumeUploaded: null,
+    servicesOffered: ["Gardening", "Lawn Maintenance"],
+    hourlyRate: 25,
+    averageRating: 4.6,
+    completedJobs: 200,
+    cancelledJobs: 5,
+    gender: "Male",
+    profilePicture: "https://example.com/profiles/helper2.jpg",
+    identityCard: "987654321",
+    fullName: "John Smith",
+    dateOfBirth: "1985-09-10",
+    address: "456 Elm Street, Metropolis, USA",
+    phoneNumber: "+1239876543",
+    email: "john.smith@example.com",
+  },
+  {
+    id: "3",
+    experienceDescription:
+      "2 years providing babysitting and childcare services.",
+    resumeUploaded: null,
+    servicesOffered: ["Babysitting", "Childcare"],
+    hourlyRate: 18,
+    averageRating: 4.9,
+    completedJobs: 80,
+    cancelledJobs: 2,
+    gender: "Female",
+    profilePicture: "https://example.com/profiles/helper3.jpg",
+    identityCard: "456789123",
+    fullName: "Emily Brown",
+    dateOfBirth: "1995-12-22",
+    address: "789 Pine Avenue, Gotham, USA",
+    phoneNumber: "+1236547890",
+    email: "emily.brown@example.com",
+  },
+];
 
 const EmployeeTable = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('Filter by');
-  const [searchBy, setSearchBy] = useState('Name');
-  const [helpersData, setHelpersData] = useState<any>(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("Filter by");
+  const [searchBy, setSearchBy] = useState("Name");
+  const [helpersData, setHelpersData] = useState<Helper[]>(sample);
 
-  // useEffect(() => {
-  //   const url = 'http://localhost:5011/api/v1/manage/helpers';
+  const { useGetAllHelpers } = useHelper();
 
-  //   const getHelpersData = async () => {
-  //     try {
-  //       const data = await fetchHelper(url)
-  //       console.log('helperdata', data)
-  //       setHelpersData(data)
-  //     } catch (error) {
-  //       console.error('Lỗi khi lấy dữ liệu:', error)
-  //     }
-  //   };
-
-  //   getHelpersData();
-  // }, []);
-
-
-  const { data, error } = useQuery({
-    queryKey: ['getHelpers'],
-    queryFn: () => helperAction.getHelpers()
-  })
+  const { data, error } = useGetAllHelpers();
 
   useEffect(() => {
-    if (data) {
-      setHelpersData(data)
+    if (data && data.data?.results) {
+      setHelpersData(data.data.results);
     }
-  }, [data])
+  }, [data]);
 
   //Filter
-  const applyFilter = (data: Employee[]) => {
+  const applyFilter = (data: Helper[]) => {
     switch (filter) {
-      case 'Best Rating':
+      case "Best Rating":
         return [...data].sort((a, b) => b.averageRating - a.averageRating);
 
-      case 'Worst Rating':
+      case "Worst Rating":
         return [...data].sort((a, b) => a.averageRating - b.averageRating);
 
       default:
         return data;
     }
-  }
+  };
 
   // Search
   const handleSearch = (term: string) => {
@@ -85,13 +118,14 @@ const EmployeeTable = () => {
 
   const filteredData = (helpersData || []).filter((employee: any) => {
     const term = searchTerm.toLowerCase();
-    if (searchBy === 'Id') return employee.id.toLowerCase().includes(term);
-    if (searchBy === 'Name') return employee.fullName.toLowerCase().includes(term);
-    if (searchBy === 'Address')
+    if (searchBy === "Id") return employee.id.toLowerCase().includes(term);
+    if (searchBy === "Name")
+      return employee.fullName.toLowerCase().includes(term);
+    if (searchBy === "Address")
       return employee.address.toLowerCase().includes(term);
-    if (searchBy === 'Phone')
+    if (searchBy === "Phone")
       return employee.phoneNumber.toLowerCase().includes(term);
-    if (searchBy === 'Email')
+    if (searchBy === "Email")
       return employee.email?.toLowerCase().includes(term);
     return employee.fullName.toLowerCase().includes(term);
   });
@@ -136,7 +170,7 @@ const EmployeeTable = () => {
 
       {/* employee table */}
       <div className="flex overflow-hidden flex-col justify-center w-full max-md:max-w-full">
-        {finalData.map((Employee: Employee, index: any) => (
+        {finalData.map((Employee: Helper, index: any) => (
           <EmployeeRow key={Employee.id} {...Employee} />
         ))}
       </div>

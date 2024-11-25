@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
 import { ClipLoader } from "react-spinners";
 
-import { partialAdminCustomerSchema } from "@/schemas/customerSchema";
+import { partialCustomerSchema } from "@/schemas/customerSchema";
 import { Gender } from "@/types/enum";
 
 import { useCustomer } from "@/hooks/useCustomer";
@@ -27,11 +27,9 @@ const DEFAULT_IMAGES = {
   profilePicture: "/images/camera.svg",
 };
 
-type FormField = z.infer<typeof partialAdminCustomerSchema>;
+type FormField = z.infer<typeof partialCustomerSchema>;
 
 const CustomerInfo = () => {
-  const { id } = useParams<{ id: string }>();
-
   const [customerIdCard, setCustomerIdCard] = useState<string | null>(
     DEFAULT_IMAGES.idCard,
   );
@@ -39,18 +37,18 @@ const CustomerInfo = () => {
     string | null
   >(DEFAULT_IMAGES.profilePicture);
 
-  const { useUpdateUser, useGetCustomerById } = useCustomer();
+  const { useUpdateCurrentUser, useGetCurrentCustomer } = useCustomer();
 
   const {
     isPending,
     data: queryData,
     error: queryError,
-  } = useGetCustomerById(id);
-  const updateCustomerMutation = useUpdateUser(id);
+  } = useGetCurrentCustomer();
+  const updateCustomerMutation = useUpdateCurrentUser();
 
   const form = useForm<FormField>({
     mode: "onBlur",
-    resolver: zodResolver(partialAdminCustomerSchema),
+    resolver: zodResolver(partialCustomerSchema),
   });
 
   const {
@@ -62,7 +60,6 @@ const CustomerInfo = () => {
 
   useEffect(() => {
     if (queryData) {
-      console.log(queryData.data);
       reset({
         ...queryData.data,
         profilePictureFile: undefined,
@@ -296,7 +293,7 @@ const CustomerInfo = () => {
           <div className="min-h-screen md:w-1/3">
             <p className="my-[12.8875px] font-Averta-Bold text-4xl">Avatar</p>
 
-            <div className="mb-6 flex flex-col items-center justify-center">
+            <div className="mb-6">
               {isPending ? (
                 <ClipLoader color="#000000" loading={isPending} size={100} />
               ) : (
@@ -309,7 +306,6 @@ const CustomerInfo = () => {
                 />
               )}
               <Button
-                type="button"
                 variant="link"
                 className="mx-auto flex items-center justify-center font-Averta-Semibold text-[18px] text-[#1A78F2]"
                 onClick={() =>
@@ -356,7 +352,6 @@ const CustomerInfo = () => {
                 Download
               </Button>
               <Button
-                type="button"
                 className="ml-[10px] h-[40px] w-[170px] border-2 border-[#1A78F2] bg-white font-Averta-Semibold text-[16px] text-[#1A78F2] hover:bg-gray-100"
                 onClick={() => document.getElementById("idCardInput")?.click()}
               >
