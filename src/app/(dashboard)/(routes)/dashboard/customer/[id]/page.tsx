@@ -62,6 +62,7 @@ const CustomerInfo = () => {
 
   useEffect(() => {
     if (queryData) {
+      console.log(queryData.data);
       reset({
         ...queryData.data,
         profilePictureFile: undefined,
@@ -295,7 +296,7 @@ const CustomerInfo = () => {
           <div className="min-h-screen md:w-1/3">
             <p className="my-[12.8875px] font-Averta-Bold text-4xl">Avatar</p>
 
-            <div className="mb-6">
+            <div className="mb-6 flex flex-col items-center justify-center">
               {isPending ? (
                 <ClipLoader color="#000000" loading={isPending} size={100} />
               ) : (
@@ -308,6 +309,7 @@ const CustomerInfo = () => {
                 />
               )}
               <Button
+                type="button"
                 variant="link"
                 className="mx-auto flex items-center justify-center font-Averta-Semibold text-[18px] text-[#1A78F2]"
                 onClick={() =>
@@ -354,6 +356,7 @@ const CustomerInfo = () => {
                 Download
               </Button>
               <Button
+                type="button"
                 className="ml-[10px] h-[40px] w-[170px] border-2 border-[#1A78F2] bg-white font-Averta-Semibold text-[16px] text-[#1A78F2] hover:bg-gray-100"
                 onClick={() => document.getElementById("idCardInput")?.click()}
               >
