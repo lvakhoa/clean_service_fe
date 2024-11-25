@@ -1,65 +1,65 @@
-'use client';
+"use client";
 
-import { ToggleButton } from '@/components/button/togglebutton';
-import { ToggleButtonGroup } from '@/components/button/togglebuttongroup';
-import { InputWithLabel } from '@/components/input/inputwithlabel';
-import { MultiLineInput } from '@/components/input/multiplelineinput';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { EXCEPTION_CODE } from '@/configs';
-import validateObject from '@/helpers/validateObject';
-import { useBookingStore, useCreateBooking } from '@/hooks/useBooking';
-import createBookingSchema from '@/schemas/createBookingSchema';
-import { Spinner } from '@material-tailwind/react';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
-import ErrorPopup from '../error-popup/error-popup';
+import { ToggleButton } from "@/components/button/togglebutton";
+import { ToggleButtonGroup } from "@/components/button/togglebuttongroup";
+import { InputWithLabel } from "@/components/input/inputwithlabel";
+import { MultiLineInput } from "@/components/input/multiplelineinput";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { EXCEPTION_CODE } from "@/configs";
+import validateObject from "@/helpers/validateObject";
+import { useBookingStore, useCreateBooking } from "@/hooks/useBooking";
+import createBookingSchema from "@/schemas/createBookingSchema";
+import { Spinner } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
+import ErrorPopup from "../error-popup/error-popup";
 
 const getInOpitonsButtons = [
-  { id: 1, contentText: 'Someone in Home' },
-  { id: 2, contentText: 'Doorman' },
-  { id: 3, contentText: 'Hidden Key' },
-  { id: 4, contentText: 'Others' },
+  { id: 1, contentText: "Someone in Home" },
+  { id: 2, contentText: "Doorman" },
+  { id: 3, contentText: "Hidden Key" },
+  { id: 4, contentText: "Others" },
 ];
 
 const deepCleanOptionsButtons = [
   {
-    contentText: 'Inside fridge',
-    price: '35',
-    imageSrc: '/images/BookingPage/step-4/Fridge.svg',
-    imageSrc2: '/images/BookingPage/step-4/FridgeBlue.svg',
+    contentText: "Inside fridge",
+    price: "35",
+    imageSrc: "/images/BookingPage/step-4/Fridge.svg",
+    imageSrc2: "/images/BookingPage/step-4/FridgeBlue.svg",
   },
   {
-    contentText: 'Inside oven',
-    price: '35',
-    imageSrc: '/images/BookingPage/step-4/Oven.svg',
-    imageSrc2: '/images/BookingPage/step-4/OvenBlue.svg',
+    contentText: "Inside oven",
+    price: "35",
+    imageSrc: "/images/BookingPage/step-4/Oven.svg",
+    imageSrc2: "/images/BookingPage/step-4/OvenBlue.svg",
   },
   {
-    contentText: 'Inside cabinets',
-    price: '35',
-    imageSrc: '/images/BookingPage/step-4/Cabinets.svg',
-    imageSrc2: '/images/BookingPage/step-4/CabinetsBlue.svg',
+    contentText: "Inside cabinets",
+    price: "35",
+    imageSrc: "/images/BookingPage/step-4/Cabinets.svg",
+    imageSrc2: "/images/BookingPage/step-4/CabinetsBlue.svg",
   },
 ];
 
 const yesNoOptionsButtons = [
-  { id: 5, contentText: 'Yes' },
-  { id: 6, contentText: 'No' },
+  { id: 5, contentText: "Yes" },
+  { id: 6, contentText: "No" },
 ];
 
 const Booking4 = () => {
   const booking = useBookingStore((state) => state.booking);
   const setBooking = useBookingStore((state) => state.setBooking);
 
-  const [location, setLocation] = useState('');
-  const [aptNum, setAptNum] = useState('');
+  const [location, setLocation] = useState("");
+  const [aptNum, setAptNum] = useState("");
   // const [getIn, setGetIn] = useState<number | null>(null);
   // const [hasPet, setHasPet] = useState<number | null>(null);
   // const [petType, setPetType] = useState('');
-  const [notes, setNotes] = useState('');
-  const [contract, setContract] = useState('');
+  const [notes, setNotes] = useState("");
+  const [contract, setContract] = useState("");
 
   const {
     mutate: createBooking,
@@ -109,36 +109,36 @@ const Booking4 = () => {
   return (
     <div>
       <div className="min-h-screen w-full">
-        <div className="w-1/2 m-auto p-4">
-          <div className="justify-center h-max">
-            <p className="text-4xl text-center font-Averta-Bold mb-2 mt-[50px] ">
+        <div className="m-auto w-1/2 p-4">
+          <div className="h-max justify-center">
+            <p className="mb-2 mt-[50px] text-center font-Averta-Bold text-4xl">
               Add Your Address & Details
             </p>
-            <p className="text-[20px] text-center text-[#88939D] font-Averta-Regular leading-[25px]">
+            <p className="text-center font-Averta-Regular text-[20px] leading-[25px] text-[#88939D]">
               Be specific of any additional details we might need from you
             </p>
           </div>
         </div>
 
         <div className="mt-[50px]">
-          <div className="justify-center flex md:flex-row">
+          <div className="flex justify-center md:flex-row">
             <InputWithLabel
               labelText="ADDRESS"
               inputType="text"
               inputPlaceholder="Enter a Location"
               inputId="location"
               inputWidth="40vw"
-              defaulValue={location}
+              defaultValue={location}
               setValue={setLocation}
             />
-            <div className="md:ml-2 mt-2 md:mt-0">
+            <div className="mt-2 md:ml-2 md:mt-0">
               <InputWithLabel
                 labelText="APT.NUMBER"
                 inputType="text"
                 inputPlaceholder=""
                 inputId="aptNum"
                 inputWidth="16.25vw"
-                defaulValue={aptNum}
+                defaultValue={aptNum}
                 setValue={setAptNum}
               />
             </div>
@@ -200,7 +200,7 @@ const Booking4 = () => {
             </div>
           </div> */}
 
-          <div className="grid justify-center items-center">
+          <div className="grid items-center justify-center">
             {/* <Input
               value={petType}
               onChange={(e) => setPetType(e.target.value)}
@@ -233,14 +233,14 @@ const Booking4 = () => {
               />
             </div>
 
-            <div className="flex justify-center items-center mt-[55px] pb-[50px]">
+            <div className="mt-[55px] flex items-center justify-center pb-[50px]">
               <Button
                 disabled={isPending || isSuccess}
                 onClick={handleOrder}
                 className="h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
               >
                 {isPending && (
-                  <FaSpinner className="animate-spin size-5 mr-2" />
+                  <FaSpinner className="mr-2 size-5 animate-spin" />
                 )}
                 Place order
               </Button>

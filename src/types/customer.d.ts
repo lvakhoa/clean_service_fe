@@ -13,7 +13,7 @@ type Customer = {
   userType: UserType;
   profilePicture?: string;
   identityCard?: string;
-  gender?: string;
+  gender: string;
   fullName: string;
   dateOfBirth: string;
   address?: string;

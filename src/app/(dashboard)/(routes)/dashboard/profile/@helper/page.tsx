@@ -5,15 +5,20 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import helperAction from "@/apis/helper.action";
+import customerAction from "@/apis/customer.action";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
-import UpdateUserSchema, { UpdateUserDto } from "@/schemas/updateUserSchema";
-import UpdateHelperSchema from "@/schemas/updateHelperSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender } from "@/configs/enum";
 import FileDownloadCard from "@/components/card/FileDownloadCard";
 import { useHelper } from "@/hooks/useHelper";
+import { formatDate } from "@/helpers/formatDateTime";
+import { useCustomer } from "@/hooks/useCustomer";
+import { partialHelperSchema } from "@/schemas/helperSchema";
+import { partialCustomerSchema } from "@/schemas/customerSchema";
+import { z } from "zod";
+import { Skeleton } from "@/components/skeleton/skeleton";
 
 const genderOptions = Object.values(Gender);
 
@@ -23,101 +28,81 @@ interface ResumeFile {
   fileUrl?: string | null;
 }
 
-type FormData = UpdateUserDto & {
-  experienceDescription: string;
-};
-
 const DEFAULT_IMAGES = {
   idCard: "/images/identity.png",
   profilePicture: "/images/camera.svg",
 };
 
+const combinedSchema = z.object({
+  ...partialCustomerSchema.shape,
+  ...partialHelperSchema.shape,
+});
+
+type FormField = z.infer<typeof combinedSchema>;
+
 const EmployeeInfo = () => {
   const router = useRouter();
 
-  const [helperData, setHelperData] = useState<Helper | undefined>();
   const [helperIdCard, setHelperIdCard] = useState<string | null>(
-    DEFAULT_IMAGES.idCard
+    DEFAULT_IMAGES.idCard,
   );
   const [helperProfilePicture, setHelperProfilePicture] = useState<
     string | null
   >(DEFAULT_IMAGES.profilePicture);
   const [helperResumeFile, setHelperResumeFile] = useState<ResumeFile>();
 
-  const {
-    useGetCurrentHelper,
-    useUpdateHelperIdCard,
-    useUpdateHelperProfilePicture,
-    useUpdateHelperResume,
-  } = useHelper();
+  const { useUpdateCurrentHelper, useGetCurrentHelper } = useHelper();
+  const { useUpdateCurrentUser } = useCustomer();
 
-  const { data, error } = useGetCurrentHelper();
+  const { data: helperData, error, isPending } = useGetCurrentHelper();
 
-  const updateIdCardMutation = useUpdateHelperIdCard(helperData?.id || "");
-  const updateProfilePictureMutation = useUpdateHelperProfilePicture(
-    helperData?.id || ""
-  );
-  const updateResumeMutation = useUpdateHelperResume(helperData?.id || "");
-
-  const combinedSchema = UpdateUserSchema.extend({
-    experienceDescription: UpdateHelperSchema.shape.experienceDescription,
-  });
-
+  const updateUserMutation = useUpdateCurrentUser();
+  const updateHelperMutation = useUpdateCurrentHelper();
   const {
     control,
     handleSubmit,
     reset,
     formState: { isSubmitting, errors },
-  } = useForm<FormData>({
+  } = useForm<FormField>({
     resolver: zodResolver(combinedSchema),
-    defaultValues: {
-      fullName: "",
-      dateOfBirth: new Date(), // Set default date
-      gender: undefined,
-      phoneNumber: "",
-      address: "",
-      experienceDescription: "",
-      profilePicture: "",
-      identityCard: "",
-    },
   });
 
   useEffect(() => {
-    if (data) {
-      setHelperIdCard(data.data?.identityCard || DEFAULT_IMAGES.idCard);
+    if (helperData) {
+      setHelperIdCard(helperData.data?.identityCard || DEFAULT_IMAGES.idCard);
       setHelperProfilePicture(
-        data.data?.profilePicture || DEFAULT_IMAGES.profilePicture
+        helperData.data?.profilePicture || DEFAULT_IMAGES.profilePicture,
       );
-      setHelperData(data.data);
-
-      const fileNameWithExtension = data.data?.resumeUploaded.split("/").pop();
-
+      const fileNameWithExtension = helperData.data?.resumeUploaded
+        .split("/")
+        .pop();
       setHelperResumeFile({
         fileName: fileNameWithExtension || "CV.docx",
         fileSize: "",
-        fileUrl: data.data?.resumeUploaded,
+        fileUrl: helperData.data?.resumeUploaded,
       });
-      reset({ gender: data.data?.gender as Gender });
-    }
-  }, [data, reset]);
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) {
-      return "";
+      reset({
+        ...helperData.data,
+      });
+      console.log("helperData", helperData);
     }
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-CA");
-    return formattedDate;
-  };
+  }, [helperData, error, reset]);
 
-  const onSubmit = async (formData: FormData) => {
+  const onSubmit = async (formData: FormField) => {
     try {
-      const { experienceDescription, ...userDto } = formData;
-      const helperDto = { experienceDescription };
+      const { experienceDescription, resumeUploadedFile, ...other } = formData;
 
-      await helperAction.updateUserHelper(helperData?.id || "", userDto);
-      await helperAction.updateHelper(helperData?.id || "", helperDto);
+      const helperDto = {
+        experienceDescription,
+        resumeUploadedFile,
+      };
+      const userDto = {
+        ...other,
+      };
 
+      updateUserMutation.mutate(userDto);
+      updateHelperMutation.mutate(helperDto);
       toast.success("User updated successfully!");
       router.refresh();
     } catch (error) {
@@ -126,86 +111,40 @@ const EmployeeInfo = () => {
     }
   };
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    uploadMutation: any,
-    setFileState: React.Dispatch<React.SetStateAction<string | null>>,
-    fileKey: string
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append(fileKey, file);
-
-        await uploadMutation.mutateAsync(formData);
-
-        setFileState(URL.createObjectURL(file));
-      } catch (error) {
-        console.error(`Error uploading ${fileKey}:`, error);
+  const handleResumeChange =
+    (onChange: (file: File) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileNameWithExtension = file.name;
+        const fileSizeInKB = (file.size / 1024).toFixed(2);
+        const fileUrl = URL.createObjectURL(file);
+        setHelperResumeFile({
+          fileName: fileNameWithExtension,
+          fileSize: `${fileSizeInKB} KB`,
+          fileUrl,
+        });
+        onChange(file);
       }
-    }
-  };
+    };
 
-  const handleResumeUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
+  const handleFileChange =
+    (setFilePreview: (url: string) => void, onChange: (file: File) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setFilePreview(URL.createObjectURL(file));
+        onChange(file);
+      }
+    };
 
-    if (!file) return;
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Please upload a PDF or Word document");
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      toast.error("File size should be less than 5MB");
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("resume", file);
-
-      toast.loading("Uploading resume...");
-
-      await updateResumeMutation.mutateAsync(formData);
-
-      const formattedSize =
-        file.size < 1024 * 1024
-          ? `${(file.size / 1024).toFixed(1)} KB`
-          : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
-
-      setHelperResumeFile({
-        fileName: file.name,
-        fileSize: formattedSize,
-        fileUrl: URL.createObjectURL(file),
-      });
-
-      toast.dismiss();
-      toast.success("Resume uploaded successfully!");
-    } catch (error) {
-      toast.dismiss();
-      toast.error("Failed to upload resume");
-      console.error("Error uploading resume:", error);
-    }
-  };
-
-  if (!helperData) return <div>Loading...</div>;
+  // if (!helperData) return <div>Loading...</div>;
   if (error) return <div>Error fetching data</div>;
 
   return (
-    <div className="bg-white h-full w-full flex flex-col md:flex-row">
+    <div className="flex h-full w-full flex-col bg-white md:flex-row">
       {/* Section-Left */}
-      <div className="md:w-2/3 pb-10 bg-white min-h-screen">
+      <div className="min-h-screen bg-white pb-10 md:w-2/3">
         <div className="flex flex-row">
           <Image
             src="/images/exit-button.png"
@@ -215,140 +154,196 @@ const EmployeeInfo = () => {
             className="cursor-pointer transition-transform duration-300 hover:scale-110"
             onClick={() => router.back()}
           />
-          <p className="font-Averta-Bold text-4xl text-center my-auto ml-[10px]">
+          <p className="my-auto ml-[10px] text-center font-Averta-Bold text-4xl">
             User Info
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid justify-center mt-[50px]"
+          className="mt-[50px] grid justify-center"
         >
           <div className="flex flex-col md:flex-row">
-            <Controller
-              name="fullName"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  labelText="FULL NAME"
-                  inputType="text"
-                  inputPlaceholder="Enter Full Name"
-                  inputId="fullName"
-                  inputWidth="25vw"
-                  defaultValue={helperData.fullName}
-                  error={errors.fullName?.message}
-                  {...field}
-                />
-              )}
-            />
-            <div className="md:ml-2 md:mt-0">
+            {isPending ? (
+              <div className="flex flex-col gap-1.5">
+                <Skeleton className="h-[21px] w-[5vw]" />
+                <Skeleton className="h-[50px] w-[25vw]" />
+              </div>
+            ) : (
               <Controller
-                name="dateOfBirth"
+                name="fullName"
                 control={control}
-                render={({ field: { onChange, value, ...field } }) => (
+                render={({ field }) => (
                   <InputWithLabel
-                    labelText="DATE OF BIRTH"
-                    inputType="date"
-                    inputId="dateOfBirth"
-                    inputPlaceholder=""
-                    inputWidth="11.25vw"
-                    error={errors.dateOfBirth?.message}
-                    defaultValue={formatDate(helperData.dateOfBirth)}
-                    onChange={(e) => onChange(new Date(e.target.value))}
+                    labelText="FULL NAME"
+                    inputType="text"
+                    inputPlaceholder="Enter Full Name"
+                    inputId="fullName"
+                    inputWidth="25vw"
+                    defaultValue={field.value}
+                    error={errors.fullName?.message}
                     {...field}
                   />
                 )}
               />
+            )}
+            <div className="md:ml-2 md:mt-0">
+              {isPending ? (
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-[21px] w-[5vw]" />
+                  <Skeleton className="h-[50px] w-[11.25vw]" />
+                </div>
+              ) : (
+                <Controller
+                  name="dateOfBirth"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <InputWithLabel
+                      labelText="DATE OF BIRTH"
+                      inputType="date"
+                      inputId="dateOfBirth"
+                      inputPlaceholder=""
+                      inputWidth="11.25vw"
+                      error={errors.dateOfBirth?.message}
+                      defaultValue={formatDate(value ?? null)}
+                      onChange={(e) => onChange(new Date(e.target.value))}
+                      {...field}
+                    />
+                  )}
+                />
+              )}
             </div>
             <div className="md:ml-2 md:mt-0">
+              {isPending ? (
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-[21px] w-[5vw]" />
+                  <Skeleton className="h-[50px] w-[6.875vw]" />
+                </div>
+              ) : (
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <InputWithLabel
+                      labelText="GENDER"
+                      inputPlaceholder=""
+                      inputType="combobox"
+                      inputId="gender"
+                      inputWidth="6.875vw"
+                      options={genderOptions}
+                      error={errors.gender?.message}
+                      onValueChange={(val) => {
+                        onChange(val as Gender);
+                      }}
+                      defaultValue={helperData?.data?.gender as Gender}
+                    />
+                  )}
+                />
+              )}
+            </div>
+          </div>
+
+          <div className="mt-[30px] flex flex-col md:flex-row">
+            {isPending ? (
+              <div className="flex flex-col gap-1.5">
+                <Skeleton className="h-[21px] w-[5vw]" />
+                <Skeleton className="h-[50px] w-[25vw]" />
+              </div>
+            ) : (
               <Controller
-                name="gender"
+                name="phoneNumber"
                 control={control}
-                render={({ field: { onChange, value } }) => (
+                render={({ field }) => (
                   <InputWithLabel
-                    labelText="GENDER"
-                    inputPlaceholder=""
-                    inputType="combobox"
-                    inputId="gender"
-                    inputWidth="6.875vw"
-                    options={genderOptions}
-                    error={errors.gender?.message}
-                    onValueChange={(val) => onChange(val as Gender)}
-                    defaultValue={value || ""}
+                    labelText="PHONE NUMBER"
+                    inputType="text"
+                    inputPlaceholder="Enter a Phone number"
+                    inputId="phoneNumber"
+                    defaultValue={field.value}
+                    inputWidth="25vw"
+                    {...field}
                   />
                 )}
               />
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row mt-[30px]">
-            <Controller
-              name="phoneNumber"
-              control={control}
-              defaultValue={helperData.phoneNumber}
-              render={({ field }) => (
-                <InputWithLabel
-                  labelText="PHONE NUMBER"
-                  inputType="text"
-                  inputPlaceholder="Enter a Phone number"
-                  inputId="phoneNumber"
-                  defaultValue={helperData.phoneNumber}
-                  inputWidth="25vw"
-                  {...field}
-                />
-              )}
-            />
+            )}
             <div className="md:ml-2 md:mt-0">
-              <InputWithLabel
-                labelText="EMAIL ADDRESS"
-                inputType="email"
-                inputPlaceholder="Enter your email address"
-                inputId="email"
-                inputWidth="18.125vw"
-                defaultValue={helperData.email}
-              />
+              {isPending ? (
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-[21px] w-[5vw]" />
+                  <Skeleton className="h-[50px] w-[18.125vw]" />
+                </div>
+              ) : (
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <InputWithLabel
+                      labelText="EMAIL ADDRESS"
+                      inputType="email"
+                      inputPlaceholder="Enter your email address"
+                      inputId="email"
+                      inputWidth="18.125vw"
+                      defaultValue={field.value}
+                    />
+                  )}
+                />
+              )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-8 mt-[30px]">
-            <Controller
-              name="address"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  labelText="ADDRESS"
-                  inputType="text"
-                  inputPlaceholder="Enter your city/province"
-                  inputId="address"
-                  inputWidth="44vw"
-                  defaultValue={helperData.address}
-                  error={errors.address?.message}
-                  {...field}
-                />
-              )}
-            />
-            <Controller
-              name="experienceDescription"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  labelText="DESCRIPTION"
-                  inputType="text"
-                  inputPlaceholder="Describe your experience"
-                  inputId="experienceDescription"
-                  inputWidth="44vw"
-                  defaultValue={helperData.experienceDescription}
-                  error={errors.experienceDescription?.message}
-                  {...field}
-                />
-              )}
-            />
+          <div className="mt-[30px] flex flex-col gap-8">
+            {isPending ? (
+              <div className="flex w-full flex-col gap-1.5">
+                <Skeleton className="h-[21px] w-[5vw]" />
+                <Skeleton className="h-[50px] w-[full]" />
+              </div>
+            ) : (
+              <Controller
+                name="address"
+                control={control}
+                render={({ field }) => (
+                  <InputWithLabel
+                    labelText="ADDRESS"
+                    inputType="text"
+                    inputPlaceholder="Enter your city/province"
+                    inputId="address"
+                    inputWidth="44vw"
+                    defaultValue={field.value}
+                    error={errors.address?.message}
+                    {...field}
+                  />
+                )}
+              />
+            )}
+            {isPending ? (
+              <div className="flex w-full flex-col gap-1.5">
+                <Skeleton className="h-[21px] w-[5vw]" />
+                <Skeleton className="h-[50px] w-[full]" />
+              </div>
+            ) : (
+              <Controller
+                name="experienceDescription"
+                control={control}
+                render={({ field }) => (
+                  <InputWithLabel
+                    labelText="DESCRIPTION"
+                    inputType="text"
+                    inputPlaceholder="Describe your experience"
+                    inputId="experienceDescription"
+                    inputWidth="44vw"
+                    defaultValue={field.value}
+                    error={errors.experienceDescription?.message}
+                    {...field}
+                  />
+                )}
+              />
+            )}
           </div>
 
-          <div className="flex justify-center items-center mt-[4.5vw] pb-[2vw]">
+          <div className="mt-[4.5vw] flex items-center justify-center pb-[2vw]">
             <Button
               type="submit"
-              className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
+              className="h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px] md:w-1/3"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -362,83 +357,111 @@ const EmployeeInfo = () => {
       </div>
 
       {/* Section Right */}
-      <div className="md:w-1/3 min-h-screen">
-        <p className="font-Averta-Bold text-3xl my-[12.8875px]">Avatar</p>
+      <div className="min-h-screen md:w-1/3">
+        <p className="my-[12.8875px] font-Averta-Bold text-3xl">Avatar</p>
 
-        <div className="mb-6">
-          <Image
-            src={helperProfilePicture ?? "/images/camera.svg"}
-            alt="camera"
-            width={160}
-            height={160}
-            className=" flex items-center justify-center mx-auto"
-          />
+        <div className="mb-6 flex flex-col items-center justify-center">
+          {isPending ? (
+            <ClipLoader color="#000000" loading={isPending} size={100} />
+          ) : (
+            <Image
+              src={helperProfilePicture ?? "/images/camera.svg"}
+              alt="camera"
+              width={160}
+              height={160}
+              className="mx-auto flex items-center justify-center"
+            />
+          )}
           <Button
             variant="link"
-            className="flex text-[18px] items-center justify-center mx-auto font-Averta-Semibold text-[#1A78F2]"
+            className="mx-auto flex items-center justify-center font-Averta-Semibold text-[18px] text-[#1A78F2]"
+            onClick={() =>
+              document.getElementById("profilePictureInput")?.click()
+            }
           >
-            <input
-              onChange={(e) =>
-                handleImageUpload(
-                  e,
-                  updateProfilePictureMutation,
-                  setHelperProfilePicture,
-                  "profilePicture"
-                )
-              }
-              type="file"
-              className="file:border-none file:bg-transparent file:text-blue-500 text-white file:hover:underline file:cursor-pointer w-[111px] overflow-hidden"
+            Upload
+            <Controller
+              name="profilePictureFile"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="file"
+                  id="profilePictureInput"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange(
+                    setHelperProfilePicture,
+                    field.onChange,
+                  )}
+                />
+              )}
             />
           </Button>
         </div>
 
-        <p className="text-3xl font-Averta-Bold mb-3 mt-[1vw]">Identify Card</p>
+        <p className="mb-3 mt-[1vw] font-Averta-Bold text-3xl">Identify Card</p>
         <div className="px-4 py-8 text-center">
-          <Image
-            src={helperIdCard ?? "/images/identity.png"}
-            alt="identity"
-            width={400}
-            height={200}
-          />
+          {isPending ? (
+            <ClipLoader color="#000000" loading={isPending} size={150} />
+          ) : (
+            <Image
+              src={helperIdCard ?? "/images/identity.png"}
+              alt="identity"
+              width={400}
+              height={200}
+            />
+          )}
         </div>
         <div className="flex flex-row justify-center">
           <Button
-            className="ml-[10px] w-[170px] h-[40px]
-         bg-white font-Averta-Semibold text-[#1A78F2] hover:bg-gray-100
-         text-[16px] border-2 border-[#1A78F2]"
+            className="ml-[10px] h-[40px] w-[170px] border-2 border-[#1A78F2] bg-white font-Averta-Semibold text-[16px] text-[#1A78F2] hover:bg-gray-100"
             onClick={() => document.getElementById("idCardInput")?.click()}
           >
             Upload
-            <input
-              type="file"
-              id="idCardInput"
-              className=" hidden"
-              onChange={(e) =>
-                handleImageUpload(
-                  e,
-                  updateIdCardMutation,
-                  setHelperIdCard,
-                  "idCard"
-                )
-              }
+            <Controller
+              name="idCardFile"
+              control={control}
+              render={({ field }) => (
+                <input
+                  accept="image/*"
+                  type="file"
+                  id="idCardInput"
+                  className="hidden"
+                  onChange={handleFileChange(setHelperIdCard, field.onChange)}
+                />
+              )}
             />
           </Button>
         </div>
 
-        <p className="text-3xl font-Averta-Bold mb-3 mt-[1vw]">Résumé</p>
-        <FileDownloadCard
-          fileName={helperResumeFile?.fileName || "CV.docx"}
-          fileSize={helperResumeFile?.fileSize || ""}
-          onClick={() => document.getElementById("resumeInput")?.click()}
-          uri={helperResumeFile?.fileUrl || ""}
-        />
-        <input
-          type="file"
-          accept=".doc,.docx,.pdf"
-          id="resumeInput"
-          className=" hidden"
-          onChange={handleResumeUpload}
-        />
+        <p className="mb-3 mt-[1vw] font-Averta-Bold text-3xl">Résumé</p>
+        {isPending ? (
+          <div className="flex w-full flex-col gap-1.5">
+            <Skeleton className="h-[50px] w-[full]" />
+          </div>
+        ) : (
+          <>
+            <FileDownloadCard
+              fileName={helperResumeFile?.fileName || "CV.docx"}
+              fileSize={helperResumeFile?.fileSize || ""}
+              onClick={() => document.getElementById("resumeInput")?.click()}
+              uri={helperResumeFile?.fileUrl || ""}
+            />
+            <Controller
+              name="resumeUploadedFile"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="file"
+                  accept=".doc,.docx,.pdf"
+                  id="resumeInput"
+                  className="hidden"
+                  onChange={handleResumeChange(field.onChange)}
+                />
+              )}
+            />
+          </>
+        )}
       </div>
     </div>
   );

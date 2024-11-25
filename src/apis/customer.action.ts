@@ -1,3 +1,7 @@
+import {
+  adminUpdateCustomerData,
+  updateCustomerData,
+} from "@/schemas/customerSchema";
 import { cleanApi } from "@/services/HttpClient";
 
 const customerAction = {
@@ -14,16 +18,61 @@ const customerAction = {
   },
   async getCustomerById(id: string) {
     const res = await cleanApi.get<CleanSuccessResponseWrapper<Customer>>(
-      `/manage/customers/${id}`
+      `/manage/customers/${id}`,
     );
     return res.data;
   },
-  async updateCustomer(id: string, data: any) {
+  async updateUser(id: string, data: adminUpdateCustomerData) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value == null) return;
+
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (typeof value === "number") {
+        formData.append(key, (value as number).toString());
+      } else {
+        formData.append(key, value);
+      }
+    });
+
     const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
       `/manage/users/${id}`,
-      data
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
     );
+
     return res.data;
+  },
+  async updateCurrentUser(data: updateCustomerData) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value == null) return;
+
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (typeof value === "number") {
+        formData.append(key, (value as number).toString());
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
+      `/auth/me`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
   },
   async getCurrentCustomerBooking(page?: number, limit?: number) {
     const res = await cleanApi.get<
@@ -36,32 +85,9 @@ const customerAction = {
     });
     return res.data;
   },
-  async updateCustomerIdCard(id: string, data: any) {
-    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
-      `/manage/users/${id}/id-card`,
-      data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return res.data;
-  },
-  async updateCustomerProfile(id: string, data: any) {
-    const res = await cleanApi.patch<CleanSuccessResponseWrapper>(
-      `/manage/users/${id}/profile-picture`,
-      data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-  },
   async getCurrentCustomer() {
     const res = await cleanApi.get<CleanSuccessResponseWrapper<Customer>>(
-      "/manage/customers/me"
+      "/manage/customers/me",
     );
     return res.data;
   },

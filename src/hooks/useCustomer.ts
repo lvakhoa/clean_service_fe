@@ -6,12 +6,14 @@ import customerAction from "@/apis/customer.action";
 export const useCustomer = (page?: number, limit?: number) => {
   const queryClient = useQueryClient();
 
-  const getAllCustomers = useQuery({
-    queryKey: ["customers"],
-    queryFn: () => {
-      return customerAction.getAllCustomer(page, limit);
-    },
-  });
+  const useGetAllCustomers = () => {
+    return useQuery({
+      queryKey: ["customers"],
+      queryFn: () => {
+        return customerAction.getAllCustomer(page, limit);
+      },
+    });
+  };
 
   const useGetCustomerById = (id: string) =>
     useQuery({
@@ -21,24 +23,10 @@ export const useCustomer = (page?: number, limit?: number) => {
       },
     });
 
-  const useUpdateCustomer = (id: string) =>
+  const useUpdateUser = (id: string) =>
     useMutation({
       mutationFn: (data: any) => {
-        return customerAction.updateCustomer(id, data);
-      },
-    });
-
-  const useUpdateCustomerIdCard = (id: string) =>
-    useMutation({
-      mutationFn: (data: any) => {
-        return customerAction.updateCustomerIdCard(id, data);
-      },
-    });
-
-  const useUpdateCustomerProfile = (id: string) =>
-    useMutation({
-      mutationFn: (data: any) => {
-        return customerAction.updateCustomerProfile(id, data);
+        return customerAction.updateUser(id, data);
       },
     });
 
@@ -50,13 +38,23 @@ export const useCustomer = (page?: number, limit?: number) => {
       },
     });
   };
+
+  const useUpdateCurrentUser = () => {
+    return useMutation({
+      mutationFn: (data: any) => {
+        return customerAction.updateCurrentUser(data);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["customer", "me"] });
+      },
+    });
+  };
   return {
     queryClient,
-    getAllCustomers,
+    useGetAllCustomers,
     useGetCurrentCustomer,
-    useUpdateCustomerProfile,
-    useUpdateCustomerIdCard,
     useGetCustomerById,
-    useUpdateCustomer,
+    useUpdateUser,
+    useUpdateCurrentUser,
   };
 };

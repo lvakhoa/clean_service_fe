@@ -23,3 +23,12 @@ export const formatDateTime = (dateString: string) => {
 
   return `${dateFormatted} - ${timeFormatted} (${relativeTime})`;
 };
+
+export const formatDate = (dateString: string | null) => {
+  if (!dateString) {
+    return "";
+  }
+  const date = new Date(dateString);
+  const formattedDate = date.toLocaleDateString("en-CA");
+  return formattedDate;
+};

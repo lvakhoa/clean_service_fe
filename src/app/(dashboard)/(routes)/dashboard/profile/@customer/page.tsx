@@ -3,31 +3,24 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-import { CustomerInputWithLabel } from "@/components/input/customerInputWithLabel";
+import { InputWithLabel } from "@/components/input/inputwithlabel";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/skeleton/skeleton";
+import { ClipLoader } from "react-spinners";
 
-import { UserType } from "@/types/enum";
-import { partialCustomerSchema } from "@/schemas/customer";
+import { partialCustomerSchema } from "@/schemas/customerSchema";
+import { Gender } from "@/types/enum";
 
 import { useCustomer } from "@/hooks/useCustomer";
 
-const DEFAULT_CUSTOMER_DATA: Customer = {
-  id: "-",
-  fullName: "khang",
-  address: "-",
-  phoneNumber: "-",
-  email: "-",
-  userType: UserType.Customer,
-  gender: "Other",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  dateOfBirth: "2000-01-01",
-};
+import { formatDate } from "@/helpers/formatDateTime";
+import { toast } from "react-toastify";
+
+const genderOptions = Object.values(Gender);
 
 const DEFAULT_IMAGES = {
   idCard: "/images/identity.png",
@@ -37,48 +30,21 @@ const DEFAULT_IMAGES = {
 type FormField = z.infer<typeof partialCustomerSchema>;
 
 const CustomerInfo = () => {
-  const [customerData, setCustomerData] = useState<Customer>(
-    DEFAULT_CUSTOMER_DATA
-  );
   const [customerIdCard, setCustomerIdCard] = useState<string | null>(
-    DEFAULT_IMAGES.idCard
+    DEFAULT_IMAGES.idCard,
   );
   const [customerProfilePicture, setCustomerProfilePicture] = useState<
     string | null
   >(DEFAULT_IMAGES.profilePicture);
 
-  const {
-    useUpdateCustomer,
-    useGetCurrentCustomer,
-    useUpdateCustomerIdCard,
-    useUpdateCustomerProfile,
-  } = useCustomer();
+  const { useUpdateCurrentUser, useGetCurrentCustomer } = useCustomer();
 
   const {
     isPending,
     data: queryData,
     error: queryError,
   } = useGetCurrentCustomer();
-
-  const updateCustomerMutation = useUpdateCustomer(customerData.id);
-  const updateIdCardMutation = useUpdateCustomerIdCard(customerData.id);
-  const updateProfilePictureMutation = useUpdateCustomerProfile(
-    customerData.id
-  );
-
-  useEffect(() => {
-    if (queryData) {
-      console.log(queryData);
-      setCustomerData(queryData.data || DEFAULT_CUSTOMER_DATA);
-      setCustomerIdCard(queryData.data?.identityCard || DEFAULT_IMAGES.idCard);
-      setCustomerProfilePicture(
-        queryData.data?.profilePicture || DEFAULT_IMAGES.profilePicture
-      );
-      reset();
-    } else {
-      console.log(queryError);
-    }
-  }, [queryData, queryError]);
+  const updateCustomerMutation = useUpdateCurrentUser();
 
   const form = useForm<FormField>({
     mode: "onBlur",
@@ -86,49 +52,61 @@ const CustomerInfo = () => {
   });
 
   const {
+    control,
     reset,
     handleSubmit,
     formState: { errors },
   } = form;
 
+  useEffect(() => {
+    if (queryData) {
+      reset({
+        ...queryData.data,
+        profilePictureFile: undefined,
+        idCardFile: undefined,
+      });
+      setCustomerIdCard(queryData.data?.identityCard || DEFAULT_IMAGES.idCard);
+      setCustomerProfilePicture(
+        queryData.data?.profilePicture || DEFAULT_IMAGES.profilePicture,
+      );
+    } else {
+      toast.error("Get customer info failed");
+      console.log(queryError);
+    }
+  }, [queryData, queryError, reset]);
+
   const onSubmitHandle = async (data: FormField) => {
     try {
+      toast.info("Updating customer info...");
       await updateCustomerMutation.mutateAsync(data);
+
+      toast.dismiss();
+      toast.success("Update customer successfully");
     } catch (error) {
+      toast.dismiss();
+      toast.error("Update customer failed");
       console.error("Update customer error:", error);
     }
   };
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    uploadMutation: any,
-    setImageState: React.Dispatch<React.SetStateAction<string | null>>,
-    fileKey: string
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append(fileKey, file);
-
-        await uploadMutation.mutateAsync(formData);
-
-        setImageState(URL.createObjectURL(file));
-      } catch (error) {
-        console.error(`Error uploading ${fileKey}:`, error);
+  const handleFileChange =
+    (setFilePreview: (url: string) => void, onChange: (file: File) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setFilePreview(URL.createObjectURL(file));
+        onChange(file);
       }
-    }
-  };
+    };
 
   return (
-    <div className="bg-white h-full w-full flex flex-col md:flex-row">
+    <div className="flex h-full w-full flex-col bg-white md:flex-row">
       <FormProvider {...form}>
         <form
-          className="bg-white h-full w-full flex flex-col md:flex-row"
+          className="flex h-full w-full flex-col bg-white md:flex-row"
           onSubmit={handleSubmit(onSubmitHandle)}
         >
-          <div className="md:w-2/3 pb-10 bg-white min-h-screen">
+          <div className="min-h-screen bg-white pb-10 md:w-2/3">
             <div className="flex flex-row">
               <Image
                 src="/images/exit-button.png"
@@ -138,12 +116,12 @@ const CustomerInfo = () => {
                 className="cursor-pointer"
                 onClick={() => window.history.back()}
               />
-              <p className="font-Averta-Bold text-4xl text-center my-auto ml-[10px]">
+              <p className="my-auto ml-[10px] text-center font-Averta-Bold text-4xl">
                 User Info
               </p>
             </div>
 
-            <div className="grid items-center justify-center mt-[75px]">
+            <div className="mt-[75px] grid items-center justify-center">
               <div className="flex flex-col md:flex-row">
                 {isPending ? (
                   <div className="flex flex-col gap-1.5">
@@ -151,14 +129,21 @@ const CustomerInfo = () => {
                     <Skeleton className="h-[50px] w-[25vw]" />
                   </div>
                 ) : (
-                  <CustomerInputWithLabel
-                    labelText="FULL NAME"
-                    inputType="text"
-                    inputPlaceholder="Enter Full Name"
-                    inputId="name"
-                    inputWidth="25vw"
-                    defaultValue={customerData.fullName}
-                    keyName="fullName"
+                  <Controller
+                    name="fullName"
+                    control={control}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        labelText="FULL NAME"
+                        inputType="text"
+                        inputPlaceholder="Enter Full Name"
+                        inputId="fullName"
+                        inputWidth="25vw"
+                        defaultValue={field.value}
+                        error={errors.fullName?.message}
+                        {...field}
+                      />
+                    )}
                   />
                 )}
                 <div className="md:ml-2 md:mt-0">
@@ -168,58 +153,75 @@ const CustomerInfo = () => {
                       <Skeleton className="h-[50px] w-[11.25vw]" />
                     </div>
                   ) : (
-                    <CustomerInputWithLabel
-                      labelText="DATE OF BIRTH"
-                      inputType="date"
-                      inputPlaceholder=""
-                      inputId="date"
-                      inputWidth="11.25vw"
-                      defaultValue={
-                        new Date(customerData.dateOfBirth)
-                          .toISOString()
-                          .split("T")[0]
-                      }
-                      keyName="dateOfBirth"
+                    <Controller
+                      name="dateOfBirth"
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <InputWithLabel
+                          labelText="DATE OF BIRTH"
+                          inputType="date"
+                          inputId="dateOfBirth"
+                          inputPlaceholder=""
+                          inputWidth="11.25vw"
+                          error={errors.dateOfBirth?.message}
+                          defaultValue={formatDate(value ?? null)}
+                          onChange={(e) => onChange(new Date(e.target.value))}
+                          {...field}
+                        />
+                      )}
                     />
                   )}
                 </div>
                 <div className="md:ml-2 md:mt-0">
-                  {isPending && (
+                  {isPending ? (
                     <div className="flex flex-col gap-1.5">
                       <Skeleton className="h-[21px] w-[5vw]" />
                       <Skeleton className="h-[50px] w-[6.875vw]" />
                     </div>
-                  )}
-                  {
-                    <CustomerInputWithLabel
-                      className={isPending ? "opacity-0 hidden" : ""}
-                      labelText="GENDER"
-                      inputType="combobox"
-                      inputPlaceholder=""
-                      inputId="gender"
-                      defaultValue={customerData.gender}
-                      inputWidth="6.875vw"
-                      options={["Male", "Female", "Other"]}
-                      keyName="gender"
+                  ) : (
+                    <Controller
+                      name="gender"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <InputWithLabel
+                          labelText="GENDER"
+                          inputPlaceholder=""
+                          inputType="combobox"
+                          inputId="gender"
+                          inputWidth="6.875vw"
+                          options={genderOptions}
+                          error={errors.gender?.message}
+                          onValueChange={(val) => {
+                            onChange(val as Gender);
+                          }}
+                          defaultValue={queryData?.data?.gender as Gender}
+                        />
+                      )}
                     />
-                  }
+                  )}
                 </div>
               </div>
-              <div className="flex flex-col md:flex-row mt-[30px]">
+              <div className="mt-[30px] flex flex-col md:flex-row">
                 {isPending ? (
                   <div className="flex flex-col gap-1.5">
                     <Skeleton className="h-[21px] w-[5vw]" />
                     <Skeleton className="h-[50px] w-[25vw]" />
                   </div>
                 ) : (
-                  <CustomerInputWithLabel
-                    labelText="PHONE NUMBER"
-                    inputType="tel"
-                    inputPlaceholder="Enter a Phone number"
-                    inputId="phoneNum"
-                    inputWidth="25vw"
-                    defaultValue={customerData.phoneNumber}
-                    keyName="phoneNumber"
+                  <Controller
+                    name="phoneNumber"
+                    control={control}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        labelText="PHONE NUMBER"
+                        inputType="text"
+                        inputPlaceholder="Enter a Phone number"
+                        inputId="phoneNumber"
+                        defaultValue={field.value}
+                        inputWidth="25vw"
+                        {...field}
+                      />
+                    )}
                   />
                 )}
                 <div className="md:ml-2 md:mt-0">
@@ -229,121 +231,146 @@ const CustomerInfo = () => {
                       <Skeleton className="h-[50px] w-[18.125vw]" />
                     </div>
                   ) : (
-                    <CustomerInputWithLabel
-                      labelText="EMAIL ADDRESS"
-                      inputType="email"
-                      inputPlaceholder="Enter your email address"
-                      inputId="contactEmail"
-                      inputWidth="18.125vw"
-                      plusPX="8px"
-                      defaultValue={customerData.email}
-                      keyName="email"
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          labelText="EMAIL ADDRESS"
+                          inputType="email"
+                          inputPlaceholder="Enter your email address"
+                          inputId="contactEmail"
+                          inputWidth="18.125vw"
+                          plusPX="8px"
+                          defaultValue={field.value}
+                        />
+                      )}
                     />
                   )}
                 </div>
               </div>
-              <div className="flex flex-col md:flex-row mt-[30px] w-full">
+              <div className="mt-[30px] flex w-full flex-col md:flex-row">
                 {isPending ? (
-                  <div className="flex flex-col gap-1.5 w-full">
+                  <div className="flex w-full flex-col gap-1.5">
                     <Skeleton className="h-[21px] w-[5vw]" />
                     <Skeleton className="h-[50px] w-[full]" />
                   </div>
                 ) : (
-                  <CustomerInputWithLabel
-                    className="w-full max-w-none"
-                    labelText="STREET NAME"
-                    inputType="text"
-                    inputPlaceholder="Enter your Street Name"
-                    inputId="streetName"
-                    plusPX="8px"
-                    defaultValue={customerData.address}
-                    keyName="address"
+                  <Controller
+                    name="address"
+                    control={control}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        labelText="ADDRESS"
+                        inputType="text"
+                        inputPlaceholder="Enter your city/province"
+                        inputId="address"
+                        inputWidth="44vw"
+                        defaultValue={field.value}
+                        error={errors.address?.message}
+                        {...field}
+                      />
+                    )}
                   />
                 )}
               </div>
-              <div className="flex justify-center items-center mt-[3.5vw] pb-[2vw]">
+              <div className="mt-[3.5vw] flex items-center justify-center pb-[2vw]">
                 <Button
                   disabled={updateCustomerMutation.isPending || isPending}
                   type="submit"
-                  className="md:w-1/3 h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px]"
+                  className="h-[60px] bg-[#1A78F2] font-Averta-Semibold text-[16px] md:w-1/3"
                 >
                   {isPending
                     ? "Loading..."
                     : updateCustomerMutation.isPending
-                    ? "Saving..."
-                    : "Save"}
+                      ? "Saving..."
+                      : "Save"}
                 </Button>
               </div>
             </div>
           </div>
           {/* Section Right */}
-          <div className="md:w-1/3 min-h-screen">
-            <p className="font-Averta-Bold text-4xl my-[12.8875px]">Avatar</p>
+          <div className="min-h-screen md:w-1/3">
+            <p className="my-[12.8875px] font-Averta-Bold text-4xl">Avatar</p>
 
             <div className="mb-6">
-              <Image
-                src={customerProfilePicture ?? "/images/camera.svg"}
-                alt="camera"
-                width={160}
-                height={160}
-                className=" flex items-center justify-center mx-auto"
-              />
+              {isPending ? (
+                <ClipLoader color="#000000" loading={isPending} size={100} />
+              ) : (
+                <Image
+                  src={customerProfilePicture ?? "/images/camera.svg"}
+                  alt="camera"
+                  width={160}
+                  height={160}
+                  className="mx-auto flex items-center justify-center"
+                />
+              )}
               <Button
                 variant="link"
-                className="flex text-[18px] items-center justify-center mx-auto font-Averta-Semibold text-[#1A78F2]"
+                className="mx-auto flex items-center justify-center font-Averta-Semibold text-[18px] text-[#1A78F2]"
+                onClick={() =>
+                  document.getElementById("profilePictureInput")?.click()
+                }
               >
-                <input
-                  onChange={(e) =>
-                    handleFileUpload(
-                      e,
-                      updateProfilePictureMutation,
-                      setCustomerProfilePicture,
-                      "profilePicture"
-                    )
-                  }
-                  type="file"
-                  className="file:border-none file:bg-transparent file:text-blue-500 text-white file:hover:underline file:cursor-pointer w-[111px] overflow-hidden"
+                Upload
+                <Controller
+                  name="profilePictureFile"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      type="file"
+                      id="profilePictureInput"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleFileChange(
+                        setCustomerProfilePicture,
+                        field.onChange,
+                      )}
+                    />
+                  )}
                 />
               </Button>
             </div>
 
-            <p className="text-3xl font-Averta-Bold mb-4 ml-[2.2vw] mt-[1vw]">
+            <p className="mb-4 ml-[2.2vw] mt-[1vw] font-Averta-Bold text-3xl">
               ID Card
             </p>
             <div className="px-4 py-8 text-center">
-              <Image
-                src={customerIdCard ?? "/images/identity.png"}
-                alt="identity"
-                width={400}
-                height={200}
-              />
+              {isPending ? (
+                <ClipLoader color="#000000" loading={isPending} size={150} />
+              ) : (
+                <Image
+                  src={customerIdCard ?? "/images/identity.png"}
+                  alt="identity"
+                  width={400}
+                  height={200}
+                />
+              )}
             </div>
             <div className="flex flex-row justify-center">
-              <Button
-                className="w-[170px] h-[40px] 
-        bg-[#1A78F2] font-Averta-Semibold text-[16px]"
-              >
+              <Button className="h-[40px] w-[170px] bg-[#1A78F2] font-Averta-Semibold text-[16px]">
                 Download
               </Button>
               <Button
-                className="ml-[10px] w-[170px] h-[40px]
-         bg-white font-Averta-Semibold text-[#1A78F2] hover:bg-gray-100
-         text-[16px] border-2 border-[#1A78F2]"
+                className="ml-[10px] h-[40px] w-[170px] border-2 border-[#1A78F2] bg-white font-Averta-Semibold text-[16px] text-[#1A78F2] hover:bg-gray-100"
                 onClick={() => document.getElementById("idCardInput")?.click()}
               >
                 Upload
-                <input
-                  type="file"
-                  id="idCardInput"
-                  className=" hidden"
-                  onChange={(e) =>
-                    handleFileUpload(
-                      e,
-                      updateIdCardMutation,
-                      setCustomerIdCard,
-                      "idCard"
-                    )
-                  }
+                <Controller
+                  name="idCardFile"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      accept="image/*"
+                      type="file"
+                      id="idCardInput"
+                      className="hidden"
+                      onChange={handleFileChange(
+                        setCustomerIdCard,
+                        field.onChange,
+                      )}
+                    />
+                  )}
                 />
               </Button>
             </div>

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import helperAction from "@/apis/helper.action";
+import { updateAdminHelperData } from "@/schemas/helperSchema";
 
 export const useHelper = (page?: number, limit?: number) => {
   const queryClient = useQueryClient();
@@ -20,42 +21,13 @@ export const useHelper = (page?: number, limit?: number) => {
     });
   };
 
-  const useUpdateUserHelper = (id: string) => {
-    return useMutation({
-      mutationFn: (data: any) => {
-        return helperAction.updateUserHelper(id, data);
-      },
-    });
-  };
-
   const useUpdateHelper = (id: string) => {
     return useMutation({
-      mutationFn: (data: any) => {
+      mutationFn: (data: updateAdminHelperData) => {
         return helperAction.updateHelper(id, data);
       },
     });
   };
-
-  const useUpdateHelperIdCard = (id: string) =>
-    useMutation({
-      mutationFn: (data: any) => {
-        return helperAction.updateHelperIdCard(id, data);
-      },
-    });
-
-  const useUpdateHelperProfilePicture = (id: string) =>
-    useMutation({
-      mutationFn: (data: any) => {
-        return helperAction.updateHelperProfilePicture(id, data);
-      },
-    });
-
-  const useUpdateHelperResume = (id: string) =>
-    useMutation({
-      mutationFn: (data: any) => {
-        return helperAction.updateHelperResume(id, data);
-      },
-    });
 
   const useGetCurrentHelper = () => {
     return useQuery({
@@ -66,15 +38,23 @@ export const useHelper = (page?: number, limit?: number) => {
     });
   };
 
+  const useUpdateCurrentHelper = () => {
+    return useMutation({
+      mutationFn: (data: updateAdminHelperData) => {
+        return helperAction.updateCurrentHelper(data);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["helper", "me"] });
+      },
+    });
+  };
+
   return {
     queryClient,
     useGetCurrentHelper,
     useGetAllHelpers,
     useGetHelperById,
-    useUpdateUserHelper,
     useUpdateHelper,
-    useUpdateHelperIdCard,
-    useUpdateHelperProfilePicture,
-    useUpdateHelperResume,
+    useUpdateCurrentHelper,
   };
 };

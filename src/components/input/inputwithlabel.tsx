@@ -17,12 +17,12 @@ interface InputWithLabelProps {
   inputId: string;
   inputWidth?: string;
   options?: string[];
-  defaulValue?: string;
+  value?: string;
   setValue?: (value: string) => void;
   defaultValue?: string;
   plusPX?: string;
   onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   onValueChange?: (value: string) => void;
   error?: string;
@@ -37,6 +37,7 @@ export function InputWithLabel({
   options = [],
   setValue,
   defaultValue,
+  value,
   plusPX,
   onChange,
   onValueChange,
@@ -49,7 +50,7 @@ export function InputWithLabel({
   return (
     <div className="grid max-w-max items-center gap-1.5">
       <Label
-        className="text-[14px] font-Averta-Semibold text-[#9FA7B0]"
+        className="font-Averta-Semibold text-[14px] text-[#9FA7B0]"
         htmlFor={inputId}
       >
         {labelText}
@@ -57,7 +58,7 @@ export function InputWithLabel({
       {inputType === "combobox" ? (
         <Select defaultValue={defaultValue} onValueChange={onValueChange}>
           <SelectTrigger
-            className={`${inputWidth} font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
+            className={`${inputWidth} h-[50px] border-2 font-Averta-Semibold text-[16px] text-[#5f6367]`}
             style={{ width: `${inputWidth}` }}
           >
             <SelectValue />
@@ -75,7 +76,7 @@ export function InputWithLabel({
       ) : (
         <>
           <Input
-            className={`font-Averta-Semibold h-[50px] text-[16px] text-[#5f6367] border-2`}
+            className={`h-[50px] border-2 font-Averta-Semibold text-[16px] text-[#5f6367]`}
             type={inputType}
             id={inputId}
             placeholder={inputPlaceholder}
@@ -87,7 +88,7 @@ export function InputWithLabel({
                 : { width: `${inputWidth}` }
             }
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </>
       )}
     </div>
