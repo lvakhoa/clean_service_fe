@@ -40,16 +40,17 @@ type Booking = {
   location: string;
   scheduledStartTime: string;
   scheduledEndTime: string;
-  status: 'Pending' | 'Confirmed' | 'InProgress' | 'Completed' | 'Cancelled';
+  status: "Pending" | "Confirmed" | "InProgress" | "Completed" | "Cancelled";
+  cancellationReason: ?string;
   totalPrice: number;
-  paymentStatus: 'Pending' | 'Paid' | 'Refunded';
+  paymentStatus: "Pending" | "Paid" | "Refunded";
   paymentMethod: ?string;
   helperRating: ?number;
   createdAt: string;
   updatedAt: string;
   customer: {
     id: string;
-    gender: 'Male' | 'Female' | 'Other';
+    gender: "Male" | "Female" | "Other";
     fullName: string;
     identityCard: ?string;
     address: string;
@@ -66,7 +67,7 @@ type Booking = {
     averageRating: number;
     user: {
       id: string;
-      gender: 'Male' | 'Female' | 'Other';
+      gender: "Male" | "Female" | "Other";
       fullName: string;
       identityCard: ?string;
       address: ?string;
@@ -95,4 +96,13 @@ type Booking = {
     specialRequirements: ?string;
     createdAt: string;
   };
+  feedbacks: {
+    id: string;
+    bookingId: string;
+    title: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  refunds: [];
 };

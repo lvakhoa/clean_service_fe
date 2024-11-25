@@ -18,8 +18,16 @@ export const useScheduler = (page?: number, limit?: number) => {
       bookingAction.updateBooking(id, data),
   });
 
+  const queryBookings = useQuery({
+    queryKey: ["queryBooking"],
+    queryFn: () => {
+      return bookingAction.getAllBookings(page, limit);
+    },
+  });
+
   return {
     getCurrentCustomerBooking,
+    queryBookings,
     updateBooking,
     queryClient,
   };

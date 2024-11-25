@@ -11,17 +11,15 @@ type OrderHistoryRowProps = {
 const OrderHistoryRow: React.FC<OrderHistoryRowProps> = ({ order }) => {
   const startTimeString: string = new Date(
     order.scheduledStartTime
-  ).toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
+  ).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const endTimeString: string = new Date(
     order.scheduledEndTime
-  ).toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
+  ).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const dateString: string = new Date(
     order.scheduledStartTime

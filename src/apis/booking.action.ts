@@ -8,6 +8,18 @@ const bookingAction = {
     );
     return response.data.data;
   },
+  async getAllBookings(page?: number, limit?: number) {
+    const response = await cleanApi.get<
+      CleanSuccessResponseWrapper<PaginationResponseWrapper<Booking>>
+    >("/scheduler", {
+      params: {
+        page,
+        limit,
+      },
+    });
+    console.log("response", response.data);
+    return response.data;
+  },
   async createBooking(booking: CreateBookingRequest) {
     try {
       const response = await cleanApi.post<
