@@ -1,3 +1,4 @@
+import { CreateRefundDto } from "@/schemas/createRefundSchema";
 import { cleanApi } from "@/services/HttpClient";
 
 const refundAction = {
@@ -42,6 +43,13 @@ const refundAction = {
     );
     return res;
   },
+  async createRefund(data: CreateRefundDto) {
+    const res = await cleanApi.post<CleanSuccessResponseWrapper>(
+      "/booking/refund",
+      data
+    )
+    return res
+  }
 };
 
 export default refundAction;

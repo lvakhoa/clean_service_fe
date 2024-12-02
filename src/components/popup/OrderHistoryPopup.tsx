@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useScheduler } from "@/hooks/useScheduler";
 import { ClipLoader } from "react-spinners";
 import { BookingStatus } from "@/configs/enum";
+import CreateRefundPopup from "./CreateRefundPopup";
 
 interface OrderHistoryPopupProps {
   toggle: () => void;
@@ -32,11 +33,15 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
   const [cancelService, setCancelService] = useState(false);
   const [reason, setReason] = useState("");
   const [feedbackToggle, setFeedbackToggle] = useState(false);
+  const [refundToggle, setRefundToggle] = useState(false);
   const [updating, setUpdating] = useState(false);
 
   const handleFeedback = () => {
     setFeedbackToggle(!feedbackToggle);
   };
+  const handleRefund = () => {
+    setRefundToggle(!refundToggle);
+  }
 
   const style =
     bookingState === BookingStatus.Completed ? (
@@ -91,7 +96,7 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       >
         Feedback
       </Button>
-    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
+    ) : (bookingState === BookingStatus.Confirmed) &&
       cancelService ? (
       <Button
         className="w-full h-[55px] bg-[#00b69b] text-lg text-white font-Averta-Semibold hover:bg-[#00b69b] hover:bg-opacity-70"
@@ -99,8 +104,8 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
       >
         Don't Cancel The Service
       </Button>
-    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
-      !cancelService ? (
+    ) : ( (bookingState === BookingStatus.Confirmed ) &&
+      !cancelService ) ? (
       <Button
         className="w-full h-[55px] bg-[#e01a1a] text-lg text-white font-Averta-Semibold hover:bg-[#e01a1a] hover:bg-opacity-70"
         onClick={() => setCancelService(!cancelService)}
@@ -238,6 +243,15 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
                     </p>
                   </div>
                 </div>
+                
+              { booking.status === BookingStatus.Completed && !booking.helperRating && <div className="h-[55px] mt">
+                <Button
+          onClick={() => handleRefund() }
+          className="w-full h-[55px] bg-[#e01a1a] hover:bg-[#d86464] text-lg text-white font-Averta-Semibold"
+        >
+          Request Refund
+        </Button>
+                </div>}
               </div>
             </div>
           </div>
@@ -298,7 +312,7 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
                   {style}
                 </div>
               </div>
-              <div className="h-[55px]">{styleBtn}</div>
+              { styleBtn !== "" && <div className="h-[55px]">{styleBtn}</div>}
             </div>
           </div>
         </div>
@@ -350,11 +364,38 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
         ) : (
           ""
         )}
+        {bookingState === BookingStatus.Cancelled && booking.cancellationReason && (
+          <div className="flex flex-col gap-[10px]">
+          <div className="h-fit w-full flex flex-col gap-[8px] ">
+            <p className="text-[#9ea7af] text-sm font-Averta-Semibold uppercase leading-[17px] tracking-tight">
+              cancellation reason
+            </p>
+            <textarea
+              disabled = {true}
+              placeholder="CANCELLATION REASON"
+              value={booking.cancellationReason ? booking.cancellationReason : ""}
+              onChange={(e) => setReason(e.target.value)}
+              className="text-[#4f6071] text-base font-Averta-Semibold leading-[23px] tracking-tight border-[#d3d8dd] border-2 rounded-lg min-h-[130px] px-[10px] py-[16px] resize-none"
+            />
+          </div>
+        </div>
+        )
+
+        }
       </div>
       {feedbackToggle && (
         <div onClick={(e) => e.stopPropagation()}>
           <CreateFeedbackPopup
             toggle={handleFeedback}
+            booking={booking}
+            closeParentPopup={toggle}
+          />
+        </div>
+      )}
+      {refundToggle && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <CreateRefundPopup
+            toggle={handleRefund}
             booking={booking}
             closeParentPopup={toggle}
           />
