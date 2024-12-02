@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { GoArrowLeft } from "react-icons/go";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { LuArrowLeft } from "react-icons/lu";
 import Image from "next/image";
 import { useFeedback } from "@/hooks/useFeedback";
@@ -12,6 +12,19 @@ import { format, formatDistance, isToday, isYesterday } from "date-fns";
 import { set } from "zod";
 import { formatDateTime } from "@/helpers/formatDateTime";
 import { Skeleton } from "@/components/skeleton/skeleton";
+import { toast } from "react-toastify";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ClipLoader } from "react-spinners";
 
 const FeedbackDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +32,9 @@ const FeedbackDetail = () => {
   const { useGetFeedbackById, useDeleteFeedback } = useFeedback();
 
   const { data, error, isPending } = useGetFeedbackById(id);
+  const {queryClient} = useFeedback();
+  const router = useRouter();
+  const [deleting, setDeleting] = useState(false);
 
   const mutation = useDeleteFeedback();
 
@@ -69,6 +85,22 @@ const FeedbackDetail = () => {
     },
   ];
 
+  const handleDeleteFeedback = async () => {
+      try {
+        setDeleting(true);
+        await mutation.mutateAsync(id);
+        toast.success("Delete feedback successfully!");
+        router.back()
+        queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+        queryClient.invalidateQueries({ queryKey: ["feedbacks/customer"] });
+      } catch (error) {
+        toast.error("Failed to delete some feedback");
+        console.error(error);
+      } finally{
+        setDeleting(false);
+      }
+  };
+
   return (
     <div className="flex flex-col justify-center mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
       <div className="flex flex-col w-full rounded max-md:max-w-full pb-6">
@@ -105,12 +137,43 @@ const FeedbackDetail = () => {
               </div>
             </div>
           </div>
-          <button
-            onClick={() => mutation.mutate(id)}
+          {/* <button
+            onClick={handleDeleteFeedback}
             className="h-full p-6 hover:bg-slate-200"
           >
             <FaRegTrashAlt className="h-[19px]" />
-          </button>
+          </button> */}
+          <AlertDialog>
+                <AlertDialogTrigger disabled={deleting}>
+                  {deleting ? (
+                    <ClipLoader color="#ffffff" loading={deleting} size={30} />
+                  ) : (
+                    <div className="h-full p-6 hover:bg-slate-200">
+                      <FaRegTrashAlt className="h-[19px]" />
+                    </div>
+                  )}
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      the feedback.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteFeedback}
+                      className="bg-[#e01a1a] hover:bg-[#e01a1a] hover:bg-opacity-70"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
         </div>
         {/* End Title */}
 

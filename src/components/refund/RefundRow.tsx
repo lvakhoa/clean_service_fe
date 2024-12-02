@@ -38,7 +38,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
 }) => {
   const [isChecked, setIsChecked] = useState(false);
 
-  const bgColor = isEven ? "bg-white" : "bg-[#f5f7ff]";
+  //const bgColor = isEven ? "bg-white" : "bg-[#f5f7ff]";
   const sentimentColor =
     status === "Refunded"
       ? "bg-[#00B69B]/20 text-[#00B69B]"
@@ -59,7 +59,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
   return (
     <div
       className={cn(
-        `flex group overflow-hidden flex-wrap w-full ${bgColor} min-h-[63px] max-md:max-w-full hover:bg-gray-200 hover:cursor-pointer`,
+        `flex group overflow-hidden flex-wrap w-full bg-white min-h-[63px] max-md:max-w-full hover:bg-gray-200 hover:cursor-pointer`,
         className
       )}
       onClick={() => {
@@ -68,7 +68,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
       }}
     >
       <div
-        className={`flex flex-col grow shrink justify-center pl-6 ${bgColor} group-hover:transition-colors group-hover:bg-[#e1e7ff] border-b border-zinc-600 border-opacity-20 w-[66px]`}
+        className={`flex flex-col grow shrink justify-center pl-6 bg-white} group-hover:transition-colors group-hover:bg-[#e1e7ff] border-b border-zinc-600 border-opacity-20 w-[66px]`}
         onClick={(e) => e.stopPropagation()}
       >
         {isPending ? (
@@ -86,7 +86,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
         )}
       </div>
       <div
-        className={`flex flex-col grow shrink justify-center pl-2.5 group-hover:transition-colors group-hover:bg-[#e1e7ff] text-sm font-bold ${bgColor} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[103px]`}
+        className={`flex flex-col grow shrink justify-center pl-2.5 group-hover:transition-colors group-hover:bg-[#e1e7ff] text-sm font-bold bg-white} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[103px]`}
       >
         {isPending ? (
           <Skeleton className="h-[50px] w-full" />
@@ -97,7 +97,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
         )}
       </div>
       <div
-        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-6 text-xs font-bold text-center whitespace-nowrap ${bgColor} border-b border-zinc-600 border-opacity-20 w-[125px]`}
+        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-6 text-xs font-bold text-center whitespace-nowrap bg-white} border-b border-zinc-600 border-opacity-20 w-[125px]`}
       >
         <div className="flex overflow-hidden flex-1 items-center size-full">
           <div className="flex flex-col self-stretch my-auto w-[93px]">
@@ -116,7 +116,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
         </div>
       </div>
       <div
-        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm ${bgColor} border-b border-zinc-600 border-opacity-20 min-w-[240px] text-neutral-800 w-[566px] max-md:max-w-full`}
+        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm bg-white} border-b border-zinc-600 border-opacity-20 min-w-[240px] text-neutral-800 w-[566px] max-md:max-w-full`}
       >
         {isPending ? (
           <Skeleton className="h-[50px] w-full" />
@@ -127,7 +127,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
         )}
       </div>
       <div
-        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm ${bgColor} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[136px]`}
+        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm bg-white} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[136px]`}
       >
         {isPending ? (
           <Skeleton className="h-[50px] w-full" />
@@ -138,7 +138,7 @@ const RefundRow: React.FC<RefundRowProps> = ({
         )}
       </div>
       <div
-        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm ${bgColor} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[136px]`}
+        className={`flex flex-col grow shrink justify-center group-hover:transition-colors group-hover:bg-[#e1e7ff] pl-2.5 text-sm bg-white} border-b border-zinc-600 border-opacity-20 text-neutral-800 w-[136px]`}
       >
         <div className="overflow-hidden self-stretch px-3 py-4 w-full min-h-[48px] font-Averta-Regular text-[14px]">
           {isPending ? (

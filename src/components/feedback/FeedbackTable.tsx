@@ -7,6 +7,18 @@ import SearchBarAndFilter from "./SearchBarAndFilter";
 import { useFeedback } from "@/hooks/useFeedback";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ClipLoader } from "react-spinners";
 
 const feedbackSampleData: Feedback[] = [
   {
@@ -57,6 +69,7 @@ export default function FeedbackTable({ role }: { role: string }) {
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Name");
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
   const [feedbackData, setFeedbackData] =
     useState<Feedback[]>(feedbackSampleData);
@@ -97,6 +110,7 @@ export default function FeedbackTable({ role }: { role: string }) {
       toast.error("Please select feedback to delete");
     } else {
       try {
+        setDeleting(true);
         await Promise.all(checkedRows.map((id) => mutation.mutateAsync(id)));
         toast.success("Delete feedback successfully!");
         if (role == "Admin") {
@@ -106,6 +120,8 @@ export default function FeedbackTable({ role }: { role: string }) {
       } catch (error) {
         toast.error("Failed to delete some feedback");
         console.error(error);
+      } finally{
+        setDeleting(false);
       }
     }
   };
@@ -188,18 +204,43 @@ export default function FeedbackTable({ role }: { role: string }) {
           setSearchBy={setSearchBy}
           onFilterChange={setFilter}
         />
-        <button
-          onClick={handleDeleteFeedback}
-          className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5"
-        >
-          <Image
+        <AlertDialog>
+                <AlertDialogTrigger disabled={deleting}>
+                  {deleting ? (
+                    <ClipLoader color="#ffffff" loading={deleting} size={30} />
+                  ) : (
+                    <div className="flex flex-row justify-center items-center px-7 h-[38px] bg-[#e11b1a] hover:bg-opacity-90 rounded-[8px] text-xs font-Averta-Bold tracking-normal leading-loose text-center text-white gap-1.5">
+                      <Image
             src="/images/Dashboard/Feedback/Trash.svg"
             alt=""
             width={18}
             height={18}
           />
           <p>Delete</p>
-        </button>
+                    </div>
+                  )}
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      the feedback.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteFeedback}
+                      className="bg-[#e01a1a] hover:bg-[#e01a1a] hover:bg-opacity-70"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
       </div>
 
       <div className="flex flex-col justify-center px-8 py-7 mt-3.5 w-full bg-white rounded max-md:px-5 max-md:max-w-full">
