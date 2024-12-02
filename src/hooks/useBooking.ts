@@ -1,9 +1,9 @@
-import bookingAction from '@/apis/booking.action';
-import { ServiceCategory } from '@/configs/enum';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { toast } from 'react-toastify';
-import * as zustand from 'zustand';
+import bookingAction from "@/apis/booking.action";
+import customerAction from "@/apis/customer.action";
+import { ServiceCategory } from "@/configs/enum";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import * as zustand from "zustand";
 
 type State = {
   booking: DeepPartial<CreateBookingRequest> | null;
@@ -26,9 +26,9 @@ export const useBookingStore = zustand.create<State & Action>((set) => ({
 
 export const useGetBookingByOrderCode = (orderCode: number | null) =>
   useQuery({
-    queryKey: ['booking', 'orderCode', orderCode],
+    queryKey: ["booking", "orderCode", orderCode],
     queryFn: () => {
-      if (!orderCode) throw new Error('Order code is invalid');
+      if (!orderCode) throw new Error("Order code is invalid");
       return bookingAction.getBookingByOrderCode(orderCode);
     },
   });
@@ -45,6 +45,12 @@ export const useCreateBooking = () =>
         window.location.href = data?.paymentLink;
       }
     },
+  });
+
+export const useGetBookingOfCurrentCustomer = () =>
+  useQuery({
+    queryKey: ["currentCustomerBooking"],
+    queryFn: () => customerAction.getCurrentCustomerBooking(),
   });
 
 export const useCreatePayment = () =>

@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-
 type SearchBarProps = {
   setSearchTerm: (term: string) => void;
   setSearchBy: (field: string) => void;
 };
-
 const SearchBar: React.FC<SearchBarProps> = ({
   setSearchTerm,
   setSearchBy,
@@ -12,22 +10,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-
-  const [selectedSearchBy, setSelectedSearchBy] = useState("Helper");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // đóng - mở của search by
-
+  const [selectedSearchBy, setSelectedSearchBy] = useState("Customer");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const handleSearchByChange = (field: string) => {
     setSelectedSearchBy(field);
     setSearchBy(field);
     setIsDropdownOpen(false);
   };
-
   const closeDropdown = () => {
     setIsDropdownOpen(false);
   };
-
-  const searchByOptions = ["Helper", "Rating", "Price", "Status"];
-
+  const searchByOptions = ["Customer", "Rating", "Price", "Status"];
   return (
     <>
       <div className="flex w-full flex-wrap gap-10 max-md:max-w-full">
@@ -52,7 +45,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onChange={handleSearchChange}
                 />
               </div>
-
               {/* search by */}
               <div className="relative" onMouseLeave={closeDropdown}>
                 <div
@@ -61,7 +53,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 >
                   {selectedSearchBy}
                 </div>
-
                 {isDropdownOpen && (
                   <div className="absolute z-10 w-full rounded-lg border border-gray-300 bg-white shadow-lg">
                     <ul className="py-1 font-Averta-Regular text-sm text-[#2b3034e6]">
@@ -85,5 +76,4 @@ const SearchBar: React.FC<SearchBarProps> = ({
     </>
   );
 };
-
 export default SearchBar;
