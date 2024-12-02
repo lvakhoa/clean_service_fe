@@ -1,9 +1,8 @@
 "use client";
 import React, { use, useEffect, useState } from "react";
 import Pagination from "./Pagination";
-import SearchBar from "./SearhBar";
+import SearchBar from "./SearchBar";
 import JobHistoryRow from "./JobHistoryRow";
-import { useCustomer } from "@/hooks/useCustomer";
 import { useGetBookingOfCurrentCustomer } from "@/hooks/useBooking";
 
 const columns = [
