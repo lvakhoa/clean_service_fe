@@ -47,10 +47,10 @@ export const useCreateBooking = () =>
     },
   });
 
-export const useGetBookingOfCurrentCustomer = () =>
+export const useGetBookingOfCurrentCustomer = (page: number, limit: number) =>
   useQuery({
     queryKey: ["currentCustomerBooking"],
-    queryFn: () => customerAction.getCurrentCustomerBooking(),
+    queryFn: () => customerAction.getCurrentCustomerBooking(page, limit),
   });
 
 export const useCreatePayment = () =>

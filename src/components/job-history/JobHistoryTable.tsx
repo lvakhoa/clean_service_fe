@@ -21,12 +21,13 @@ const JobHistoryTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchBy, setSearchBy] = useState("Customer");
 
-  const { data, error, isPending } = useGetBookingOfCurrentCustomer();
+  const { data, isPending } = useGetBookingOfCurrentCustomer(currentPage, 10);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     setCurrentPage(1);
   };
+
   const filteredData =
     data && data.data
       ? data.data.results.filter((order) => {
@@ -42,21 +43,15 @@ const JobHistoryTable = () => {
           return order.customer.fullName.toLowerCase().includes(term);
         })
       : [];
-  // Pagination
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const currentData = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
+    if (newPage > 0 && newPage <= (data?.data?.totalPages ?? 0))
+      setCurrentPage(newPage);
   };
 
   return (
     <>
       <SearchBar setSearchTerm={handleSearch} setSearchBy={setSearchBy} />
-      {/* title column */}
       <div className="mt-4 flex h-[48px] w-full items-center gap-3 bg-[#f5f5f5] p-2.5">
         {columns.map((col, index) => (
           <div
@@ -68,14 +63,22 @@ const JobHistoryTable = () => {
         ))}
       </div>
       <div className="flex w-full flex-col justify-center overflow-hidden max-md:max-w-full">
-        {currentData.map((job: Booking, index: any) => (
-          <JobHistoryRow job={job} key={index} />
-        ))}
+        {isPending
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <JobHistoryRow
+                key={index}
+                job={{} as Booking}
+                isPending={isPending}
+              />
+            ))
+          : filteredData.map((job: Booking, index: number) => (
+              <JobHistoryRow job={job} key={index} isPending={isPending} />
+            ))}
       </div>
       <Pagination
-        currentPage={currentPage}
-        totalItems={filteredData.length}
-        totalPages={totalPages}
+        currentPage={data?.data?.currentPage ?? 0}
+        totalItems={data?.data?.totalItems ?? 0}
+        totalPages={data?.data?.totalPages ?? 0}
         onPageChange={handlePageChange}
       />
     </>
