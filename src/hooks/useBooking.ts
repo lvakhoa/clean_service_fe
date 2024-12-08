@@ -49,8 +49,9 @@ export const useCreateBooking = () =>
 
 export const useGetBookingOfCurrentCustomer = (page: number, limit: number) =>
   useQuery({
-    queryKey: ["currentCustomerBooking"],
+    queryKey: ["currentCustomerBooking", page, limit],
     queryFn: () => customerAction.getCurrentCustomerBooking(page, limit),
+    placeholderData: (previous) => previous,
   });
 
 export const useCreatePayment = () =>
