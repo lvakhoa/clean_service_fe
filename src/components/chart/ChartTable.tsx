@@ -1,23 +1,22 @@
 import React from 'react'
 import { ChartRow } from './ChartRow';
+import { BookingStatus } from '@/configs/enum';
 
-const chartkData = [
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:16 PM", service_fee: "$100.00", status: "Completed" as "Completed" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:17 PM", service_fee: "$100.00", status: "Processing" as "Processing" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:18 PM", service_fee: "$100.00", status: "Completed" as "Completed" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:19 PM", service_fee: "$100.00", status: "Processing" as "Processing" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:20 PM", service_fee: "$100.00", status: "Completed" as "Completed" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:21 PM", service_fee: "$100.00", status: "Processing" as "Processing" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:22 PM", service_fee: "$100.00", status: "Completed" as "Completed" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:23 PM", service_fee: "$100.00", status: "Processing" as "Processing" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:24 PM", service_fee: "$100.00", status: "Completed" as "Completed" },
-    { service_name: "Gardening", location: "6096 hahaha", date_time: "21.10.2024 - 15:25 PM", service_fee: "$100.00", status: "Processing" as "Processing" },
-];
+type ChartTableProps = {
+    chartTableData: {
+        service_name: string;
+        location: string;
+        date_time: string;
+        service_fee: number;
+        status: string;
+    }[];
+}
 
-export const ChartTable = () => {
+export const ChartTable: React.FC<ChartTableProps> = ({chartTableData}) => {
+
   return (
     <div className='w-[95%] m-auto mt-[25px]'>
-        <div className='flex flex-row bg-[#F1F4F9] h-[48px] p-[10px] gap-[10px] rounded-t-2xl'>
+        <div className='max-sm:hidden flex flex-row bg-[#F1F4F9] h-[48px] p-[10px] gap-[10px] rounded-t-2xl'>
             <div className='w-[20.5%] pl-[12px] m-auto'>
                 <div className='text-[#202224] text-sm font-bold'>Service Name</div>
             </div>
@@ -35,8 +34,8 @@ export const ChartTable = () => {
             </div>
         </div>
         <div className='divide-y'>
-            {chartkData.map((chart) => (
-                <ChartRow key={chart.date_time} {...chart} />
+            {chartTableData.map((chart, index) => (
+                <ChartRow key={index} {...chart} />
             ))}
         </div>
     </div>
