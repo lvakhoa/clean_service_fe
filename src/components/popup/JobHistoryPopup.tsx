@@ -1,42 +1,23 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import CreateFeedbackPopup from "./CreateFeedbackPopup";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
 import { useScheduler } from "@/hooks/useScheduler";
-import { ClipLoader } from "react-spinners";
 import { BookingStatus } from "@/configs/enum";
 
-interface OrderHistoryPopupProps {
+interface JobHistoryPopupProps {
   toggle: () => void;
   booking: Booking;
 }
-const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
+const JobHistoryPopup: React.FC<JobHistoryPopupProps> = ({
   toggle,
   booking,
 }) => {
   const { updateBooking, queryClient } = useScheduler();
 
   const bookingState: string = booking.status;
-  const [cancelService, setCancelService] = useState(false);
   const [reason, setReason] = useState("");
-  const [feedbackToggle, setFeedbackToggle] = useState(false);
   const [updating, setUpdating] = useState(false);
-
-  const handleFeedback = () => {
-    setFeedbackToggle(!feedbackToggle);
-  };
 
   const style =
     bookingState === BookingStatus.Completed ? (
@@ -48,7 +29,7 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
     ) : bookingState === BookingStatus.InProgress ? (
       <div className="h-full w-[60%] rounded-lg bg-[#1a78f2] bg-opacity-20 p-[13px]">
         <p className="flex h-full items-center justify-center text-xl font-bold text-[#1a78f2]">
-          {bookingState}
+          {"In Progress"}
         </p>
       </div>
     ) : bookingState === BookingStatus.Pending ? (
@@ -72,43 +53,70 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
     ) : (
       ""
     );
+
+  const handleStartWorkingSession = async () => {
+    setUpdating(true);
+    console.log("Start working session");
+    try {
+      await updateBooking.mutateAsync({
+        id: booking.id,
+        data: { status: 2 },
+      });
+      toast.success("Start Session.");
+      queryClient.invalidateQueries({ queryKey: ["currentCustomerBooking"] });
+      toggle();
+    } catch (error: any) {
+      console.error("Error start session:", error);
+      toast.error(
+        `Failed to start session: ${error.message || "Unknown error"}`,
+      );
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleEndWorkingSession = async () => {
+    setUpdating(true);
+    console.log("End working session");
+    try {
+      await updateBooking.mutateAsync({
+        id: booking.id,
+        data: { status: 3 },
+      });
+      toast.success("End Session.");
+      queryClient.invalidateQueries({ queryKey: ["currentCustomerBooking"] });
+      toggle();
+    } catch (error: any) {
+      console.error("Error ending session:", error);
+      toast.error(
+        `Failed to ending session: ${error.message || "Unknown error"}`,
+      );
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const styleBtn =
-    bookingState === BookingStatus.Completed ? (
-      booking.helperRating == null ? (
+    bookingState === BookingStatus.InProgress ? (
+      <div className="h-[55px]">
         <Button
-          onClick={handleFeedback}
-          className="h-[55px] w-full bg-[#1A78F2] font-Averta-Semibold text-lg text-white"
+          className="h-[55px] w-full bg-[#1A78F2] font-Averta-Semibold text-lg text-white hover:bg-[#1A78F2]/70"
+          onClick={handleEndWorkingSession}
         >
-          Feedback
+          End Working Session
         </Button>
-      ) : (
-        <></>
-      )
-    ) : bookingState === BookingStatus.InProgress ? (
-      <Button
-        className="h-[55px] w-full bg-[#000000] font-Averta-Semibold text-lg text-white"
-        disabled
-      >
-        Feedback
-      </Button>
-    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
-      cancelService ? (
-      <Button
-        className="h-[55px] w-full bg-[#00b69b] font-Averta-Semibold text-lg text-white hover:bg-[#00b69b] hover:bg-opacity-70"
-        onClick={() => setCancelService(!cancelService)}
-      >
-        Don't Cancel The Service
-      </Button>
-    ) : (bookingState === BookingStatus.Pending || BookingStatus.Confirmed) &&
-      !cancelService ? (
-      <Button
-        className="h-[55px] w-full bg-[#e01a1a] font-Averta-Semibold text-lg text-white hover:bg-[#e01a1a] hover:bg-opacity-70"
-        onClick={() => setCancelService(!cancelService)}
-      >
-        Cancel The Service
-      </Button>
+      </div>
+    ) : bookingState === BookingStatus.Confirmed ? (
+      <div className="h-[55px]">
+        <Button
+          className="h-[55px] w-full bg-[#1A78F2] font-Averta-Semibold text-lg text-white hover:bg-[#1A78F2]/70"
+          onClick={handleStartWorkingSession}
+        >
+          Start Working Session
+        </Button>
+      </div>
     ) : (
-      ""
+      <></>
     );
 
   function formatSchedule(startTime: string, endTime: string): string {
@@ -129,35 +137,9 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
     return `From ${start} to ${end} | ${day}/${month}/${year}`;
   }
 
-  const handleConfirmCancel = async () => {
-    if (!reason.trim()) {
-      console.log("Error: Reason is empty");
-      toast.error("Please enter the reason for cancellation");
-    } else {
-      setUpdating(true);
-      try {
-        await updateBooking.mutateAsync({
-          id: booking.id,
-          data: { status: 4, cancellationReason: reason },
-        });
-        toast.success("Service has been cancelled successfully.");
-        //window.location.reload();
-        queryClient.invalidateQueries({ queryKey: ["currentBooking"] });
-        toggle();
-      } catch (error: any) {
-        console.error("Error cancelling service:", error);
-        toast.error(
-          `Failed to cancel service: ${error.message || "Unknown error"}`,
-        );
-      } finally {
-        setUpdating(false);
-      }
-    }
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex h-full w-full cursor-default items-center justify-center bg-black bg-opacity-50"
       onClick={toggle}
     >
       <div
@@ -298,70 +280,13 @@ const OrderHistoryPopup: React.FC<OrderHistoryPopupProps> = ({
                   {style}
                 </div>
               </div>
-              <div className="h-[55px]">{styleBtn}</div>
+              {styleBtn}
             </div>
           </div>
         </div>
-        {cancelService ? (
-          <div className="flex flex-col gap-[10px]">
-            <div className="mt-[10px] flex h-fit w-full flex-col gap-[8px]">
-              <p className="font-Averta-Semibold text-sm uppercase leading-[17px] tracking-tight text-[#9ea7af]">
-                cancellation reason
-              </p>
-              <textarea
-                placeholder="CANCELLATION REASON"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                className="min-h-[130px] resize-none rounded-lg border-2 border-[#d3d8dd] px-[10px] py-[16px] font-Averta-Semibold text-base leading-[23px] tracking-tight text-[#4f6071]"
-              />
-            </div>
-            <div className="item-center m-auto flex h-[55px] w-[50%] justify-center rounded-lg bg-[#e01a1a] font-Averta-Semibold text-lg text-white hover:bg-[#e01a1a] hover:bg-opacity-70">
-              <AlertDialog>
-                <AlertDialogTrigger disabled={updating}>
-                  {updating ? (
-                    <ClipLoader color="#ffffff" loading={updating} size={30} />
-                  ) : (
-                    "Confirm"
-                  )}
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently cancel
-                      the booking order.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleConfirmCancel}
-                      className="bg-[#e01a1a] hover:bg-[#e01a1a] hover:bg-opacity-70"
-                    >
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
-      {feedbackToggle && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <CreateFeedbackPopup
-            toggle={handleFeedback}
-            booking={booking}
-            closeParentPopup={toggle}
-          />
-        </div>
-      )}
     </div>
   );
 };
 
-export default OrderHistoryPopup;
+export default JobHistoryPopup;
