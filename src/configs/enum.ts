@@ -36,3 +36,9 @@ export enum ServiceCategory {
   HomeCleaning = 'HomeCleaning',
   OtherServices = 'OtherServices',
 }
+
+export enum RefundStatus {
+  Pending = 'Pending',
+  Refunded = 'Refunded',
+  Declined = 'Declined',
+}

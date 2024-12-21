@@ -17,7 +17,6 @@ const bookingAction = {
         limit,
       },
     });
-    console.log("response", response.data);
     return response.data;
   },
   async createBooking(booking: CreateBookingRequest) {

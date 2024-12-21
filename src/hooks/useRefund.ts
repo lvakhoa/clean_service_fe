@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import refundAction from "@/apis/refund.action";
+import { CreateRefundDto } from "@/schemas/createRefundSchema";
 
 export const useRefund = (page?: number, limit?: number) => {
   const queryClient = useQueryClient();
@@ -37,6 +38,12 @@ export const useRefund = (page?: number, limit?: number) => {
       refundAction.updateRefund(id, data),
   });
 
+  const createRefund = useMutation({
+    mutationFn: (data: CreateRefundDto) => {
+      return refundAction.createRefund(data);
+    }
+  })
+
   return {
     queryClient,
     getRefundOfCurrentUser,
@@ -44,5 +51,6 @@ export const useRefund = (page?: number, limit?: number) => {
     useGetRefundById,
     deleteRefundMutation,
     updateRefundMutation,
+    createRefund
   };
 };
