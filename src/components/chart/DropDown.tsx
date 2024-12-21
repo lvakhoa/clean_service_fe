@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const Dropdown = () => {
+type DropdownProps = {
+  setFilter: (filter: string) => void;
+}
+const filterOption = ['Descending', 'Ascending', 'None'];
+
+const Dropdown: React.FC<DropdownProps> = ({setFilter}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -18,16 +23,14 @@ const Dropdown = () => {
         </button>
         {isOpen && <div className="fixed inset-0" onClick={toggleDropdown}></div>}
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-[104px] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <button className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-400 hover:bg-opacity-30 hover:rounded-t-md duration-300 w-full text-left">
-              Descending
+        <div className="origin-top-right absolute right-0 mt-2 w-[104px] shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+          {filterOption.map((option) => (
+            <button key={option} 
+            onClick={() => {setFilter(option); toggleDropdown()}} 
+            className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-400 hover:bg-opacity-30 duration-300 w-full text-left">
+              {option}
             </button>
-            <button className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-400 hover:bg-opacity-30 duration-300 w-full text-left">
-              Ascending
-            </button>
-            <button className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-400 hover:bg-opacity-30 hover:rounded-b-md duration-300 w-full text-left">
-              None
-            </button>
+          ))}
         </div>
       )}
     </div>

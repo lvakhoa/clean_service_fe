@@ -5,10 +5,11 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalItems,
   totalPages,
+  itemsPerPage = 10,
   onPageChange,
 }) => {
-  const startItem = (currentPage - 1) * 10 + 1;
-  const endItem = Math.min(currentPage * 10, totalItems);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
     <div className="flex flex-wrap gap-10 justify-between items-center mt-3.5 w-full max-md:max-w-full">

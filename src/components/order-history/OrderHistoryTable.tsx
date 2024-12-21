@@ -347,7 +347,7 @@ const OrderHistoryTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchBy, setSearchBy] = useState("Helper");
-  const [order, setOrder] = useState<Booking[]>([]);
+  const [order, setOrder] = useState<Booking[] | null>(null);
 
   useEffect(() => {
     setOrder(
@@ -364,7 +364,7 @@ const OrderHistoryTable = () => {
     setCurrentPage(1);
   };
 
-  const filteredData = order.filter((order) => {
+  const filteredData = order ? order.filter((order) => {
     const term = searchTerm.toLowerCase();
 
     if (searchBy === "Helper")
@@ -375,7 +375,7 @@ const OrderHistoryTable = () => {
     if (searchBy === "Status") return order.status.toLowerCase().includes(term);
 
     return order.helper.user.fullName.toLowerCase().includes(term);
-  });
+  }): [];
 
   // Pagination
   const itemsPerPage = 10;
@@ -409,9 +409,12 @@ const OrderHistoryTable = () => {
       </div>
 
       <div className="flex overflow-hidden flex-col justify-center w-full max-md:max-w-full">
-        {currentData.map((order: Booking, index: any) => (
+        {order == null || order.length === 0 ? (<div className="flex justify-center items-center w-full bg-white">
+                We have no feedback
+              </div>):(currentData.map((order: Booking, index: any) => (
           <OrderHistoryRow key={order.id} order={order} />
-        ))}
+        )))}
+        {}
       </div>
       <Pagination
         currentPage={currentPage}
