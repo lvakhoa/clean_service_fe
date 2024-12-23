@@ -2,6 +2,7 @@ type PaginationProps = {
   currentPage: number;
   totalItems: number;
   totalPages: number;
+  itemsPerPage?: number;
   onPageChange: (newPage: number) => void;
 };
 
