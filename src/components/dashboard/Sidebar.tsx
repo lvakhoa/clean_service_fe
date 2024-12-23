@@ -134,16 +134,22 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       label: 'Service',
       items: [
         {
-          icon: '/images/Dashboard/Sidebar/InActive/ServiceCategory.svg',
-          activeIcon: '/images/Dashboard/Sidebar/Active/ServiceCategory.svg',
-          label: 'Category',
-          href: ADMIN_ENDPOINTS.service_category,
+          icon: '/images/Dashboard/Sidebar/InActive/ServiceType.svg',
+          activeIcon: '/images/Dashboard/Sidebar/Active/ServiceType.svg',
+          label: 'Type',
+          href: ADMIN_ENDPOINTS.service_type,
         },
         {
-          icon: '/images/Dashboard/Sidebar/InActive/ServiceDetail.svg',
-          activeIcon: '/images/Dashboard/Sidebar/Active/ServiceDetail.svg',
-          label: 'Detail',
-          href: ADMIN_ENDPOINTS.service_details,
+          icon: '/images/Dashboard/Sidebar/InActive/Duration.svg',
+          activeIcon: '/images/Dashboard/Sidebar/Active/Duration.svg',
+          label: 'Duration ',
+          href: ADMIN_ENDPOINTS.service_duration,
+        },
+        {
+          icon: '/images/Dashboard/Sidebar/InActive/Room.svg',
+          activeIcon: '/images/Dashboard/Sidebar/Active/Room.svg',
+          label: 'Room ',
+          href: ADMIN_ENDPOINTS.service_room,
         },
       ],
     },
@@ -153,12 +159,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       label: 'Feedback',
       href: ADMIN_ENDPOINTS.feedback,
     },
-    {
-      icon: '/images/Dashboard/Sidebar/InActive/Issue.svg',
-      activeIcon: '/images/Dashboard/Sidebar/Active/Issue.svg',
-      label: 'Issue',
-      href: ADMIN_ENDPOINTS.issue,
-    },
+    // {
+    //   icon: '/images/Dashboard/Sidebar/InActive/Issue.svg',
+    //   activeIcon: '/images/Dashboard/Sidebar/Active/Issue.svg',
+    //   label: 'Issue',
+    //   href: ADMIN_ENDPOINTS.issue,
+    // },
     {
       icon: '/images/Dashboard/Sidebar/InActive/Refund.svg',
       activeIcon: '/images/Dashboard/Sidebar/Active/Refund.svg',
@@ -207,12 +213,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       label: 'Personal',
       href: HELPER_ENDPOINTS.personal,
     },
-    {
-      icon: '/images/Dashboard/Sidebar/InActive/Feedback.svg',
-      activeIcon: '/images/Dashboard/Sidebar/Active/Feedback.svg',
-      label: 'Feedback',
-      href: HELPER_ENDPOINTS.feedback,
-    },
+    // {
+    //   icon: '/images/Dashboard/Sidebar/InActive/Feedback.svg',
+    //   activeIcon: '/images/Dashboard/Sidebar/Active/Feedback.svg',
+    //   label: 'Feedback',
+    //   href: HELPER_ENDPOINTS.feedback,
+    // },
     {
       icon: '/images/Dashboard/Sidebar/InActive/JobHistory.svg',
       activeIcon: '/images/Dashboard/Sidebar/Active/JobHistory.svg',
@@ -237,8 +243,9 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       : [];
 
   return (
-    <aside className="flex flex-col w-[16%] max-md:ml-0 max-md:w-full">
-      <nav className="flex flex-col items-center px-5 pt-5 mx-auto w-full font-Averta-Bold tracking-wide whitespace-nowrap bg-white min-h-[970px] pb-[700px] text-stone-600 max-md:pb-24">
+    <aside className="fixed md:static top-0 left-0 z-40 min-h-screen w-[85%] md:w-[16%] 
+          transform transition-transform duration-300 ease-in-out bg-white">
+      <nav className="flex flex-col items-center px-5 pt-5 mx-auto w-full font-Averta-Bold tracking-wide whitespace-nowrap bg-white min-h-screen text-stone-600 max-md:pb-24">
         {navItems.map((item) => (
           <NavItem
             key={item.label}

@@ -10,9 +10,24 @@ type HeaderProps = {
 };
 
 const Header = ({ isAuth }: HeaderProps) => {
-  const links = ['Residential', 'Office', 'Commercial', "FAQ's"];
+  //const links = ['About Us', 'Career', 'Dashboard'];
+  const links = [
+    {
+      name: 'About Us',
+      url: '/about-us'
+    },
+    {
+      name: 'Career',
+      url: '/career'
+    },
+    {
+      name: 'Dashboard',
+      url: '/dashboard'
+    }
+  ]
+  console.log('isAuth', isAuth); 
 
-  const handleLogIn = () => {
+  const handleLogIn = () => { 
     window.location.href = ENV.API_BASE_URL + '/auth/login';
   };
 
@@ -23,15 +38,17 @@ const Header = ({ isAuth }: HeaderProps) => {
   return (
     <header className="flex justify-center bg-transparent">
       <div className="flex flex-row w-full max-w-[1170px] h-[38px] justify-between items-end mt-[20px]">
+        <a href="/">
         <img src="/images/Header/Logo.svg" alt="Clean" className="h-[38px]" />
+        </a>
         <nav className="flex flex-wrap gap-8 items-center">
           {links.map((link) => (
             <a
-              href={`#${link.toLowerCase()}`}
-              key={link}
+              href={`${link.url}`}
+              key={link.url}
               className="text-gray-700 font-Averta-Semibold mt-1"
             >
-              {link}
+              {link.name}
             </a>
           ))}
           {isAuth ? (

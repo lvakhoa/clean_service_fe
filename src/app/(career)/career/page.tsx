@@ -2,8 +2,10 @@ import Footer from '@/components/footer/Footer'
 import Header from '@/components/header/Header'
 import React from 'react'
 import Image from 'next/image'
+import { verifySession } from '@/helpers/verifySession'
 
-const CareerPage = () => {
+const CareerPage = async () => {
+    const session = await verifySession();
     const accreditions = [
         {
             logo: '/images/About/UIT.svg'
@@ -46,7 +48,7 @@ const CareerPage = () => {
             <div className="relative">
 
                 <div className="absolute top-0 left-0 w-full z-20">
-                    <Header />
+                    <Header isAuth={session.isAuth} />
                 </div>
                 <div className='flex flex-col justify-center items-center'>
                     <div className='relative'>

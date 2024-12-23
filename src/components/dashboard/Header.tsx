@@ -4,12 +4,14 @@ import React from 'react';
 const Header: React.FC = () => {
   return (
     <header className="flex flex-wrap gap-10 justify-between items-center py-6 pr-5 pl-12 w-full bg-white min-h-[100px] max-md:pl-5 max-md:max-w-full">
+      <a href="/">
       <Image src='/images/Header/Logo.svg' alt='HeroIllustration' width={0} height={0} sizes="100vw" style={{ width: '126px', height: 'auto' }} />
+      </a>
       <nav className="flex flex-wrap gap-8 items-center self-stretch my-auto min-w-[240px] max-md:max-w-full">
-        <a href="#" className="text-slate-800 font-Averta-Semibold">Residential</a>
-        <a href="#" className="text-slate-800 font-Averta-Semibold">Office</a>
-        <a href="#" className="text-slate-800 font-Averta-Semibold">Commercial</a>
-        <a href="#" className="text-slate-800 font-Averta-Semibold">FAQ's</a>
+        {/* <a href="#" className="text-slate-800 font-Averta-Semibold">Residential</a> */}
+        <a href="/about-us" className="text-slate-800 font-Averta-Semibold">About Us</a>
+        <a href="/career" className="text-slate-800 font-Averta-Semibold">Career</a>
+        <a href="/dashboard" className="text-slate-800 font-Averta-Semibold">Dashboard</a>
         <div className="flex gap-3.5 items-start self-stretch my-auto w-[169px]">
           <div className="flex gap-5 justify-between items-center w-[169px]">
             <Image 
