@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 
 type HeaderProps = {
@@ -22,7 +23,13 @@ type HeaderProps = {
 
 const Header = ({ isAuth, role }: HeaderProps) => {
   //const links = ['About Us', 'Career', 'Dashboard'];
-  const {useGetProfile} = useAuth();
+
+  const router = useRouter();
+
+
+  const {useGetProfile, useLogout} = useAuth();
+  
+  const mutation = useLogout;
   const { data , error , isPending } = useGetProfile()
   console.log('useGetProfile', data);
   const links = [
@@ -125,9 +132,13 @@ const Header = ({ isAuth, role }: HeaderProps) => {
             </DropdownMenuTrigger> 
   <DropdownMenuContent>
     <DropdownMenuLabel className='hidden'>My Account</DropdownMenuLabel>
-    <DropdownMenuItem>Profile</DropdownMenuItem>
+    <DropdownMenuItem><button onClick={() => router.push(`/dashboard/profile`)} >
+Profile
+              </button></DropdownMenuItem>
     <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem><button onClick={() => mutation.mutate()} >
+Log out
+              </button></DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
 
