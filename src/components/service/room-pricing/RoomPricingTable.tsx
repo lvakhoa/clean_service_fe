@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import SearchBarAndFilter from "./SearchBarAndFilter";
@@ -79,8 +79,12 @@ const RoomPricingTable = () => {
     string | null
   >(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [initValue, setInitValue] = useState<{
+    roomCount: number;
+    additionalPrice: number;
+  }>({ roomCount: 0, additionalPrice: 0 });
 
-  const { data, isLoading, error } = useGetRoomPricing();
+  const { data, isLoading } = useGetRoomPricing();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -112,6 +116,12 @@ const RoomPricingTable = () => {
   const handleRowClick = (id: string) => {
     setSelectedRoomPricingId(id);
     setIsDialogOpen(true);
+  };
+  const handleInitValue = (value: {
+    roomCount: number;
+    additionalPrice: number;
+  }) => {
+    setInitValue(value);
   };
   const itemsPerPage = 10;
 
@@ -158,6 +168,7 @@ const RoomPricingTable = () => {
             key={category.id}
             {...category}
             onRowClick={handleRowClick}
+            setInitValue={handleInitValue}
             isLoading={isLoading}
           />
         ))}
@@ -172,6 +183,8 @@ const RoomPricingTable = () => {
       <UpdateRoomPricingPopup
         id={selectedRoomPricingId}
         open={isDialogOpen}
+        roomCount={initValue.roomCount}
+        additionalPrice={initValue.additionalPrice}
         onClose={() => setIsDialogOpen(false)}
       />
     </>

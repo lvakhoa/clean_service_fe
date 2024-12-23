@@ -13,6 +13,10 @@ type DurationPriceRowProps = {
   durationHours: number;
   priceMultiplier: number; // decimal
   onRowClick: (id: string) => void;
+  setInitValue: (value: {
+    durationHours: number;
+    priceMultiplier: number;
+  }) => void;
   isLoading?: boolean;
 };
 
@@ -25,6 +29,7 @@ type RoomPricingRowProps = {
   additionalPrice: number;
   createdAt: string;
   onRowClick: (id: string) => void;
+  setInitValue: (value: { roomCount: number; additionalPrice: number }) => void;
   isLoading?: boolean;
 };
 
@@ -66,6 +71,7 @@ type ServiceTypeRowProps = {
   createdAt: string;
   isActive: boolean;
   onRowClick: (id: string) => void;
+  setInitValue: (value: { description: string; basePrice: number }) => void;
   isLoading?: boolean;
   category: {
     id: string;

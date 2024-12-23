@@ -11,6 +11,7 @@ const ServiceTypeRow: React.FC<ServiceTypeRowProps> = ({
   description,
   basePrice,
   onRowClick,
+  setInitValue,
   isLoading,
 }) => {
   return (
@@ -21,7 +22,10 @@ const ServiceTypeRow: React.FC<ServiceTypeRowProps> = ({
           ? "cursor-default hover:bg-white"
           : "cursor-pointer hover:bg-[#f4f7ff]",
       )}
-      onClick={() => onRowClick(id)}
+      onClick={() => {
+        onRowClick(id);
+        setInitValue({ description: description ?? "", basePrice });
+      }}
     >
       <div className="mb-2 ml-5 flex w-full items-center justify-start xl:mb-0 xl:w-[300px] xl:py-6">
         {isLoading ? (

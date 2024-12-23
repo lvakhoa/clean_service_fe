@@ -1,6 +1,7 @@
 import roomPricingAction from "@/apis/room-pricing.action";
 import { RoomType } from "@/configs/enum";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { updateRoomPricingData } from "@/schemas/roomPricingSchema";
 
 export const useGetAllRoomPricings = (serviceTypeId?: string) =>
   useQueries({
@@ -60,8 +61,21 @@ export const useGetAllRoomPricings = (serviceTypeId?: string) =>
 
 export const useGetRoomPricing = () =>
   useQuery({
-    queryKey: ["roomPricings"],
+    queryKey: ["allRoomPricings"],
     queryFn: () => {
       return roomPricingAction.getAllRoomPricings();
+    },
+  });
+
+export const useUpdateRoomPricing = () =>
+  useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: updateRoomPricingData;
+    }) => {
+      await roomPricingAction.updateRoomPricing(id, data);
     },
   });

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Pagination from "./Pagination";
@@ -8,6 +8,7 @@ import { UpdateDurationPricePopup } from "@/components/popup/UpdateDurationPrice
 import DurationPriceRow from "./DurationPriceRow";
 import { Button } from "@/components/ui/button";
 import { useGetDurationPrice } from "@/hooks/useDurationPrice";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 const columns = [
   {
@@ -25,7 +26,10 @@ const DurationPriceTable = () => {
     string | null
   >(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [checkedRows, setCheckedRows] = useState<string[]>([]);
+  const [initValue, setInitValue] = useState<{
+    durationHours: number;
+    priceMultiplier: number;
+  }>({ durationHours: 0, priceMultiplier: 0 });
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
@@ -59,6 +63,14 @@ const DurationPriceTable = () => {
     setSelectedServiceTypeId(id);
     setIsDialogOpen(true);
   };
+  const handleInitValue = (value: {
+    durationHours: number;
+    priceMultiplier: number;
+  }) => {
+    setInitValue(value);
+  };
+
+  useEffect(() => {}, [initValue]);
 
   const itemsPerPage = 10;
 
@@ -101,6 +113,7 @@ const DurationPriceTable = () => {
             key={detail.id}
             {...detail}
             onRowClick={handleRowClick}
+            setInitValue={handleInitValue}
             isLoading={isLoading}
           />
         ))}
@@ -112,8 +125,8 @@ const DurationPriceTable = () => {
         onPageChange={handlePageChange}
       />
       <UpdateDurationPricePopup
-        durationHours={0}
-        priceMultiplier={0}
+        durationHours={initValue.durationHours}
+        priceMultiplier={initValue.priceMultiplier}
         id={selectedServiceTypeId}
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
