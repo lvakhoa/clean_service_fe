@@ -17,6 +17,13 @@ const authAction = {
     );
     return res.data;
   },
+  async getProfile(config?: AxiosRequestConfig) {
+    const res = await cleanApi.get<CleanSuccessResponseWrapper<Profile>>(
+      "/auth/me",
+      config
+    );
+    return res.data.data;
+  }
 };
 
 export default authAction;
