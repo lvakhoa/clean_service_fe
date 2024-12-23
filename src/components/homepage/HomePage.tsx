@@ -65,7 +65,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="relative">
         <Image
           src="/images/HomePage/HeroIllustration.svg"
@@ -75,21 +75,21 @@ const HomePage = () => {
           sizes="100vw"
           style={{ width: "100%", height: "auto" }}
         />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="font-Averta-Bold text-center text-6xl mt-10">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+          <div className="mt-10 text-center font-Averta-Bold text-6xl">
             <p>Your One Stop Cleaning</p>
             <p>Centre For All Needs</p>
-            <button className="px-7 py-2 mt-[7%] bg-[#1b78f2] rounded-xl text-lg font-Averta-Semibold tracking-normal leading-loose text-center text-white">
-              Booking from 80$
+            <button className="mt-[7%] rounded-xl bg-[#1b78f2] px-7 py-2 text-center font-Averta-Semibold text-lg leading-loose tracking-normal text-white">
+              <a href="/booking">Booking from 80$</a>
             </button>
           </div>
         </div>
       </div>
-      <div className="flex flex-row max-w-[1000px] pt-[112px] items-center justify-center">
-        <div className="font-Averta-Bold text-5xl w-full flex flex-col gap-5">
+      <div className="flex max-w-[1000px] flex-row items-center justify-center pt-[112px]">
+        <div className="flex w-full flex-col gap-5 font-Averta-Bold text-5xl">
           <p>Why Choose Us?</p>
-          <div className="flex flex-col max-w-[400px] gap-3">
-            <li className="flex gap-1.5 ">
+          <div className="flex max-w-[400px] flex-col gap-3">
+            <li className="flex gap-1.5">
               <Check className="h-5 w-5 shrink-0 text-blue-600" />
               <p className="font-Averta-Regular text-[15px]">
                 <a className="font-Averta-Bold">Sparkling clean home:</a> Sit
@@ -97,7 +97,7 @@ const HomePage = () => {
                 cranny, leaving your home spotless.
               </p>
             </li>
-            <li className="flex gap-1.5 ">
+            <li className="flex gap-1.5">
               <Check className="h-5 w-5 shrink-0 text-blue-600" />
               <p className="font-Averta-Regular text-[15px]">
                 <a className="font-Averta-Bold">More time for you:</a> Reclaim
@@ -105,7 +105,7 @@ const HomePage = () => {
                 hobbies, family, and fun.
               </p>
             </li>
-            <li className="flex gap-1.5 ">
+            <li className="flex gap-1.5">
               <Check className="h-5 w-5 shrink-0 text-blue-600" />
               <p className="font-Averta-Regular text-[15px]">
                 <a className="font-Averta-Bold">Healthy living:</a> A
@@ -114,7 +114,7 @@ const HomePage = () => {
               </p>
             </li>
           </div>
-          <div className="flex flex-row items-start gap-5 mt-5">
+          <div className="mt-5 flex flex-row items-start gap-5">
             <div className="flex -space-x-4">
               <Image
                 src="/images/HomePage/users/user-1.png"
@@ -159,16 +159,16 @@ const HomePage = () => {
                 height={0}
                 sizes="100vw"
                 style={{ width: "40px", height: "auto" }}
-                className="inline-block rounded-full ring-2 ring-slate-100 object-cover"
+                className="inline-block rounded-full object-cover ring-2 ring-slate-100"
               />
             </div>
-            <div className="flex flex-col justify-between items-start gap-2">
+            <div className="flex flex-col items-start justify-between gap-2">
               <div className="flex gap-0.5">
-                <Star className="h-4 w-4 text-blue-600 fill-blue-600" />
-                <Star className="h-4 w-4 text-blue-600 fill-blue-600" />
-                <Star className="h-4 w-4 text-blue-600 fill-blue-600" />
-                <Star className="h-4 w-4 text-blue-600 fill-blue-600" />
-                <Star className="h-4 w-4 text-blue-600 fill-blue-600" />
+                <Star className="h-4 w-4 fill-blue-600 text-blue-600" />
+                <Star className="h-4 w-4 fill-blue-600 text-blue-600" />
+                <Star className="h-4 w-4 fill-blue-600 text-blue-600" />
+                <Star className="h-4 w-4 fill-blue-600 text-blue-600" />
+                <Star className="h-4 w-4 fill-blue-600 text-blue-600" />
               </div>
               <div className="text-[15px]">
                 <p className="font-Averta-Regular">
@@ -179,14 +179,14 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="m-auto font-Averta-Regular max-w-[40%] w-full">
+        <div className="m-auto w-full max-w-[40%] font-Averta-Regular">
           We understand your home is important to you. That's why we focus on
           the quality of the clean. Our cleaners aren't contract workers - they
           are full-time employees. They care as much as we do.
         </div>
       </div>
-      <div className="relative mt-[147px] mb-[147px]">
-        <div className="flex flex-row gap-[135px] ml-[7%]">
+      <div className="relative mb-[147px] mt-[147px]">
+        <div className="ml-[7%] flex flex-row gap-[135px]">
           <Image
             src="/images/HomePage/Line.svg"
             alt="Line"
@@ -204,7 +204,7 @@ const HomePage = () => {
             style={{ width: "100%", height: "auto" }}
           />
         </div>
-        <div className="flex flex-row -top-10 -left-52 absolute gap-[143px]">
+        <div className="absolute -left-52 -top-10 flex flex-row gap-[143px]">
           <Image
             src="/images/HomePage/Book.svg"
             alt="WhyChooseShield"
@@ -232,53 +232,53 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-[10%] max-w-[1000px] w-full">
+      <div className="flex w-full max-w-[1000px] flex-row gap-[10%]">
         {HomePageData.map((data, index) => (
           <div key={index} className="flex flex-col gap-4">
             <p className="font-Averta-Bold uppercase text-[#1b78f2]">
               {data.title}
             </p>
             <div className="flex flex-col gap-2">
-              <p className="text-gray-600 font-Averta-Regular" key={index}>
+              <p className="font-Averta-Regular text-gray-600" key={index}>
                 {data.description}
               </p>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-[140px] w-full h-[700px] relative">
+      <div className="relative mt-[140px] h-[700px] w-full">
         <Image
           src="/images/HomePage/Background_feedback.svg"
           alt="Logo_Grat"
           fill
           className="absolute inset-0 object-cover"
         />
-        <div className="flex flex-col absolute inset-0 items-center justify-center">
-          <h1 className="text-white text-4xl font-Averta-Bold z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <h1 className="z-10 font-Averta-Bold text-4xl text-white">
             <p>What our customers say?</p>
           </h1>
-          <div className="flex flex-row mt-20 gap-32">
+          <div className="mt-20 flex flex-row gap-32">
             {FeedBack.map((data, index) => (
               <div
-                className="flex flex-row gap-5 p-4 bg-white rounded-lg"
+                className="flex flex-row gap-5 rounded-lg bg-white p-4"
                 key={index}
               >
                 <div className="flex flex-col gap-5 p-4">
                   <div className="flex gap-0.5">
-                    <Star className="h-5 w-5 text-blue-600 fill-blue-600" />
-                    <Star className="h-5 w-5 text-blue-600 fill-blue-600" />
-                    <Star className="h-5 w-5 text-blue-600 fill-blue-600" />
-                    <Star className="h-5 w-5 text-blue-600 fill-blue-600" />
-                    <Star className="h-5 w-5 text-blue-600 fill-blue-600" />
+                    <Star className="h-5 w-5 fill-blue-600 text-blue-600" />
+                    <Star className="h-5 w-5 fill-blue-600 text-blue-600" />
+                    <Star className="h-5 w-5 fill-blue-600 text-blue-600" />
+                    <Star className="h-5 w-5 fill-blue-600 text-blue-600" />
+                    <Star className="h-5 w-5 fill-blue-600 text-blue-600" />
                   </div>
-                  <div className="max-w-[470px] text-black font-Averta-Regular text-lg leading-8">
+                  <div className="max-w-[470px] font-Averta-Regular text-lg leading-8 text-black">
                     "
                     {data.feedback.map((segment, segmentIndex) => (
                       <span
                         key={segmentIndex}
                         className={
                           segment.isHighlighted
-                            ? "p-0.5 bg-slate-800 text-white"
+                            ? "bg-slate-800 p-0.5 text-white"
                             : ""
                         }
                       >
@@ -297,9 +297,9 @@ const HomePage = () => {
                       style={{ width: "50px", height: "auto" }}
                       className="inline-block rounded-full ring-2 ring-slate-100"
                     />
-                    <div className="flex flex-col justify-between items-start">
+                    <div className="flex flex-col items-start justify-between">
                       <p className="font-Averta-Bold">{data.customer}</p>
-                      <div className="text-[15px] flex flex-row gap-1">
+                      <div className="flex flex-row gap-1 text-[15px]">
                         <Check className="h-5 w-5 shrink-0 text-blue-600" />
                         <p className="font-Averta-Regular">Verified Customer</p>
                       </div>
@@ -311,16 +311,16 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-[300px] relative">
+      <div className="relative h-[300px] w-full">
         <Image
           src="/images/HomePage/Background_Footer_Booking.svg"
           alt="Logo_Grat"
           fill
           className="absolute inset-0 object-cover"
         />
-        <div className="flex flex-col absolute inset-0 items-center justify-center">
-          <button className="px-7 py-2 bg-[#1b78f2] rounded-xl text-lg font-Averta-Semibold tracking-normal leading-loose text-center text-white">
-            Booking from 80$
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <button className="rounded-xl bg-[#1b78f2] px-7 py-2 text-center font-Averta-Semibold text-lg leading-loose tracking-normal text-white">
+            <a href="/booking">Booking from 80$</a>
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
 export const AUTH_ENDPOINTS = {
-  personal: '/dashboard/profile',
-  booking: '/booking',
+  personal: '/dashboard/personal',
+  // booking: '/booking',
 };

@@ -7,6 +7,7 @@ import {
   HELPER_ENDPOINTS,
   PUBLIC_ENDPOINTS,
 } from "./configs/endpoints";
+import ENV from "@/configs/env";
 
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -49,7 +50,7 @@ export default async function middleware(request: NextRequest) {
     )?.value;
     if (!role) {
       return NextResponse.redirect(
-        new URL(PUBLIC_ENDPOINTS.landing, request.url)
+        new URL(ENV.API_BASE_URL + "/auth/login", request.url)
       );
     }
 
