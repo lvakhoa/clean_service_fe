@@ -3,7 +3,7 @@ type ServiceTypeResponse = {
   categoryId: string;
   name: string;
   description?: string;
-  basePrice: string; // decimal
+  basePrice: number; // decimal
   createdAt: string;
   isActive: boolean;
   category: {
@@ -18,14 +18,14 @@ type ServiceTypeResponse = {
     serviceTypeId: string;
     roomType: string;
     roomCount: int;
-    additionalPrice: string; // decimal
+    additionalPrice: number; // decimal
     createdAt: string;
   };
   durationPrice: {
     id: string;
     serviceTypeId: string;
     durationHours: int;
-    priceMultiplier: string; // decimal
+    priceMultiplier: number; // decimal
     createdAt: string;
   };
 };

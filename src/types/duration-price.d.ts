@@ -3,5 +3,5 @@ type DurationPriceResponse = {
   serviceTypeId: string;
   serviceTypeName: string;
   durationHours: number;
-  priceMultiplier: string; // decimal
+  priceMultiplier: number; // decimal
 };

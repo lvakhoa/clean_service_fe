@@ -1,29 +1,29 @@
-import roomPricingAction from '@/apis/room-pricing.action';
-import { RoomType } from '@/configs/enum';
-import { useQueries } from '@tanstack/react-query';
+import roomPricingAction from "@/apis/room-pricing.action";
+import { RoomType } from "@/configs/enum";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 export const useGetAllRoomPricings = (serviceTypeId?: string) =>
   useQueries({
     queries: [
       {
         queryKey: [
-          'roomPricings',
+          "roomPricings",
           RoomType.Bathroom,
-          'serviceType',
+          "serviceType",
           serviceTypeId,
         ],
         queryFn: () =>
           roomPricingAction.getAllRoomPricings(
             RoomType.Bathroom,
-            serviceTypeId
+            serviceTypeId,
           ),
         enabled: !!serviceTypeId,
       },
       {
         queryKey: [
-          'roomPricings',
+          "roomPricings",
           RoomType.Bedroom,
-          'serviceType',
+          "serviceType",
           serviceTypeId,
         ],
         queryFn: () =>
@@ -32,9 +32,9 @@ export const useGetAllRoomPricings = (serviceTypeId?: string) =>
       },
       {
         queryKey: [
-          'roomPricings',
+          "roomPricings",
           RoomType.Kitchen,
-          'serviceType',
+          "serviceType",
           serviceTypeId,
         ],
         queryFn: () =>
@@ -43,17 +43,25 @@ export const useGetAllRoomPricings = (serviceTypeId?: string) =>
       },
       {
         queryKey: [
-          'roomPricings',
+          "roomPricings",
           RoomType.LivingRoom,
-          'serviceType',
+          "serviceType",
           serviceTypeId,
         ],
         queryFn: () =>
           roomPricingAction.getAllRoomPricings(
             RoomType.LivingRoom,
-            serviceTypeId
+            serviceTypeId,
           ),
         enabled: !!serviceTypeId,
       },
     ],
+  });
+
+export const useGetRoomPricing = () =>
+  useQuery({
+    queryKey: ["roomPricings"],
+    queryFn: () => {
+      return roomPricingAction.getAllRoomPricings();
+    },
   });
