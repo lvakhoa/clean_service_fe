@@ -1,5 +1,6 @@
 import durationPricingAction from "@/apis/duration-pricing.action";
-import { useQuery } from "@tanstack/react-query";
+import { updateDurationPriceData } from "@/schemas/durationPriceSchema";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetAllDurationPrices = (serviceTypeId?: string) =>
   useQuery({
@@ -10,6 +11,19 @@ export const useGetAllDurationPrices = (serviceTypeId?: string) =>
 
 export const useGetDurationPrice = () =>
   useQuery({
-    queryKey: ["durationPrice"],
+    queryKey: ["allDurationPrice"],
     queryFn: () => durationPricingAction.getAllDurationPrices(),
+  });
+
+export const useUpdateDurationPrice = () =>
+  useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: updateDurationPriceData;
+    }) => {
+      await durationPricingAction.updateDurationPrice(id, data);
+    },
   });

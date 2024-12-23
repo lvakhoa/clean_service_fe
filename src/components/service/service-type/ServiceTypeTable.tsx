@@ -7,7 +7,9 @@ import SearchBarAndFilter from "./SearchBarAndFilter";
 import ServiceTypeRow from "./ServiceTypeRow";
 import { UpdateServiceTypePopup } from "@/components/popup/UpdateServiceTypePopup";
 import Pagination from "./Pagination";
-import useGetAllServiceTypes from "@/hooks/useServiceType";
+import useGetAllServiceTypes, {
+  useUpdateServiceType,
+} from "@/hooks/useServiceType";
 
 const columns = [
   {
@@ -78,7 +80,6 @@ const RoomPricingTable = () => {
     string | null
   >(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [checkedRows, setCheckedRows] = useState<string[]>([]);
 
   const { data, isLoading, error } = useGetAllServiceTypes();
 
@@ -86,7 +87,13 @@ const RoomPricingTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Filter by");
   const [searchBy, setSearchBy] = useState("Category");
-
+  const [initValue, setInitValue] = useState<{
+    basePrice: number;
+    description: string;
+  }>({
+    basePrice: 0,
+    description: "",
+  });
   const applyFilter = (data: ServiceTypeResponse[]) => {
     if (filter === "Base Price ↑") {
       return [...data].sort((a, b) => a.basePrice - b.basePrice);
@@ -107,13 +114,11 @@ const RoomPricingTable = () => {
     setSelectedRoomPricingId(id);
     setIsDialogOpen(true);
   };
-  const handleCheckboxToggle = (id: string, isChecked: boolean) => {
-    setCheckedRows((prevCheckedRows) =>
-      isChecked
-        ? [...prevCheckedRows, id]
-        : prevCheckedRows.filter((rowId) => rowId !== id),
-    );
-    console.log(checkedRows);
+  const handleInitValues = (value: {
+    basePrice: number;
+    description: string;
+  }) => {
+    setInitValue(value);
   };
 
   const itemsPerPage = 10;
@@ -162,6 +167,7 @@ const RoomPricingTable = () => {
             key={category.id}
             {...category}
             onRowClick={handleRowClick}
+            setInitValue={handleInitValues}
             isLoading={isLoading}
           />
         ))}
@@ -176,6 +182,8 @@ const RoomPricingTable = () => {
       <UpdateServiceTypePopup
         id={selectedRoomPricingId}
         open={isDialogOpen}
+        basePrice={initValue.basePrice}
+        description={initValue.description}
         onClose={() => setIsDialogOpen(false)}
       />
     </>

@@ -13,8 +13,8 @@ const durationPriceSchema = z.object({
 
 const partialDurationPriceSchema = durationPriceSchema.partial();
 
-export type createServiceDetailData = z.infer<typeof durationPriceSchema>;
-export type updateServiceDetailData = z.infer<
+export type createDurationPriceData = z.infer<typeof durationPriceSchema>;
+export type updateDurationPriceData = z.infer<
   typeof partialDurationPriceSchema
 >;
 

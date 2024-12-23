@@ -10,6 +10,7 @@ const DurationPriceRow: React.FC<DurationPriceRowProps> = ({
   durationHours,
   priceMultiplier,
   onRowClick,
+  setInitValue,
   isLoading,
 }) => {
   return (
@@ -20,7 +21,10 @@ const DurationPriceRow: React.FC<DurationPriceRowProps> = ({
           ? "cursor-default hover:bg-white"
           : "cursor-pointer hover:bg-[#f4f7ff]",
       )}
-      onClick={() => onRowClick(id)}
+      onClick={() => {
+        onRowClick(id);
+        setInitValue({ durationHours, priceMultiplier });
+      }}
     >
       <div className="mb-2 ml-5 flex w-full items-center justify-start md:mb-0 md:w-[500px] md:py-6">
         {isLoading ? (
