@@ -6,5 +6,6 @@ export const CUSTOMER_ENDPOINTS = {
   calendar: '/dashboard/calendar',
   feedback: '/dashboard/feedback',
   refund: '/dashboard/refund',
-  chart: '/dashboard/chart',
+  //chart: '/dashboard/chart',
+  booking: '/booking',
 };
