@@ -11,7 +11,7 @@ const LandingPage = async () => {
       <div className="relative">
         <HomePage />
         <div className="absolute top-0 left-0 w-full">
-          <Header isAuth={session.isAuth} />
+          <Header isAuth={session.isAuth} role={session.role} />
         </div>
       </div>
       <div className="mt-auto">

@@ -4,13 +4,27 @@ import ENV from '@/configs/env';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useAuth } from '@/hooks/useAuth';
+
 
 type HeaderProps = {
   isAuth?: boolean;
+  role?: string;
 };
 
-const Header = ({ isAuth }: HeaderProps) => {
+const Header = ({ isAuth, role }: HeaderProps) => {
   //const links = ['About Us', 'Career', 'Dashboard'];
+  const {useGetProfile} = useAuth();
+  const { data , error , isPending } = useGetProfile()
+  console.log('useGetProfile', data);
   const links = [
     {
       name: 'About Us',
@@ -25,7 +39,6 @@ const Header = ({ isAuth }: HeaderProps) => {
       url: '/dashboard'
     }
   ]
-  console.log('isAuth', isAuth); 
 
   const handleLogIn = () => { 
     window.location.href = ENV.API_BASE_URL + '/auth/login';
@@ -51,10 +64,40 @@ const Header = ({ isAuth }: HeaderProps) => {
               {link.name}
             </a>
           ))}
+          
           {isAuth ? (
-            <div className="flex gap-5 justify-between items-center w-[169px]">
-              <Image
-                src="/images/Dashboard/Header/Avatar.png"
+            // <div className="flex gap-5 justify-between items-center w-[169px]">
+            //   <Image
+            //     src="/images/Dashboard/Header/Avatar.png"
+            //     alt="Avatar"
+            //     width={44}
+            //     height={44}
+            //     sizes="100vw"
+            //     style={{ width: '44px', height: 'auto' }}
+            //   />
+            //   <div className="flex flex-col self-stretch my-auto">
+            //     <div className="text-sm font-bold text-neutral-700 font-Averta-Semibold">
+            //       Moni Roy
+            //     </div>
+            //     <div className="self-start text-xs font-semibold text-neutral-600 font-Averta-Regular">
+            //       Admin
+            //     </div>
+            //   </div>
+            //   <Image
+            //     src="/images/Dashboard/Header/DropDown.svg"
+            //     alt=""
+            //     width={18}
+            //     height={18}
+            //     sizes="100vw"
+            //     style={{ width: '18px', height: 'auto' }}
+            //   />
+            //   <img loading="lazy" src="/images/Dashboard/Header/DropDown.svg" alt="" className="object-contain shrink-0 self-stretch my-auto aspect-square w-[18px]" />
+            // </div>
+            <DropdownMenu>
+  <DropdownMenuTrigger> 
+     <div className="flex gap-5 justify-between items-center w-[169px]">
+               <Image
+                src={data?.profilePicture ||'/images/Dashboard/Header/Avatar.png'}
                 alt="Avatar"
                 width={44}
                 height={44}
@@ -63,10 +106,10 @@ const Header = ({ isAuth }: HeaderProps) => {
               />
               <div className="flex flex-col self-stretch my-auto">
                 <div className="text-sm font-bold text-neutral-700 font-Averta-Semibold">
-                  Moni Roy
+                  {data?.fullName}
                 </div>
                 <div className="self-start text-xs font-semibold text-neutral-600 font-Averta-Regular">
-                  Admin
+                  {role}
                 </div>
               </div>
               <Image
@@ -79,6 +122,15 @@ const Header = ({ isAuth }: HeaderProps) => {
               />
               {/* <img loading="lazy" src="/images/Dashboard/Header/DropDown.svg" alt="" className="object-contain shrink-0 self-stretch my-auto aspect-square w-[18px]" /> */}
             </div>
+            </DropdownMenuTrigger> 
+  <DropdownMenuContent>
+    <DropdownMenuLabel className='hidden'>My Account</DropdownMenuLabel>
+    <DropdownMenuItem>Profile</DropdownMenuItem>
+    <DropdownMenuSeparator />
+        <DropdownMenuItem>Log out</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
           ) : (
             <div className="space-x-2">
               <button
