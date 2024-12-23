@@ -4,6 +4,6 @@ type RoomPricingResponse = {
   serviceTypeName: string;
   roomCount: number;
   roomType: RoomType;
-  additionalPrice: string; // decimal
+  additionalPrice: number; // decimal
   createdAt: string;
 };

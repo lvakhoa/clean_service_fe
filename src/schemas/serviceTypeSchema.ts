@@ -1,6 +1,7 @@
 import z from "zod";
 
 const serviceTypeSchema = z.object({
+  id: string
   categoryId: z.string(),
   name: z.string().min(1, "Name cannot be empty"),
   description: z.string().min(1, "Description cannot be empty"),

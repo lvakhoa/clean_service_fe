@@ -5,13 +5,7 @@ type FilterDropdownProps = {
 };
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({ onFilterChange }) => {
-  const options = [
-    "Multiply Price ↑",
-    "Multiply Price ↓",
-    "Additional Price ↑",
-    "Additional Price ↓",
-    "None",
-  ];
+  const options = ["Base Price ↑", "Base Price ↓", "None"];
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Filter by");
@@ -31,7 +25,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ onFilterChange }) => {
   return (
     <div className="relative w-[170px]" onMouseLeave={closeDropdown}>
       <div
-        className="text-xs text-[#2b3034e6] font-Averta-Bold gap-4 flex items-center justify-between border border-solid border-[#d5d5d5] bg-[#fcfdfd] rounded-lg h-[38px] px-4 cursor-pointer w-full"
+        className="flex h-[38px] w-full cursor-pointer items-center justify-between gap-4 rounded-lg border border-solid border-[#d5d5d5] bg-[#fcfdfd] px-4 font-Averta-Bold text-xs text-[#2b3034e6]"
         onClick={openDropdown}
       >
         {selectedOption}
@@ -51,12 +45,12 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ onFilterChange }) => {
       </div>
 
       {isOpen && (
-        <div className="absolute bg-white border border-gray-300 rounded-lg shadow-lg w-full z-10">
-          <ul className="text-sm text-[#2b3034e6] font-Averta-Regular py-1">
+        <div className="absolute z-10 w-full rounded-lg border border-gray-300 bg-white shadow-lg">
+          <ul className="py-1 font-Averta-Regular text-sm text-[#2b3034e6]">
             {options.map((option, index) => (
               <li
                 key={index}
-                className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
+                className="cursor-pointer px-4 py-2 hover:bg-gray-100"
                 onClick={() => handleOptionClick(option)}
               >
                 {option}

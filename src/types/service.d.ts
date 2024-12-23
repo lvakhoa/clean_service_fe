@@ -1,44 +1,34 @@
-type ServiceType = {
-  id: string;
-  name: string;
-  description?: string;
-  categoryId: string;
-  basePrice: number;
-  isActive?: boolean;
-  createdAt?: string;
-  category?: {
-    name: string;
-  };
-};
-
-type ServiceTypeRowProps = {
-  id: string;
-  name: string;
-  description?: string;
-  basePrice: number;
-  category?: {
-    name: string;
-  };
-  onRowClick: (id: string) => void;
-  onCheckboxToggle?: (id: string, checked: boolean) => void;
-  isLoading?: boolean;
-};
-
-type DetailServiceRowProps = {
+type DurationPrice = {
   id: string;
   serviceTypeId: string;
-  title: string;
-  additionalPrice: number;
-  multiplyPrice: number;
-  serviceType?: {
-    name: string;
-  };
+  serviceTypeName: string;
+  durationHours: number;
+  priceMultiplier: string;
+};
+
+type DurationPriceRowProps = {
+  id: string;
+  serviceTypeId: string;
+  serviceTypeName: string;
+  durationHours: number;
+  priceMultiplier: number; // decimal
   onRowClick: (id: string) => void;
-  onCheckboxToggle?: (id: string, checked: boolean) => void;
   isLoading?: boolean;
 };
 
-type ServiceDetail = {
+type RoomPricingRowProps = {
+  id: string;
+  serviceTypeId: string;
+  serviceTypeName: string;
+  roomCount: number;
+  roomType: RoomType;
+  additionalPrice: number;
+  createdAt: string;
+  onRowClick: (id: string) => void;
+  isLoading?: boolean;
+};
+
+type RoomPricing = {
   id: string;
   serviceTypeId: string;
   title: string;
@@ -55,4 +45,33 @@ type ServiceCategory = {
   description?: string;
   isActive?: boolean;
   createdAt?: string;
+};
+
+type ServiceType = {
+  id: string;
+  categoryId: string;
+  name: string;
+  description?: string;
+  basePrice: number;
+  createdAt: string;
+  isActive: boolean;
+};
+
+type ServiceTypeRowProps = {
+  id: string;
+  categoryId: string;
+  name: string;
+  description?: string;
+  basePrice: number;
+  createdAt: string;
+  isActive: boolean;
+  onRowClick: (id: string) => void;
+  isLoading?: boolean;
+  category: {
+    id: string;
+    name: string;
+    description?: string;
+    createdAt: string;
+    isActive: boolean;
+  };
 };

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import FilterDropdown from "./Filter";
-import { CreateServiceDetailPopup } from "@/components/popup/CreateServiceDetailPopup";
 import { Button } from "@/components/ui/button";
 
 type SearchBarAndFilterProps = {
@@ -31,20 +30,20 @@ const SearchBarAndFilter: React.FC<SearchBarAndFilterProps> = ({
     setIsDropdownOpen(false);
   };
 
-  const searchByOptions = ["Title", "Type"];
+  const searchByOptions = ["Category", "Type", "Description"];
 
   return (
     <>
-      <div className="flex flex-wrap justify-between gap-4 w-full md:w-fit">
-        <div className="flex gap-5 justify-center my-auto min-w-[240px]">
-          <form className="flex items-center my-auto text-sm text-center min-w-[240px] text-neutral-800 w-[252px]">
-            <div className="flex self-stretch my-auto min-w-[240px] w-[252px]">
-              <div className="flex relative items-center bg-white rounded-l-lg border border-solid border-[rgba(0, 0, 0, 0.5)] h-[38px] w-[147px] px-4">
+      <div className="flex w-full flex-wrap justify-between gap-4 md:w-fit">
+        <div className="my-auto flex min-w-[240px] justify-center gap-5">
+          <form className="my-auto flex w-[252px] min-w-[240px] items-center text-center text-sm text-neutral-800">
+            <div className="my-auto flex w-[252px] min-w-[240px] self-stretch">
+              <div className="border-[rgba(0, 0, 0, 0.5)] relative flex h-[38px] w-[147px] items-center rounded-l-lg border border-solid bg-white px-4">
                 <img
                   loading="lazy"
                   src="/images/Dashboard/Employee/search.svg"
                   alt="icon-search"
-                  className="object-contain aspect-square"
+                  className="aspect-square object-contain"
                 />
                 <label htmlFor="search" className="sr-only">
                   Search
@@ -53,7 +52,7 @@ const SearchBarAndFilter: React.FC<SearchBarAndFilterProps> = ({
                   type="text"
                   id="search"
                   placeholder="Search"
-                  className="text-sm text-[#202224] w-full font-Averta-Regular opacity-50 bg-transparent h-full px-2 focus:outline-none"
+                  className="h-full w-full bg-transparent px-2 font-Averta-Regular text-sm text-[#202224] opacity-50 focus:outline-none"
                   onChange={handleSearchChange}
                 />
               </div>
@@ -61,19 +60,19 @@ const SearchBarAndFilter: React.FC<SearchBarAndFilterProps> = ({
               {/* search by */}
               <div className="relative" onMouseLeave={closeDropdown}>
                 <div
-                  className="text-sm text-[#202224] font-Averta-Regular opacity-50 flex items-center justify-center border border-solid border-[#d5d5d5]  bg-[#eceaea] rounded-r-lg h-[38px] w-[105px] cursor-pointer"
+                  className="flex h-[38px] w-[105px] cursor-pointer items-center justify-center rounded-r-lg border border-solid border-[#d5d5d5] bg-[#eceaea] font-Averta-Regular text-sm text-[#202224] opacity-50"
                   onClick={() => setIsDropdownOpen((prev) => !prev)}
                 >
                   {selectedSearchBy}
                 </div>
 
                 {isDropdownOpen && (
-                  <div className="absolute bg-white border border-gray-300 rounded-lg shadow-lg w-full z-10">
-                    <ul className="text-sm text-[#2b3034e6] font-Averta-Regular py-1">
+                  <div className="absolute z-10 w-full rounded-lg border border-gray-300 bg-white shadow-lg">
+                    <ul className="py-1 font-Averta-Regular text-sm text-[#2b3034e6]">
                       {searchByOptions.map((option, index) => (
                         <li
                           key={index}
-                          className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
+                          className="cursor-pointer px-4 py-2 hover:bg-gray-100"
                           onClick={() => handleSearchByChange(option)}
                         >
                           {option}

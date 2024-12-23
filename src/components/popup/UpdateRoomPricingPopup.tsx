@@ -15,12 +15,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   serviceDetailSchema,
   updateServiceDetailData,
-} from "@/schemas/serviceDetailSchema";
+} from "@/schemas/roomPricingSchema";
 import { useEffect } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { ClipLoader } from "react-spinners";
 
-export function UpdateServiceDetailPopup({
+export function UpdateRoomPricingPopup({
   id,
   open,
   onClose,
@@ -41,7 +41,7 @@ export function UpdateServiceDetailPopup({
     resolver: zodResolver(serviceDetailSchema),
   });
 
-  const fetchServiceDetail = async (): Promise<ServiceDetail> => {
+  const fetchServiceDetail = async (): Promise<RoomPricing> => {
     try {
       if (!serviceDetailUrl) {
         throw new Error("Service detail URL is null");
@@ -70,7 +70,7 @@ export function UpdateServiceDetailPopup({
   };
 
   const { data: detailData, isPending: isFetchDetailPending } = useQuery({
-    queryKey: ["serviceDetail", id],
+    queryKey: ["RoomPricing", id],
     queryFn: fetchServiceDetail,
   });
 

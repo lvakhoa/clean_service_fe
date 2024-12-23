@@ -5,26 +5,15 @@ import { Checkbox as MaterialCheckbox } from "@material-tailwind/react";
 import { Skeleton } from "@/components/skeleton/skeleton";
 import { cn } from "@/lib/utils";
 
-const DetailServiceRow: React.FC<DetailServiceRowProps> = ({
+const RoomPricingRow: React.FC<RoomPricingRowProps> = ({
   id,
-  title,
+  serviceTypeName,
+  roomCount,
+  roomType,
   additionalPrice,
-  multiplyPrice,
-  serviceType,
   onRowClick,
-  onCheckboxToggle,
   isLoading,
 }) => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    setIsChecked(checked);
-    if (onCheckboxToggle) {
-      onCheckboxToggle(id, checked);
-    }
-  };
-
   return (
     <div
       className={cn(
@@ -35,30 +24,15 @@ const DetailServiceRow: React.FC<DetailServiceRowProps> = ({
       )}
       onClick={() => onRowClick(id)}
     >
-      <div onClick={(e) => e.stopPropagation()}>
-        <div className="flex min-h-[48px] w-full items-center overflow-hidden pl-px">
-          {isLoading ? (
-            <Skeleton className="h-4 w-full"></Skeleton>
-          ) : (
-            <MaterialCheckbox
-              color="blue"
-              checked={isChecked}
-              onChange={handleCheckboxChange}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-              crossOrigin={undefined}
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="mb-2 flex w-full items-center justify-start xl:mb-0 xl:w-[210px] xl:py-6">
+      <div className="mb-2 ml-5 flex w-full items-center justify-start xl:mb-0 xl:w-[300px] xl:py-6">
         {isLoading ? (
           <Skeleton className="h-4 w-full"></Skeleton>
         ) : (
           <div className="text-sm text-[#202224cc]">
-            <span className="font-Averta-Semibold xl:hidden">CATEGORY: </span>
-            {serviceType?.name}
+            <span className="font-Averta-Semibold xl:hidden">
+              Service Type Name:{" "}
+            </span>
+            {serviceTypeName}
           </div>
         )}
       </div>
@@ -68,7 +42,7 @@ const DetailServiceRow: React.FC<DetailServiceRowProps> = ({
         ) : (
           <div className="text-sm text-[#202224cc]">
             <span className="font-Averta-Semibold xl:hidden">Title: </span>
-            {title}
+            {roomType}
           </div>
         )}
       </div>
@@ -78,8 +52,8 @@ const DetailServiceRow: React.FC<DetailServiceRowProps> = ({
           <Skeleton className="h-4 w-full"></Skeleton>
         ) : (
           <div className="text-sm text-[#202224cc]">
-            <span className="font-Averta-Bold xl:hidden">MULTIPLY PRICE: </span>
-            {`$${additionalPrice}`}
+            <span className="font-Averta-Bold xl:hidden">ROOM COUNT</span>
+            {roomCount}
           </div>
         )}
       </div>
@@ -91,11 +65,11 @@ const DetailServiceRow: React.FC<DetailServiceRowProps> = ({
             <span className="font-Averta-Bold xl:hidden">
               ADDITIONAL PRICE:{" "}
             </span>
-            {`${multiplyPrice}x`}
+            {`$${additionalPrice}`}
           </div>
         )}
       </div>
     </div>
   );
 };
-export default DetailServiceRow;
+export default RoomPricingRow;
