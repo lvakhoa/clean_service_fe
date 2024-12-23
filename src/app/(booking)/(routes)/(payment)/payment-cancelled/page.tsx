@@ -1,22 +1,26 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { AUTH_ENDPOINTS, PUBLIC_ENDPOINTS } from '@/configs/endpoints';
-import { BookingStatus, PaymentStatus } from '@/configs/enum';
-import { useCancelPayment, useGetBookingByOrderCode } from '@/hooks/useBooking';
-import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { Button } from "@/components/ui/button";
+import {
+  AUTH_ENDPOINTS,
+  CUSTOMER_ENDPOINTS,
+  PUBLIC_ENDPOINTS,
+} from "@/configs/endpoints";
+import { BookingStatus, PaymentStatus } from "@/configs/enum";
+import { useCancelPayment, useGetBookingByOrderCode } from "@/hooks/useBooking";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { FaSpinner } from "react-icons/fa";
 
 function PaymentCancelled() {
   const router = useRouter();
   const navigateToHome = () => router.replace(PUBLIC_ENDPOINTS.landing);
-  const navigateToOrder = () => router.push(AUTH_ENDPOINTS.booking);
+  const navigateToOrder = () => router.push(CUSTOMER_ENDPOINTS.booking);
 
   const params = useSearchParams();
-  const cancel = params.get('cancel');
-  const orderCode = params.get('orderCode');
+  const cancel = params.get("cancel");
+  const orderCode = params.get("orderCode");
 
   const {
     data: getBookingData,
@@ -28,7 +32,7 @@ function PaymentCancelled() {
   const { mutate: handleCancel } = useCancelPayment(refetchGetBooking);
   useEffect(() => {
     if (
-      cancel === 'true' &&
+      cancel === "true" &&
       orderCode &&
       getBookingData &&
       getBookingData.paymentStatus !== PaymentStatus.Paid &&
@@ -39,7 +43,7 @@ function PaymentCancelled() {
   }, [cancel, orderCode, handleCancel, getBookingData]);
 
   return (
-    <div className="flex m-auto flex-col gap-5 items-center justify-center">
+    <div className="m-auto flex flex-col items-center justify-center gap-5">
       <Image
         src="/images/Header/Logo.svg"
         alt="logo"
@@ -63,7 +67,7 @@ function PaymentCancelled() {
             <Button
               onClick={navigateToHome}
               variant="outline"
-              className="min-w-40 bg-white hover:bg-blue-100 border-blue-600 text-blue-600 hover:text-blue-600"
+              className="min-w-40 border-blue-600 bg-white text-blue-600 hover:bg-blue-100 hover:text-blue-600"
             >
               Back To Homepage
             </Button>
@@ -80,13 +84,13 @@ function PaymentCancelled() {
               <Button
                 onClick={navigateToHome}
                 variant="outline"
-                className="min-w-40 bg-white hover:bg-blue-100 border-blue-600 text-blue-600 hover:text-blue-600"
+                className="min-w-40 border-blue-600 bg-white text-blue-600 hover:bg-blue-100 hover:text-blue-600"
               >
                 Back To Homepage
               </Button>
               <Button
                 onClick={navigateToOrder}
-                className="min-w-40 bg-blue-600 hover:bg-blue-700 text-white"
+                className="min-w-40 bg-blue-600 text-white hover:bg-blue-700"
               >
                 Create New Booking
               </Button>
@@ -105,14 +109,14 @@ function PaymentCancelled() {
             <Button
               onClick={navigateToHome}
               variant="outline"
-              className="min-w-40 bg-white hover:bg-blue-100 border-blue-600 text-blue-600 hover:text-blue-600"
+              className="min-w-40 border-blue-600 bg-white text-blue-600 hover:bg-blue-100 hover:text-blue-600"
             >
               Back To Homepage
             </Button>
           </>
         )
       ) : (
-        <FaSpinner className="animate-spin size-10" />
+        <FaSpinner className="size-10 animate-spin" />
       )}
     </div>
   );
