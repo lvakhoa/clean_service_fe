@@ -86,9 +86,8 @@ const customerAction = {
     return res.data;
   },
   async getCurrentCustomer() {
-    const res = await cleanApi.get<CleanSuccessResponseWrapper<Customer>>(
-      "/manage/customers/me",
-    );
+    const res =
+      await cleanApi.get<CleanSuccessResponseWrapper<Customer>>("/auth/me");
     return res.data;
   },
 };

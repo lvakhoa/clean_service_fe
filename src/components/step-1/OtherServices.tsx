@@ -26,11 +26,14 @@ const OtherServices = () => {
   const handleSelectOtherType = (id: string) => setSelectedOtherType(id);
 
   const durationPrices = useGetAllDurationPrices(selectedOtherType);
-  const durations = durationPrices.data?.results.map((val) => ({
-    id: val.id,
-    duration: val.durationHours,
-    priceMultiplier: val.priceMultiplier,
-  }));
+  const durations = durationPrices.data?.results
+    .map((val) => ({
+      id: val.id,
+      duration: val.durationHours,
+      priceMultiplier: val.priceMultiplier,
+      serviceTypeId: val.serviceTypeId,
+    }))
+    .filter((val) => val.serviceTypeId === selectedOtherType);
   const [selectedDuration, setSelectedDuration] = useState<string | undefined>(
     booking?.bookingDetails?.durationPriceId,
   );
