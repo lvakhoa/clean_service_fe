@@ -23,6 +23,7 @@ const columns = [
   { header: "RATING", className: "w-[100px] hidden md:table-cell mr-10" },
   { header: "PRICE", className: "w-[100px] hidden md:table-cell " },
   { header: "STATUS", className: "w-[140px] hidden md:table-cell" },
+  { header: "PAYMENT STATUS", className: "w-[140px] hidden md:table-cell" },
   { header: "", className: "w-[130px] hidden md:table-cell" },
 ];
 
@@ -353,7 +354,7 @@ const OrderHistoryTable = () => {
     setOrder(
       Array.isArray(data?.data?.results)
         ? (data?.data?.results as Booking[])
-        : []
+        : [],
     );
     console.log("Data: ", data);
   }, [data]);
@@ -364,25 +365,29 @@ const OrderHistoryTable = () => {
     setCurrentPage(1);
   };
 
-  const filteredData = order ? order.filter((order) => {
-    const term = searchTerm.toLowerCase();
+  const filteredData = order
+    ? order.filter((order) => {
+        const term = searchTerm.toLowerCase();
 
-    if (searchBy === "Helper")
-      return order.helper.user.fullName.toLowerCase().includes(term);
-    if (searchBy === "Rating")
-      return order.helperRating?.toString().includes(term);
-    if (searchBy === "Price") return order.totalPrice.toString().includes(term);
-    if (searchBy === "Status") return order.status.toLowerCase().includes(term);
+        if (searchBy === "Helper")
+          return order.helper.user.fullName.toLowerCase().includes(term);
+        if (searchBy === "Rating")
+          return order.helperRating?.toString().includes(term);
+        if (searchBy === "Price")
+          return order.totalPrice.toString().includes(term);
+        if (searchBy === "Status")
+          return order.status.toLowerCase().includes(term);
 
-    return order.helper.user.fullName.toLowerCase().includes(term);
-  }): [];
+        return order.helper.user.fullName.toLowerCase().includes(term);
+      })
+    : [];
 
   // Pagination
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handlePageChange = (newPage: number) => {
@@ -397,23 +402,27 @@ const OrderHistoryTable = () => {
       <SearchBar setSearchTerm={handleSearch} setSearchBy={setSearchBy} />
 
       {/* title column */}
-      <div className="flex gap-3 w-full bg-[#f5f5f5] h-[48px] items-center mt-4 p-2.5">
+      <div className="mt-4 flex h-[48px] w-full items-center gap-3 bg-[#f5f5f5] p-2.5">
         {columns.map((col, index) => (
           <div
             key={index}
-            className={`${col.className} text-left text-[#202224] text-sm font-Averta-Bold`}
+            className={`${col.className} text-left font-Averta-Bold text-sm text-[#202224]`}
           >
             {col.header}
           </div>
         ))}
       </div>
 
-      <div className="flex overflow-hidden flex-col justify-center w-full max-md:max-w-full">
-        {order == null || order.length === 0 ? (<div className="flex justify-center items-center w-full bg-white">
-                We have no feedback
-              </div>):(currentData.map((order: Booking, index: any) => (
-          <OrderHistoryRow key={order.id} order={order} />
-        )))}
+      <div className="flex w-full flex-col justify-center overflow-hidden max-md:max-w-full">
+        {order == null || order.length === 0 ? (
+          <div className="flex w-full items-center justify-center bg-white">
+            We have no feedback
+          </div>
+        ) : (
+          currentData.map((order: Booking, index: any) => (
+            <OrderHistoryRow key={order.id} order={order} />
+          ))
+        )}
         {}
       </div>
       <Pagination

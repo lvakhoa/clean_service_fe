@@ -86,6 +86,7 @@ const CreateFeedbackPopup: React.FC<CreateFeedbackPopupProps> = ({
       toggle();
       closeParentPopup();
       queryClient.invalidateQueries({ queryKey: ["currentBooking"] });
+      queryClient.invalidateQueries({ queryKey: ["feedbacks/customer"] });
 
       setTitle("");
       setRating(0);
@@ -191,6 +192,7 @@ const CreateFeedbackPopup: React.FC<CreateFeedbackPopupProps> = ({
               Feedback content (Optional)
             </p>
             <textarea
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Type your feedback content"
               className="min-h-[130px] resize-none rounded-lg border-2 border-[#d3d8dd] px-[10px] py-[16px] font-Averta-Semibold text-base leading-[23px] tracking-tight text-[#4f6071]"
             />

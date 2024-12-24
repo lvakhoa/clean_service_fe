@@ -69,7 +69,7 @@ const CustomerInfo = () => {
       setCustomerProfilePicture(
         queryData.data?.profilePicture || DEFAULT_IMAGES.profilePicture,
       );
-    } else {
+    } else if (!isPending) {
       toast.error("Get customer info failed");
       console.log(queryError);
     }
