@@ -34,7 +34,7 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <li><a href="#License">License</a></li>
     <li><a href="#contributors">Contributors</a></li>
   </ol>
 </details>
