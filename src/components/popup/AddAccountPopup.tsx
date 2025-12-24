@@ -87,7 +87,7 @@ const AddAccountPopup: React.FC<AddAccountPopupProps> = ({ toggle }) => {
       toast.success("Account created successfully!");
 
       // Invalidate queries to refresh employee list
-      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["helpers"] });
 
       // Reset form
       setEmail("");
@@ -195,7 +195,7 @@ const AddAccountPopup: React.FC<AddAccountPopupProps> = ({ toggle }) => {
           />
 
           {/* User Type */}
-          <div className="flex w-full flex-col gap-[11px]">
+          {/* <div className="flex w-full flex-col gap-[11px]">
             <label
               className="font-Averta-Semibold text-[14px] text-[#9FA7B0]"
               htmlFor="userType"
@@ -212,7 +212,7 @@ const AddAccountPopup: React.FC<AddAccountPopupProps> = ({ toggle }) => {
               <option value="Admin">Admin</option>
               <option value="Customer">Customer</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <Button
