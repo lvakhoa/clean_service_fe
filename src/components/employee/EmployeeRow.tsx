@@ -87,11 +87,11 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({
         </div>
       </div>
 
-      <div className="w-full  md:w-[10%] flex items-center justify-end md:py-6">
+      {/* <div className="w-full  md:w-[10%] flex items-center justify-end md:py-6">
         <button onClick={() => router.push(`${pathName}/${id}`)} className="mr-2  px-4 py-1.5 bg-[#6896d1] text-[#12153a] bg-opacity-20 text-xs rounded-[4.5px] font-semibold hover:bg-opacity-50">
           More Info
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

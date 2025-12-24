@@ -51,7 +51,7 @@ const CustomerRow: React.FC<CustomerRowProps> = ({
         </div>
       </div>
 
-      <div className="w-full  md:w-[10%] flex items-center md:py-6">
+      {/* <div className="w-full  md:w-[10%] flex items-center md:py-6">
         {isLoading ? (
           <Skeleton className="h-4 w-24 rounded-lg" />
         ) : (
@@ -62,7 +62,7 @@ const CustomerRow: React.FC<CustomerRowProps> = ({
             <span>More Info</span>
           </button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

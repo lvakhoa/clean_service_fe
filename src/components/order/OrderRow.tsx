@@ -131,7 +131,7 @@ const OrderRow: React.FC<OrderRowProps> = ({ booking }) => {
         </div>
       </div>
 
-      <div className="w-full  flex-1 flex items-center md:py-6">
+      {/* <div className="w-full  flex-1 flex items-center md:py-6">
         <button
           onClick={handleToggle}
           className="md:w-[100px] ml-auto px-4 py-1.5 bg-[#6896d1] text-[#12153a] bg-opacity-20 text-xs rounded-[4.5px] font-semibold hover:bg-opacity-50"
@@ -141,7 +141,7 @@ const OrderRow: React.FC<OrderRowProps> = ({ booking }) => {
       </div>
       {toggleOrderInfo && (
         <OrderInfoPopup toggle={handleToggle} booking={booking} />
-      )}
+      )} */}
     </div>
   );
 };
