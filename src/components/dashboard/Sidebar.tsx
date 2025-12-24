@@ -165,12 +165,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
     //   label: 'Issue',
     //   href: ADMIN_ENDPOINTS.issue,
     // },
-    {
-      icon: '/images/Dashboard/Sidebar/InActive/Refund.svg',
-      activeIcon: '/images/Dashboard/Sidebar/Active/Refund.svg',
-      label: 'Refund',
-      href: CUSTOMER_ENDPOINTS.refund,
-    },
   ];
 
   const customerNavItems: Omit<NavItemProps, 'isActive'>[] = [
@@ -197,12 +191,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       activeIcon: '/images/Dashboard/Sidebar/Active/Feedback.svg',
       label: 'Feedback',
       href: CUSTOMER_ENDPOINTS.feedback,
-    },
-    {
-      icon: '/images/Dashboard/Sidebar/InActive/Refund.svg',
-      activeIcon: '/images/Dashboard/Sidebar/Active/Refund.svg',
-      label: 'Refund',
-      href: CUSTOMER_ENDPOINTS.refund,
     },
   ];
 
