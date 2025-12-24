@@ -74,20 +74,6 @@ Cleaning Service connects customers with expert cleaners through a seamless book
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
@@ -97,6 +83,64 @@ This is an example of how to list things you need to use the software and how to
   npm install npm@latest -g
   ```
 
+### Installation & Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/lvakhoa/clean_service_fe.git
+   cd clean_service_fe
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Environment Configuration**
+
+   Create a `.env.local` file in the root directory by copying the example file:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Then configure the following environment variables:
+
+   ```env
+   # API Configuration
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:5011/api
+   ```
+
+   **Environment Variables Description:**
+
+   - `NEXT_PUBLIC_API_BASE_URL`: The base URL for your backend API server.
+     - For local development: `http://localhost:5011/api`
+     - For production: Your production API URL
+
+   > **Note:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never put sensitive credentials in these variables.
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   # or
+   bun dev
+   ```
+
+5. **Open your browser**
+
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Features Overview
@@ -104,32 +148,39 @@ This is an example of how to list things you need to use the software and how to
 Our cleaning service frontend provides a seamless user experience with intuitive navigation, responsive design, and efficient service management.
 
 ### 🧑‍💼 User Authentication & Profiles
+
 - Secure login and registration with role-based access.
 - User profile creation and management.
 - Employee dashboard with performance tracking.
 
 ### 📅 Booking & Scheduling
+
 - Interactive booking system.
 - Calendar-based service scheduling and management.
 
 ### 🧹 Service Management
+
 - Browse and filter cleaning services by category.
 - Transparent pricing and service details.
 - Automated assignment of helpers based on availability.
 
 ### 💳 Payments & Refunds
+
 - Secure online payment integration (Stripe/Payos).
 - Instant invoicing and transaction history.
 - Easy refund requests and dispute management.
 
 ### 📞 Customer Support & Feedback
+
 - User reviews and ratings for services and helpers.
 
 ### 📊 Employee & Operations Dashboard
+
 - Job assignments and real-time status updates.
 - Attendance monitoring and job verification.
 
 ### ⚙️ Admin & System Controls
+
 - Admin dashboard for managing users, bookings, and transactions.
 - Role-based permissions and security monitoring.
 
