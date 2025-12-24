@@ -140,7 +140,7 @@ const OrderHistoryRow: React.FC<OrderHistoryRowProps> = ({ order }) => {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-1 items-center md:py-6">
+      {/* <div className="flex w-full flex-1 items-center md:py-6">
         <button
           onClick={handleToggle}
           className="ml-auto rounded-[4.5px] bg-[#6896d1] bg-opacity-20 px-4 py-1.5 text-xs font-semibold text-[#12153a] hover:bg-opacity-50 md:w-[100px]"
@@ -148,7 +148,7 @@ const OrderHistoryRow: React.FC<OrderHistoryRowProps> = ({ order }) => {
           More Info
         </button>
       </div>
-      {toggle && <OrderHistoryPopup toggle={handleToggle} booking={order} />}
+      {toggle && <OrderHistoryPopup toggle={handleToggle} booking={order} />} */}
     </div>
   );
 };
