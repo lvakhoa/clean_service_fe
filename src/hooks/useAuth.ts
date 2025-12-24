@@ -2,24 +2,31 @@ import authAction from "@/apis/auth.action";
 import { PUBLIC_ENDPOINTS } from "@/configs/endpoints";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+type SignupAccountDto = {
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  password: string;
+  userType: string;
+};
+
 export const useAuth = () => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const useGetProfile = () => {
-        return useQuery({
-            queryKey: ["profile"],
-            queryFn: () => {
-                return authAction.getProfile();
-            },
-        });
-    }
+  const useGetProfile = () => {
+    return useQuery({
+      queryKey: ["profile"],
+      queryFn: () => {
+        return authAction.getProfile();
+      },
+    });
+  };
 
-    
-    // const useLogout = useMutation({
-    //     mutationFn: () => authAction.logOut(),
-    // });
+  // const useLogout = useMutation({
+  //     mutationFn: () => authAction.logOut(),
+  // });
 
-    const useLogout = useMutation({
+  const useLogout = useMutation({
     mutationFn: () => authAction.logOut(),
     onSuccess: () => {
       // Xóa cache của profile sau khi logout
@@ -31,10 +38,15 @@ export const useAuth = () => {
       console.error("Logout failed:", error);
     },
   });
-  
-    return {
-        queryClient,
-        useGetProfile,
-        useLogout
-    }
-}
+
+  const signupAccount = useMutation({
+    mutationFn: (data: SignupAccountDto) => authAction.signup(data),
+  });
+
+  return {
+    queryClient,
+    useGetProfile,
+    useLogout,
+    signupAccount,
+  };
+};
