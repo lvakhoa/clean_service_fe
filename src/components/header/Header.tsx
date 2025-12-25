@@ -162,12 +162,6 @@ const Header = ({ isAuth, role }: HeaderProps) => {
               >
                 Log In
               </button>
-              <button
-                onClick={handleSignUpCustomer}
-                className="rounded-xl border-2 border-solid border-blue-600 bg-blue-600 px-6 py-1 text-center font-Averta-Semibold text-white"
-              >
-                Sign Up
-              </button>
             </div>
           )}
         </nav>
